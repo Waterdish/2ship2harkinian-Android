@@ -1,9 +1,9 @@
 [submodule "libultraship"]
 	path = libultraship
-	url = https://github.com/kenix3/libultraship.git
+	url = https://github.com/Waterdish/libultraship.git
 [submodule "OTRExporter"]
 	path = OTRExporter
-	url = https://github.com/louist103/OTRExporter.git
+	url = https://github.com/Waterdish/OTRExporter.git
 [submodule "ZAPDTR"]
 	path = ZAPDTR
-	url = https://github.com/louist103/ZAPDTR.git
+	url = https://github.com/Waterdish/ZAPDTR.git

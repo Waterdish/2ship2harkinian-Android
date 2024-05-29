@@ -830,7 +830,7 @@ void* AudioLoad_SyncLoad(s32 tableType, u32 id, s32* didAllocate) {
                 size -= 0x10;
             }
 
-            memcpy(ramAddr, romAddr, size);
+            memcpy((void*)ramAddr, (void*)romAddr, size);
         } else if (medium2 == mediumUnk) {
             AudioLoad_SyncDmaUnkMedium(romAddr, ramAddr, size, (s16)table->unkMediumParam);
         } else {
@@ -956,7 +956,7 @@ s32 AudioLoad_Dma(OSIoMesg* mesg, u32 priority, s32 direction, uintptr_t devAddr
     if (gAudioCtx.resetTimer > 0x10) {
         return -1;
     }
-    memcpy(ramAddr, devAddr, size);
+    memcpy((void*)ramAddr, (void*)devAddr, size);
     return 0;
 }
 
@@ -1672,7 +1672,7 @@ void AudioLoad_AsyncDmaRamUnloaded(AudioAsyncLoad* asyncLoad, size_t size) {
     size = ALIGN16(size);
     Audio_InvalDCache(asyncLoad->curRamAddr, size);
     osCreateMesgQueue(&asyncLoad->msgQueue, &asyncLoad->msg, 1);
-    memcpy(asyncLoad->curRamAddr, asyncLoad->curDevAddr, size);
+    memcpy((void*)asyncLoad->curRamAddr, (void*)asyncLoad->curDevAddr, size);
     osSendMesg(&asyncLoad->msgQueue, OS_MESG_PTR(NULL), OS_MESG_NOBLOCK);
 }
 
