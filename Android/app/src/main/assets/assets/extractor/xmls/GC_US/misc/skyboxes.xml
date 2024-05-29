@@ -1,0 +1,20 @@
+<Root>
+    <File Name="d2_fine_static">
+        <Texture Name="gClearSkybox1Tex" OutName="clear_1" Format="ci8" Width="128" Height="64" Offset="0x0" ExternalTlut="d2_fine_pal_static" SplitTlut="false" ExternalTlutOffset="0x0"/>
+        <Texture Name="gClearSkybox2Tex" OutName="clear_2" Format="ci8" Width="128" Height="64" Offset="0x2000" ExternalTlut="d2_fine_pal_static" SplitTlut="false" ExternalTlutOffset="0x0"/>
+        <Texture Name="gClearSkybox3Tex" OutName="clear_3" Format="ci8" Width="128" Height="64" Offset="0x4000" ExternalTlut="d2_fine_pal_static" SplitTlut="false" ExternalTlutOffset="0x0"/>
+        <Texture Name="gClearSkybox4Tex" OutName="clear_4" Format="ci8" Width="128" Height="64" Offset="0x6000" ExternalTlut="d2_fine_pal_static" SplitTlut="false" ExternalTlutOffset="0x0"/>
+        <Texture Name="gClearSkybox5Tex" OutName="clear_5" Format="ci8" Width="128" Height="128" Offset="0x8000" ExternalTlut="d2_fine_pal_static" SplitTlut="false" ExternalTlutOffset="0x0"/>
+    </File>
+
+    <File Name="d2_cloud_static">
+        <Texture Name="gCloudySkybox1Tex" OutName="cloudy_1" Format="ci8" Width="128" Height="64" Offset="0x0" ExternalTlut="d2_fine_pal_static" SplitTlut="false" ExternalTlutOffset="0x0"/>
+        <Texture Name="gCloudySkybox2Tex" OutName="cloudy_2" Format="ci8" Width="128" Height="64" Offset="0x2000" ExternalTlut="d2_fine_pal_static" SplitTlut="false" ExternalTlutOffset="0x0"/>
+        <Texture Name="gCloudySkybox3Tex" OutName="cloudy_3" Format="ci8" Width="128" Height="64" Offset="0x4000" ExternalTlut="d2_fine_pal_static" SplitTlut="false" ExternalTlutOffset="0x0"/>
+        <Texture Name="gCloudySkybox4Tex" OutName="cloudy_4" Format="ci8" Width="128" Height="64" Offset="0x6000" ExternalTlut="d2_fine_pal_static" SplitTlut="false" ExternalTlutOffset="0x0"/>
+        <Texture Name="gCloudySkybox5Tex" OutName="cloudy_5" Format="ci8" Width="128" Height="128" Offset="0x8000" ExternalTlut="d2_fine_pal_static" SplitTlut="false" ExternalTlutOffset="0x0"/>
+    </File>
+    <File Name="d2_fine_pal_static">
+        <Texture Name="gClearSkyboxTlue" OutName="clear_tlut" Format="rgba16" Width="16" Height="16" Offset="0x0"/>
+    </File>
+</Root>
