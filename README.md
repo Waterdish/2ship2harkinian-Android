@@ -41,6 +41,7 @@ Q: My controller is not doing anything. <br>
 Re-connected controllers do not open the GUI anymore. Use the back button or restart the app.<br>
 Orientation Lock does not work. https://github.com/libsdl-org/SDL/issues/6090<br>
 Near-plane clipping when the camera is close to walls.<br>
+Picto box images render black. <br>
 
 <h3>Build Instructions:</h3>
 1. Edit the app/build.gradle file to point to your ndk folder. NDK 26+ tested as working.<br>
