@@ -7,7 +7,7 @@ Original Repository: https://github.com/HarbourMasters/2ship2harkinian <br>
 NOTE: Controller only. No touch controls yet except for in the enhancements menu. <br>
 
 Supported (probably): Android 7+ (OpenGL ES 3.0+ required) <br>
-Tested On: Android 10 and Android 13 <br>
+Tested On: Android 14 <br>
 
 <h3>Installation:</h3>
 1. Install the apk from here: https://github.com/Waterdish/2ship2harkinian-Android/releases. <br>
