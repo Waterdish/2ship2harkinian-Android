@@ -50,7 +50,7 @@ void SetupGuiElements() {
     gui->SetMenuBar(std::reinterpret_pointer_cast<Ship::GuiMenuBar>(mBenMenuBar));
 
     if (gui->GetMenuBar() && !gui->GetMenuBar()->IsVisible()) {
-#if defined(__SWITCH__) || defined(__WIIU__)
+#if defined(__SWITCH__) || defined(__WIIU__) || defined(__ANDROID__)
         gui->GetGameOverlay()->TextDrawNotification(30.0f, true, "Press - to access enhancements menu");
 #else
         gui->GetGameOverlay()->TextDrawNotification(30.0f, true, "Press F1 to access enhancements menu");
