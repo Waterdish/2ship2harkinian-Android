@@ -32,13 +32,12 @@ Q: The GUI scaling is too big/too small. <br>
   A: There is no GUI scaling option implemented yet. This will come in a future update. <br><br>
 
 Q: Gyro Aim? <br>
-  A: Working on it. <br> <br>
+  A: It will come once it works in the base 2 Ship 2 Harkinian. <br> <br>
 
 Q: My controller is not doing anything. <br>
   A: Close the Enhancements Menu. If the Enhancements Menu is not open, open it with the Android back button and check if it is detected in Settings->Controller->Controller Mapping. If it is, press refresh. <br><br>
 
 <b>Known Bugs</b>:<br>
-Re-connected controllers do not open the GUI anymore. Use the back button or restart the app.<br>
 Orientation Lock does not work. https://github.com/libsdl-org/SDL/issues/6090<br>
 Near-plane clipping when the camera is close to walls.<br>
 Picto box images render black. <br>
