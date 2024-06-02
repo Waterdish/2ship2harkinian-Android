@@ -149,8 +149,8 @@ OTRGlobals::OTRGlobals() {
     context =
         Ship::Context::CreateInstance("2 Ship 2 Harkinian", appShortName, "2ship2harkinian.json", archiveFiles, {}, 3);
 
-    // Override LUS defaults
 #ifndef __ANDROID__
+    // Override LUS defaults
     Ship::Context::GetInstance()->GetLogger()->set_level(
         (spdlog::level::level_enum)CVarGetInteger("gDeveloperTools.LogLevel", 1));
     Ship::Context::GetInstance()->GetLogger()->set_pattern("[%H:%M:%S.%e] [%s:%#] [%l] %v");
