@@ -7391,10 +7391,10 @@ void Interface_DrawTimers(PlayState* play) {
     s16 j;
     s16 i;
     // 2S2H [Cosmetic] Hud editor values for timers
-    s16 newTimerX;
-    s16 newTimerY;
-    u8 modifiedTimerHudValues;
-    s16 hudTimerElement;
+    s16 newTimerX = 0;
+    s16 newTimerY = 0;
+    u8 modifiedTimerHudValues = false;
+    s16 hudTimerElement = HUD_EDITOR_ELEMENT_NONE;
 
     OPEN_DISPS(play->state.gfxCtx);
 

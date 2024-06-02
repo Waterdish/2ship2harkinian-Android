@@ -467,6 +467,9 @@ void Play_Destroy(GameState* thisx) {
     KaleidoScopeCall_Destroy(this);
     KaleidoManager_Destroy();
     ZeldaArena_Cleanup();
+
+    GameInteractor_ExecuteOnPlayDestroy();
+
     // #region 2S2H [General] Making gPlayState available
     gPlayState = NULL;
     // #endregion

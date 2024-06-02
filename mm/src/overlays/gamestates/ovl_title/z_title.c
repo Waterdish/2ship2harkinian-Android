@@ -25,10 +25,10 @@ static const ALIGN_ASSET(2) char gLUSLogoTextTex[] = dgLUSLogoTextTex;
 const char* GetGameVersionString() {
     uint32_t gameVersion = ResourceMgr_GetGameVersion(0);
     switch (gameVersion) {
-        // BENTODO: Use enums from LUS once added and add rest of version names
-        case 0x5354631C:
-        case 0xDA6983E7:
+        case MM_NTSC_US_10:
             return "MM-US 1.0";
+        case MM_NTSC_US_GC:
+            return "MM-US GC";
         default:
             return "UNKNOWN";
     }

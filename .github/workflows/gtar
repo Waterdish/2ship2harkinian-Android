@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Call the original gtar executable with sudo for macports cache restoration to root folder
+exec sudo /opt/homebrew/bin/gtar.orig "$@"

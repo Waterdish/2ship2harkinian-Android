@@ -8,6 +8,7 @@
 #include "interface/parameter_static/parameter_static.h"
 
 #include "BenGui/HudEditor.h"
+#include "2s2h/Enhancements/GameInteractor/GameInteractor.h"
 
 s16 sMaskEquipState = EQUIP_STATE_MAGIC_ARROW_GROW_ORB;
 

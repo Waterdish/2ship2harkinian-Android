@@ -457,10 +457,12 @@ void func_80A52FB8(EnDnq* this, PlayState* play) {
 }
 
 void EnDnq_HandleCutscene(EnDnq* this, PlayState* play) {
+    //! @bug The credits cutscene accesses this array OOB with a cueId of 6, which ends up giving 0
     static s32 sCsAnimIndex[] = {
         DEKU_KING_ANIM_IDLE,          DEKU_KING_ANIM_IDLE_MORPH,
         DEKU_KING_ANIM_SURPRISE,      DEKU_KING_ANIM_JUMPED_ON_START,
         DEKU_KING_ANIM_JUMPED_ON_END, DEKU_KING_ANIM_JUMPED_ON_END_MORPH,
+        DEKU_KING_ANIM_IDLE, // 2S2H [Port] Added to prevent a crash with garbage data for cueId 6
     };
     s32 cueChannel;
     u32 cueId;

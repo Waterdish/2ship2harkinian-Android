@@ -7,6 +7,7 @@
 
 #include "macros.h"
 #include "BenJsonConversions.hpp"
+#include "BenPort.h"
 
 extern "C" {
 #include "src/overlays/gamestates/ovl_file_choose/z_file_select.h"
@@ -34,7 +35,7 @@ typedef enum FlashSlotFile {
     ((GET_NEWF(save, 0) == 'Z') && (GET_NEWF(save, 1) == 'E') && (GET_NEWF(save, 2) == 'L') && \
      (GET_NEWF(save, 3) == 'D') && (GET_NEWF(save, 4) == 'A') && (GET_NEWF(save, 5) == '3'))
 
-const std::filesystem::path savesFolderPath(Ship::Context::GetPathRelativeToAppDirectory("saves"));
+const std::filesystem::path savesFolderPath(Ship::Context::GetPathRelativeToAppDirectory("saves", appShortName));
 
 // Migrations
 // The idea here is that we can read in any version of the save as generic JSON, then apply migrations

@@ -172,6 +172,7 @@ void RegisterCameraFreeLook() {
                 case CAM_FUNC_JUMP3:
                 case CAM_FUNC_BATTLE1:
                 case CAM_FUNC_UNIQUE2:
+                case CAM_FUNC_UNIQUE3:
                     if (Camera_CanFreeLook(camera)) {
                         Camera_FreeLook(camera);
                         *should = false;

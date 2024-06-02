@@ -18258,10 +18258,11 @@ void func_80855218(PlayState* play, Player* this, struct_8085D910** arg2) {
 }
 
 u16 D_8085D908[] = {
-    WEEKEVENTREG_30_80, // PLAYER_FORM_FIERCE_DEITY
-    WEEKEVENTREG_30_20, // PLAYER_FORM_GORON
-    WEEKEVENTREG_30_40, // PLAYER_FORM_ZORA
-    WEEKEVENTREG_30_10, // PLAYER_FORM_DEKU
+    WEEKEVENTREG_30_80,               // PLAYER_FORM_FIERCE_DEITY
+    WEEKEVENTREG_30_20,               // PLAYER_FORM_GORON
+    WEEKEVENTREG_30_40,               // PLAYER_FORM_ZORA
+    WEEKEVENTREG_30_10,               // PLAYER_FORM_DEKU
+    PACK_WEEKEVENTREG_FLAG(16, 0x0A), // 2S2H [Port] Added to match OOB value read on console for human form
 };
 struct_8085D910 D_8085D910[] = {
     { 0x10, 0xA, 0x3B, 0x3F },
@@ -18297,6 +18298,11 @@ void Player_Action_86(Player* this, PlayState* play) {
             this->actor.draw = NULL;
             this->av1.actionVar1 = 0;
             Play_DisableMotionBlurPriority();
+            //! @bug When taking off a transformation mask, PLAYER_FORM_HUMAN will index OOB leading
+            // to the next value causing WEEKEVENT_REG 16 being set with 0x0A which sets two flags at once
+            // WEEKEVENTREG_16_02 and WEEKEVENTREG_16_08
+            // WEEKEVENTREG_16_02 corresponds to showing a text ID from the Gorman Brothers on the 3rd day
+            // if the player has saved the farm, so this bug would prevent that text from displaying
             SET_WEEKEVENTREG(D_8085D908[GET_PLAYER_FORM]);
         }
     } else if ((this->av1.actionVar1++ > ((this->transformation == PLAYER_FORM_HUMAN) ? 0x53 : 0x37)) ||

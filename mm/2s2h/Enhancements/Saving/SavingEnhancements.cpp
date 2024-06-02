@@ -16,8 +16,8 @@ static uint32_t autosaveGameStateUpdateHookId = 0;
 static uint32_t autosaveGameStateDrawFinishHookId = 0;
 
 // Used for saving through Autosaves and Pause Menu saves.
-extern "C" int32_t GetSaveEntrance(PlayState* play) {
-    switch (play->sceneId) {
+extern "C" int SavingEnhancements_GetSaveEntrance() {
+    switch (gPlayState->sceneId) {
         // Woodfall Temple + Odolwa
         case SCENE_MITURIN:
         case SCENE_MITURIN_BS:
@@ -38,6 +38,43 @@ extern "C" int32_t GetSaveEntrance(PlayState* play) {
         default:
             return ENTRANCE(SOUTH_CLOCK_TOWN, 0);
     }
+}
+
+extern "C" bool SavingEnhancements_CanSave() {
+    // Game State
+    if (gPlayState == NULL || GET_PLAYER(gPlayState) == NULL) {
+        return false;
+    }
+
+    // Owl saving available
+    if (!gSaveContext.flashSaveAvailable || gSaveContext.fileNum == 255) {
+        return false;
+    }
+
+    // Not in a blocking cutscene
+    if (Player_InBlockingCsMode(gPlayState, GET_PLAYER(gPlayState))) {
+        return false;
+    }
+
+    // Not in the middle of dialog
+    if (gPlayState->msgCtx.msgMode != 0) {
+        return false;
+    }
+
+    // Hasn't gotten to clock town yet
+    if (gPlayState->sceneId == SCENE_SPOT00 || gPlayState->sceneId == SCENE_LOST_WOODS ||
+        gPlayState->sceneId == SCENE_OPENINGDAN) {
+        return false;
+    }
+
+    // Can't save once you've gone to the moon
+    if (gPlayState->sceneId == SCENE_SOUGEN || gPlayState->sceneId == SCENE_LAST_LINK ||
+        gPlayState->sceneId == SCENE_LAST_DEKU || gPlayState->sceneId == SCENE_LAST_GORON ||
+        gPlayState->sceneId == SCENE_LAST_ZORA || gPlayState->sceneId == SCENE_LAST_BS) {
+        return false;
+    }
+
+    return true;
 }
 
 void DeleteOwlSave() {
@@ -82,9 +119,7 @@ void HandleAutoSave() {
     }
 
     // If owl save available to create, do it and reset the interval.
-    if (gSaveContext.flashSaveAvailable && gSaveContext.fileNum != 255 &&
-        !Player_InBlockingCsMode(gPlayState, player) && gPlayState->pauseCtx.state == 0 &&
-        gPlayState->msgCtx.msgMode == 0) {
+    if (SavingEnhancements_CanSave() && gPlayState->pauseCtx.state == 0) {
 
         // Reset timestamp, set icon timer to show autosave icon for 5 seconds (100 frames)
         lastSaveTimestamp = GetUnixTimestamp();
@@ -92,7 +127,7 @@ void HandleAutoSave() {
 
         // Create owl save
         gSaveContext.save.isOwlSave = true;
-        gSaveContext.save.shipSaveInfo.pauseSaveEntrance = GetSaveEntrance(gPlayState);
+        gSaveContext.save.shipSaveInfo.pauseSaveEntrance = SavingEnhancements_GetSaveEntrance();
         Play_SaveCycleSceneFlags(&gPlayState->state);
         gSaveContext.save.saveInfo.playerData.savedSceneId = gPlayState->sceneId;
         func_8014546C(&gPlayState->sramCtx);
@@ -106,7 +141,8 @@ void HandleAutoSave() {
 
 void RegisterSavingEnhancements() {
     REGISTER_VB_SHOULD(GI_VB_DELETE_OWL_SAVE, {
-        if (CVarGetInteger("gEnhancements.Saving.PersistentOwlSaves", 0)) {
+        if (CVarGetInteger("gEnhancements.Saving.PersistentOwlSaves", 0) ||
+            gSaveContext.save.shipSaveInfo.pauseSaveEntrance != -1) {
             *should = false;
         }
     });

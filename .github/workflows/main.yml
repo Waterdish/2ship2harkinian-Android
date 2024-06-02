@@ -98,74 +98,8 @@ jobs:
   #       source-dir: _packages
   #       destination-dir: ./
 
-  # generate-2ship-otr:
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #     with:
-  #       submodules: true
-  #   - name: ccache
-  #     uses: hendrikmuhs/ccache-action@v1.2.11
-  #     with:
-  #       key: ${{ runner.os }}-otr-ccache-${{ github.ref }}-${{ github.sha }}
-  #       restore-keys: |
-  #         ${{ runner.os }}-otr-ccache-${{ github.ref }}
-  #         ${{ runner.os }}-otr-ccache
-  #   - name: Install dependencies
-  #     run: |
-  #       sudo apt-get update
-  #       sudo apt-get install -y $(cat .github/workflows/apt-deps.txt)
-  #   - name: Cache build folders
-  #     uses: actions/cache@v4
-  #     with:
-  #       key: ${{ runner.os }}-otr-build-${{ github.ref }}-${{ github.sha }}
-  #       restore-keys: |
-  #         ${{ runner.os }}-otr-build-${{ github.ref }}
-  #         ${{ runner.os }}-otr-build
-  #       path: |
-  #         build-cmake
-  #         SDL2-2.28.5
-  #         tinyxml2-10.0.0
-  #   - name: Install latest SDL
-  #     run: |
-  #       export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-  #       if [ ! -d "SDL2-2.28.5" ]; then
-  #         wget https://www.libsdl.org/release/SDL2-2.28.5.tar.gz
-  #         tar -xzf SDL2-2.28.5.tar.gz
-  #       fi
-  #       cd SDL2-2.28.5
-  #       ./configure --enable-hidapi-libusb
-  #       make -j 10
-  #       sudo make install
-  #       sudo cp -av /usr/local/lib/libSDL* /lib/x86_64-linux-gnu/
-  #   - name: Install latest tinyxml2
-  #     run: |
-  #       sudo apt-get remove libtinyxml2-dev
-  #       export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-  #       if [ ! -d "tinyxml2-10.0.0" ]; then
-  #         wget https://github.com/leethomason/tinyxml2/archive/refs/tags/10.0.0.tar.gz
-  #         tar -xzf 10.0.0.tar.gz
-  #       fi
-  #       cd tinyxml2-10.0.0
-  #       mkdir -p build
-  #       cd build
-  #       cmake ..
-  #       make
-  #       sudo make install
-  #   - name: Generate 2ship.o2r
-  #     run: |
-  #       export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-  #       cmake --no-warn-unused-cli -H. -Bbuild-cmake -GNinja -DCMAKE_BUILD_TYPE:STRING=Release
-  #       cmake --build build-cmake --config Release --target Generate2ShipOtr -j3
-  #   - uses: actions/upload-artifact@v4
-  #     with:
-  #       name: 2ship.o2r
-  #       path: 2ship.o2r
-  #       retention-days: 1
-
-  build-macos:
-    # needs: generate-2ship-otr
-    runs-on: macos-14
+  generate-2ship-otr:
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
       with:
@@ -173,99 +107,24 @@ jobs:
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2.13
       with:
-        create-symlink: true
-        key: ${{ runner.os }}-14-ccache-${{ github.ref }}-${{ github.sha }}
+        key: ${{ runner.os }}-otr-ccache-${{ github.ref }}-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-14-ccache-${{ github.ref }}
-          ${{ runner.os }}-14-ccache
-    - name: Cache MacPorts
-      id: cache-macports
-      uses: actions/cache@v4
-      with:
-        path: /opt/local/
-        key: ${{ runner.os }}-macports-${{ hashFiles('.github/workflows/macports-deps.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-macports
-    - name: Install MacPorts (if necessary)
-      run: |
-        if [ -d /opt/local/ ]; then
-          echo "MacPorts already installed"
-        else
-          wget https://github.com/macports/macports-base/releases/download/v2.9.3/MacPorts-2.9.3-14-Sonoma.pkg
-          sudo installer -pkg ./MacPorts-2.9.3-14-Sonoma.pkg -target /
-        fi
-        echo "/opt/local/bin:/opt/local/sbin" >> $GITHUB_PATH
-    - name: Install dependencies
-      run: |
-        brew uninstall --ignore-dependencies libpng
-        sudo port install $(cat .github/workflows/macports-deps.txt)
-        brew install ninja
-    # - name: Download 2ship.o2r
-    #   uses: actions/download-artifact@v4
-    #   with:
-    #     name: 2ship.o2r
-    #     path: build-cmake/mm
-    - name: Build 2Ship
-      run: |
-        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-        cmake --no-warn-unused-cli -H. -Bbuild-cmake -GNinja -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
-        cmake --build build-cmake --config Release --target Generate2ShipOtr --parallel 10
-        cmake --build build-cmake --config Release --parallel 10
-        (cd build-cmake && cpack)
-
-        mv _packages/*.dmg 2Ship.dmg
-        mv README.md readme.txt
-    # - name: Upload build
-    #   if: ${{ startsWith(github.ref, 'refs/heads/develop') }}
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: 2ship-mac
-    #     path: |
-    #       2Ship.dmg
-    #       readme.txt
-    - name: Zip build
-      run: |
-        mkdir -p _release
-        zip -qq _release/2ship-mac.zip 2ship.dmg readme.txt
-    - name: Upload build
-      if: ${{ startsWith(github.ref, 'refs/heads/develop') }}
-      uses: ryand56/r2-upload-action@latest
-      with:
-        r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
-        r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
-        r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        r2-bucket: ${{ secrets.R2_BUCKET }}
-        source-dir: _release
-        destination-dir: ./
-
-  build-linux:
-    # needs: generate-2ship-otr
-    runs-on: ubuntu-22.04
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: true
+          ${{ runner.os }}-otr-ccache-${{ github.ref }}
+          ${{ runner.os }}-otr-ccache-
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y $(cat .github/workflows/apt-deps.txt)
-    - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.11
-      with:
-        key: linux-ccache-${{ github.ref }}-${{ github.sha }}
-        restore-keys: |
-          linux-ccache-${{ github.ref }}
-          linux-ccache
+        sudo apt-get install -y $(cat .github/workflows/apt-deps.txt) libzip-dev zipcmp zipmerge ziptool
     - name: Cache build folders
       uses: actions/cache@v4
       with:
-        key: linux-build-${{ github.ref }}-${{ github.sha }}
+        key: ${{ runner.os }}-otr-build-${{ github.ref }}-${{ github.sha }}
         restore-keys: |
-          linux-build-${{ github.ref }}
-          linux-build
+          ${{ runner.os }}-otr-build-${{ github.ref }}
+          ${{ runner.os }}-otr-build-
         path: |
+          build-cmake
           SDL2-2.28.5
-          SDL2_net-2.2.0
           tinyxml2-10.0.0
     - name: Install latest SDL
       run: |
@@ -293,28 +152,160 @@ jobs:
         cmake ..
         make
         sudo make install
-    - name: Install latest SDL_net
+    - name: Generate 2ship.o2r
       run: |
         export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-        if [ ! -d "SDL2_net-2.2.0" ]; then
-          wget https://www.libsdl.org/projects/SDL_net/release/SDL2_net-2.2.0.tar.gz
-          tar -xzf SDL2_net-2.2.0.tar.gz
+        cmake --no-warn-unused-cli -H. -Bbuild-cmake -GNinja -DCMAKE_BUILD_TYPE:STRING=Release
+        cmake --build build-cmake --config Release --target Generate2ShipOtr -j3
+    - uses: actions/upload-artifact@v4
+      with:
+        name: 2ship.o2r
+        path: 2ship.o2r
+        retention-days: 1
+
+  build-macos:
+    needs: generate-2ship-otr
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.13
+      with:
+        create-symlink: true
+        key: ${{ runner.os }}-14-ccache-${{ github.ref }}-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-14-ccache-${{ github.ref }}
+          ${{ runner.os }}-14-ccache-
+    # Needed to apply sudo for macports cache restore
+    - name: Install gtar wrapper
+      run: |
+        sudo mv /opt/homebrew/bin/gtar /opt/homebrew/bin/gtar.orig
+        sudo cp .github/workflows/gtar /opt/homebrew/bin/gtar
+        sudo chmod +x /opt/homebrew/bin/gtar
+    - name: Cache MacPorts
+      id: cache-macports
+      uses: actions/cache@v4
+      with:
+        path: /opt/local/
+        key: ${{ runner.os }}-14-macports-${{ hashFiles('.github/workflows/macports-deps.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-14-macports-
+    - name: Install MacPorts (if necessary)
+      run: |
+        if [ command -v port &>/dev/null ]; then
+          echo "MacPorts already installed"
+        else
+          wget https://github.com/macports/macports-base/releases/download/v2.9.3/MacPorts-2.9.3-14-Sonoma.pkg
+          sudo installer -pkg ./MacPorts-2.9.3-14-Sonoma.pkg -target /
         fi
-        cd SDL2_net-2.2.0
-        ./configure
+        echo "/opt/local/bin:/opt/local/sbin" >> $GITHUB_PATH
+    - name: Install dependencies
+      run: |
+        brew uninstall --ignore-dependencies libpng
+        sudo port install $(cat .github/workflows/macports-deps.txt)
+        brew install ninja
+    - name: Download 2ship.o2r
+      uses: actions/download-artifact@v4
+      with:
+        name: 2ship.o2r
+        path: build-cmake/mm
+    - name: Build 2Ship
+      run: |
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+        cmake --no-warn-unused-cli -H. -Bbuild-cmake -GNinja -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
+        cmake --build build-cmake --config Release --parallel 10
+        (cd build-cmake && cpack)
+
+        mv _packages/*.dmg 2Ship.dmg
+        mv README.md readme.txt
+    - name: Upload build
+      uses: actions/upload-artifact@v4
+      with:
+        name: 2ship-mac
+        path: |
+          2Ship.dmg
+          readme.txt
+
+  build-linux:
+    needs: generate-2ship-otr
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y $(cat .github/workflows/apt-deps.txt)
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2.13
+      with:
+        key: linux-ccache-${{ github.ref }}-${{ github.sha }}
+        restore-keys: |
+          linux-ccache-${{ github.ref }}
+          linux-ccache-
+    - name: Cache build folders
+      uses: actions/cache@v4
+      with:
+        key: linux-build-${{ github.ref }}-${{ github.sha }}
+        restore-keys: |
+          linux-build-${{ github.ref }}
+          linux-build-
+        path: |
+          SDL2-2.30.3
+          tinyxml2-10.0.0
+          libzip-1.10.1
+    - name: Install latest SDL
+      run: |
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+        if [ ! -d "SDL2-2.30.3" ]; then
+          wget https://www.libsdl.org/release/SDL2-2.30.3.tar.gz
+          tar -xzf SDL2-2.30.3.tar.gz
+        fi
+        cd SDL2-2.30.3
+        ./configure --enable-hidapi-libusb
         make -j 10
         sudo make install
         sudo cp -av /usr/local/lib/libSDL* /lib/x86_64-linux-gnu/
-    # - name: Download 2ship.o2r
-    #   uses: actions/download-artifact@v4
-    #   with:
-    #     name: 2ship.o2r
-    #     path: build-cmake/mm
+    - name: Install latest tinyxml2
+      run: |
+        sudo apt-get remove libtinyxml2-dev
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+        if [ ! -d "tinyxml2-10.0.0" ]; then
+          wget https://github.com/leethomason/tinyxml2/archive/refs/tags/10.0.0.tar.gz
+          tar -xzf 10.0.0.tar.gz
+        fi
+        cd tinyxml2-10.0.0
+        mkdir -p build
+        cd build
+        cmake ..
+        make
+        sudo make install
+    - name: Install libzip without crypto
+      run: |
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+        if [ ! -d "libzip-1.10.1" ]; then
+          wget https://github.com/nih-at/libzip/releases/download/v1.10.1/libzip-1.10.1.tar.gz
+          tar -xzf libzip-1.10.1.tar.gz
+        fi
+        cd libzip-1.10.1
+        mkdir -p build
+        cd build
+        cmake .. -DENABLE_COMMONCRYPTO=OFF -DENABLE_GNUTLS=OFF -DENABLE_MBEDTLS=OFF -DENABLE_OPENSSL=OFF
+        make
+        sudo make install
+        sudo cp -av /usr/local/lib/libzip* /lib/x86_64-linux-gnu/
+    - name: Download 2ship.o2r
+      uses: actions/download-artifact@v4
+      with:
+        name: 2ship.o2r
+        path: build-cmake/mm
     - name: Build 2Ship
       run: |
         export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         cmake --no-warn-unused-cli -H. -Bbuild-cmake -GNinja -DCMAKE_BUILD_TYPE:STRING=Release -DBUILD_REMOTE_CONTROL=1
-        cmake --build build-cmake --config Release --target Generate2ShipOtr -j3
         cmake --build build-cmake --config Release -j3
         (cd build-cmake && cpack -G External)
 
@@ -323,32 +314,16 @@ jobs:
       env:
         CC: gcc-12
         CXX: g++-12
-    # Temporarily replaced with an upload to R2 until we go public
-    # - name: Upload build
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: 2ship-linux
-    #     path: |
-    #       2ship.appimage
-    #       readme.txt
-    # Remove Zip step when uploading directly to GH artifactory
-    - name: Zip build
-      run: |
-        mkdir -p _release
-        zip -qq _release/2ship-linux.zip 2ship.appimage readme.txt
     - name: Upload build
-      if: ${{ startsWith(github.ref, 'refs/heads/develop') }}
-      uses: ryand56/r2-upload-action@latest
+      uses: actions/upload-artifact@v4
       with:
-        r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
-        r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
-        r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        r2-bucket: ${{ secrets.R2_BUCKET }}
-        source-dir: _release
-        destination-dir: ./
+        name: 2ship-linux
+        path: |
+          2ship.appimage
+          readme.txt
 
   build-windows:
-    # needs: generate-2ship-otr
+    needs: generate-2ship-otr
     runs-on: windows-latest
     steps:
     - name: Install dependencies
@@ -359,60 +334,47 @@ jobs:
       with:
         submodules: true
     - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2.11
+      uses: hendrikmuhs/ccache-action@v1.2.13
       with:
         variant: sccache
         max-size: "1G"
-        key: ${{ runner.os }}-ccache-${{ github.ref }}-${{ github.sha }}
+        key: ${{ runner.os }}-ccache1-${{ github.ref }}-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-ccache-${{ github.ref }}
-          ${{ runner.os }}-ccache
+          ${{ runner.os }}-ccache1-${{ github.ref }}
+          ${{ runner.os }}-ccache1-
     - name: Cache build folder
       uses: actions/cache@v4
       with:
         save-always: true
-        key: ${{ runner.os }}-build-${{ github.ref }}-${{ github.sha }}
+        key: ${{ runner.os }}-build1-${{ github.ref }}-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-build-${{ github.ref }}
-          ${{ runner.os }}-build
+          ${{ runner.os }}-build1-${{ github.ref }}
+          ${{ runner.os }}-build1-
         path: |
           build-windows
           vcpkg
     - name: Configure Developer Command Prompt
       uses: ilammy/msvc-dev-cmd@v1
-    # - name: Download 2ship.o2r
-    #   uses: actions/download-artifact@v4
-    #   with:
-    #     name: 2ship.o2r
-    #     path: build-windows/mm
+    - name: Download 2ship.o2r
+      uses: actions/download-artifact@v4
+      with:
+        name: 2ship.o2r
+        path: build-windows/mm
     - name: Build 2Ship
-      env: 
+      env:
         VCPKG_ROOT: ${{github.workspace}}/vcpkg
       run: |
         set $env:PATH="$env:USERPROFILE/.cargo/bin;$env:PATH"
-        cmake -S . -B build-windows -G Ninja -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_BUILD_TYPE:STRING=Release
-        cmake --build build-windows --config Release --target Generate2ShipOtr --parallel 10
+        cmake -S . -B build-windows -G Ninja -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
         cmake --build build-windows --config Release --parallel 10
 
         (cd build-windows && cpack)
         cd ..
         mv _packages/*.zip _packages/2ship-windows.zip
-    # Temporarily replaced with an upload to R2 until we go public
-    # - name: Unzip package
-    #   run: Expand-Archive -Path _packages/2ship-windows.zip -DestinationPath 2ship-windows
-    # - name: Upload build
-    #   if: ${{ startsWith(github.ref, 'refs/heads/develop') }}
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: 2ship-windows
-    #     path: 2ship-windows
+    - name: Unzip package
+      run: Expand-Archive -Path _packages/2ship-windows.zip -DestinationPath 2ship-windows
     - name: Upload build
-      if: ${{ startsWith(github.ref, 'refs/heads/develop') }}
-      uses: ryand56/r2-upload-action@latest
+      uses: actions/upload-artifact@v4
       with:
-        r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
-        r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
-        r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        r2-bucket: ${{ secrets.R2_BUCKET }}
-        source-dir: _packages
-        destination-dir: ./
+        name: 2ship-windows
+        path: 2ship-windows

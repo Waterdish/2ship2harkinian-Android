@@ -17,20 +17,12 @@ extern TexturePtr sPlayerMouthTextures[PLAYER_FORM_MAX][PLAYER_MOUTH_MAX];
 static SkeletonHeader gLinkHumanSkelBackup;
 static SkeletonHeader gKafeiSkelBackup;
 
-void UpdatePlayAsKafeiSkeletons() {
+void UpdatePlayAsKafei() {
     if (CVarGetInteger("gModes.PlayAsKafei", 0)) {
         auto gLinkHumanSkelResource = Ship::Context::GetInstance()->GetResourceManager()->LoadResource(gLinkHumanSkel);
         SkeletonHeader* gLinkHumanSkelPtr = (SkeletonHeader*)gLinkHumanSkelResource->GetRawPointer();
         memcpy(gLinkHumanSkelPtr, &gKafeiSkelBackup, sizeof(SkeletonHeader));
-    } else {
-        auto gLinkHumanSkelResource = Ship::Context::GetInstance()->GetResourceManager()->LoadResource(gLinkHumanSkel);
-        SkeletonHeader* gLinkHumanSkelPtr = (SkeletonHeader*)gLinkHumanSkelResource->GetRawPointer();
-        memcpy(gLinkHumanSkelPtr, &gLinkHumanSkelBackup, sizeof(SkeletonHeader));
-    }
-}
 
-void UpdatePlayAsKafeiOther() {
-    if (CVarGetInteger("gModes.PlayAsKafei", 0)) {
         ResourceMgr_PatchGfxByName(gLinkHumanWaistDL, "gLinkHumanWaistDL0", 0,
                                    gsSPDisplayListOTRFilePath(gKafeiWaistDL));
         ResourceMgr_PatchGfxByName(gLinkHumanWaistDL, "gLinkHumanWaistDL1", 1, gsSPEndDisplayList());
@@ -49,6 +41,10 @@ void UpdatePlayAsKafeiOther() {
         sPlayerMouthTextures[PLAYER_FORM_HUMAN][2] = (TexturePtr)gKafeiMouthAngryTex;
         sPlayerMouthTextures[PLAYER_FORM_HUMAN][3] = (TexturePtr)gKafeiMouthHappyTex;
     } else {
+        auto gLinkHumanSkelResource = Ship::Context::GetInstance()->GetResourceManager()->LoadResource(gLinkHumanSkel);
+        SkeletonHeader* gLinkHumanSkelPtr = (SkeletonHeader*)gLinkHumanSkelResource->GetRawPointer();
+        memcpy(gLinkHumanSkelPtr, &gLinkHumanSkelBackup, sizeof(SkeletonHeader));
+
         ResourceMgr_UnpatchGfxByName(gLinkHumanWaistDL, "gLinkHumanWaistDL0");
         ResourceMgr_UnpatchGfxByName(gLinkHumanWaistDL, "gLinkHumanWaistDL1");
 
@@ -78,9 +74,7 @@ void RegisterPlayAsKafei() {
     memcpy(&gLinkHumanSkelBackup, gLinkHumanSkelPtr, sizeof(SkeletonHeader));
     memcpy(&gKafeiSkelBackup, gKafeiSkelPtr, sizeof(SkeletonHeader));
 
-    UpdatePlayAsKafeiSkeletons();
-    UpdatePlayAsKafeiOther();
+    UpdatePlayAsKafei();
 
-    GameInteractor::Instance->RegisterGameHook<GameInteractor::OnSceneInit>(
-        [](s8 sceneId, s8 spawnNum) { UpdatePlayAsKafeiOther(); });
+    GameInteractor::Instance->RegisterGameHook<GameInteractor::OnPlayDestroy>([]() { UpdatePlayAsKafei(); });
 }

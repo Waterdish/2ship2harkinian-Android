@@ -180,6 +180,8 @@ bool Checkbox(const char* _label, bool* value, const CheckboxOptions& options) {
     if (window->SkipItems)
         return false;
 
+    ImGui::BeginDisabled(options.disabled);
+
     bool above = options.labelPosition == LabelPosition::Above;
     bool lpFar = options.labelPosition == LabelPosition::Far;
     bool right = options.alignment == ComponentAlignment::Right;
@@ -210,19 +212,15 @@ bool Checkbox(const char* _label, bool* value, const CheckboxOptions& options) {
 
     ImGui::ItemSize(total_bb, style.FramePadding.y);
     if (!ImGui::ItemAdd(total_bb, id)) {
-        IMGUI_TEST_ENGINE_ITEM_INFO(id, label,
-                                    g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable |
-                                        (*value ? ImGuiItemStatusFlags_Checked : 0));
+        ImGui::EndDisabled();
         return false;
     }
-
-    bool hovered, held;
-    bool pressed = ImGui::ButtonBehavior(total_bb, id, &hovered, &held);
+    bool hovered, held, pressed;
+    pressed = ImGui::ButtonBehavior(total_bb, id, &hovered, &held);
     if (pressed) {
         *value = !(*value);
         ImGui::MarkItemEdited(id);
     }
-    ImGui::BeginDisabled(options.disabled);
     PushStyleCheckbox(options.color);
     ImVec2 checkPos = pos;
     ImVec2 labelPos = pos;

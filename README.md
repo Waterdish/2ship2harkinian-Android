@@ -45,5 +45,3 @@ Picto box images render black. <br>
 <h3>Build Instructions:</h3>
 1. Edit the app/build.gradle file to point to your ndk folder. NDK 26+ tested as working.<br>
 2. Open the project in android studio and build.<br>
-
-

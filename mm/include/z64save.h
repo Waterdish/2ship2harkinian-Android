@@ -559,11 +559,12 @@ typedef enum {
     (void)0
 
 // #region 2S2H [DPad]
+#define BTN_DPAD (BTN_DRIGHT | BTN_DLEFT | BTN_DDOWN | BTN_DUP)
 #define DPAD_TO_HELD_ITEM(btn) (btn + EQUIP_SLOT_MAX) 
 #define HELD_ITEM_TO_DPAD(heldBtn) (heldBtn - EQUIP_SLOT_MAX)
 #define IS_HELD_DPAD(heldBtn) ((heldBtn >= DPAD_TO_HELD_ITEM(EQUIP_SLOT_D_RIGHT)) && (heldBtn <= DPAD_TO_HELD_ITEM(EQUIP_SLOT_D_UP)))
 
-#define BTN_DPAD_EQUIP (CVarGetInteger("gEnhancements.Dpad.DpadEquips", 0) ? (BTN_DRIGHT | BTN_DLEFT | BTN_DDOWN | BTN_DUP) : 0)
+#define BTN_DPAD_EQUIP (GameInteractor_Dpad(GI_DPAD_EQUIP, BTN_DPAD))
 #define CHECK_BTN_DPAD(input) (CVarGetInteger("gEnhancements.Dpad.DpadEquips", 0) && \
                               (CHECK_BTN_ALL(input, BTN_DRIGHT) || \
                                CHECK_BTN_ALL(input, BTN_DLEFT)  || \

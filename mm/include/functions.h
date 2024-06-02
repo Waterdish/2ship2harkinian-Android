@@ -1365,10 +1365,6 @@ void osSpTaskYield(void);
 void osViSetXScale(f32 value);
 void osViSetYScale(f32 value);
 // #endregion
-// #region 2S2H [Enhancements]
-// [Autosaves & Pause Menu Saves]
-int32_t GetSaveEntrance(PlayState* play);
-// #endregion
 
 void Regs_InitData(PlayState* play);
 

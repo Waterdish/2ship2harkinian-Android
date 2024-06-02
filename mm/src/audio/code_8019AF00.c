@@ -2521,7 +2521,8 @@ void AudioOcarina_CheckSongsWithoutMusicStaff(void) {
     u8 k;
 
     if (CHECK_BTN_ANY(sOcarinaInputButtonCur, BTN_L) &&
-        CHECK_BTN_ANY(sOcarinaInputButtonCur, BTN_A | BTN_CRIGHT | BTN_CLEFT | BTN_CDOWN | BTN_CUP)) {
+        CHECK_BTN_ANY(sOcarinaInputButtonCur, BTN_A | BTN_CRIGHT | BTN_CLEFT | BTN_CDOWN | BTN_CUP |
+                                                  GameInteractor_Dpad(GI_DPAD_OCARINA, BTN_DPAD))) {
         AudioOcarina_StartDefault(sOcarinaFlags);
         return;
     }
@@ -2596,17 +2597,17 @@ void AudioOcarina_PlayControllerInput(u8 isOcarinaSfxSuppressedWhenCancelled) {
     // Ensures the button pressed to start the ocarina does not also play an ocarina note
     if ((sOcarinaInputButtonStart == 0) ||
         ((sOcarinaInputButtonStart &
-          (BTN_A | BTN_CRIGHT | BTN_CLEFT | BTN_CDOWN | BTN_CUP | BTN_DRIGHT | BTN_DLEFT | BTN_DDOWN | BTN_DUP)) !=
+          (BTN_A | BTN_CRIGHT | BTN_CLEFT | BTN_CDOWN | BTN_CUP | GameInteractor_Dpad(GI_DPAD_OCARINA, BTN_DPAD))) !=
          (sOcarinaInputButtonCur &
-          (BTN_A | BTN_CRIGHT | BTN_CLEFT | BTN_CDOWN | BTN_CUP | BTN_DRIGHT | BTN_DLEFT | BTN_DDOWN | BTN_DUP)))) {
+          (BTN_A | BTN_CRIGHT | BTN_CLEFT | BTN_CDOWN | BTN_CUP | GameInteractor_Dpad(GI_DPAD_OCARINA, BTN_DPAD))))) {
         sOcarinaInputButtonStart = 0;
         if (1) {}
         sCurOcarinaPitch = OCARINA_PITCH_NONE;
         sCurOcarinaButtonIndex = OCARINA_BTN_INVALID;
-        ocarinaBtnsHeld = (sOcarinaInputButtonCur & (BTN_A | BTN_CRIGHT | BTN_CLEFT | BTN_CDOWN | BTN_CUP | BTN_DRIGHT |
-                                                     BTN_DLEFT | BTN_DDOWN | BTN_DUP)) &
+        ocarinaBtnsHeld = (sOcarinaInputButtonCur & (BTN_A | BTN_CRIGHT | BTN_CLEFT | BTN_CDOWN | BTN_CUP |
+                                                     GameInteractor_Dpad(GI_DPAD_OCARINA, BTN_DPAD))) &
                           (sOcarinaInputButtonPrev & (BTN_A | BTN_CRIGHT | BTN_CLEFT | BTN_CDOWN | BTN_CUP |
-                                                      BTN_DRIGHT | BTN_DLEFT | BTN_DDOWN | BTN_DUP));
+                                                      GameInteractor_Dpad(GI_DPAD_OCARINA, BTN_DPAD)));
 
         if (!(sOcarinaInputButtonPress & ocarinaBtnsHeld) && (sOcarinaInputButtonCur != 0)) {
             sOcarinaInputButtonPress = sOcarinaInputButtonCur;
@@ -2621,19 +2622,22 @@ void AudioOcarina_PlayControllerInput(u8 isOcarinaSfxSuppressedWhenCancelled) {
             sCurOcarinaPitch = OCARINA_PITCH_D4;
             sCurOcarinaButtonIndex = OCARINA_BTN_A;
 
-        } else if (CHECK_BTN_ANY(sOcarinaInputButtonPress, BTN_CDOWN | (dpadCvarActive ? BTN_DDOWN : 0))) {
+        } else if (CHECK_BTN_ANY(sOcarinaInputButtonPress,
+                                 BTN_CDOWN | GameInteractor_Dpad(GI_DPAD_OCARINA, BTN_DDOWN))) {
             sCurOcarinaPitch = OCARINA_PITCH_F4;
             sCurOcarinaButtonIndex = OCARINA_BTN_C_DOWN;
 
-        } else if (CHECK_BTN_ANY(sOcarinaInputButtonPress, BTN_CRIGHT | (dpadCvarActive ? BTN_DRIGHT : 0))) {
+        } else if (CHECK_BTN_ANY(sOcarinaInputButtonPress,
+                                 BTN_CRIGHT | GameInteractor_Dpad(GI_DPAD_OCARINA, BTN_DRIGHT))) {
             sCurOcarinaPitch = OCARINA_PITCH_A4;
             sCurOcarinaButtonIndex = OCARINA_BTN_C_RIGHT;
 
-        } else if (CHECK_BTN_ANY(sOcarinaInputButtonPress, BTN_CLEFT | (dpadCvarActive ? BTN_DLEFT : 0))) {
+        } else if (CHECK_BTN_ANY(sOcarinaInputButtonPress,
+                                 BTN_CLEFT | GameInteractor_Dpad(GI_DPAD_OCARINA, BTN_DLEFT))) {
             sCurOcarinaPitch = OCARINA_PITCH_B4;
             sCurOcarinaButtonIndex = OCARINA_BTN_C_LEFT;
 
-        } else if (CHECK_BTN_ANY(sOcarinaInputButtonPress, BTN_CUP | (dpadCvarActive ? BTN_DUP : 0))) {
+        } else if (CHECK_BTN_ANY(sOcarinaInputButtonPress, BTN_CUP | GameInteractor_Dpad(GI_DPAD_OCARINA, BTN_DUP))) {
             sCurOcarinaPitch = OCARINA_PITCH_D5;
             sCurOcarinaButtonIndex = OCARINA_BTN_C_UP;
         }

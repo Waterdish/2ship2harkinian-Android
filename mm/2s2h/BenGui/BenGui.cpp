@@ -20,8 +20,6 @@
 #include "include/global.h"
 #include "include/z64audio.h"
 
-bool ShouldClearTextureCacheAtEndOfFrame = false;
-
 namespace BenGui {
 // MARK: - Delegates
 

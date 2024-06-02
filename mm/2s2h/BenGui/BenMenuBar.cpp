@@ -14,8 +14,6 @@
 #include "2s2h/DeveloperTools/WarpPoint.h"
 #include "HudEditor.h"
 
-extern bool ShouldClearTextureCacheAtEndOfFrame;
-
 extern "C" {
 #include "z64.h"
 #include "functions.h"
@@ -184,11 +182,15 @@ void DrawSettingsMenu() {
                 "form of anti-aliasing");
 #endif
 #ifndef __WIIU__
-            if (UIWidgets::CVarSliderInt("MSAA: %d", CVAR_MSAA_VALUE, 1, 8, 1)) {
+            if (UIWidgets::CVarSliderInt((CVarGetInteger(CVAR_MSAA_VALUE, 1) == 1) ? "Anti-aliasing (MSAA): Off"
+                                                                                   : "Anti-aliasing (MSAA): %d",
+                                         CVAR_MSAA_VALUE, 1, 8, 1)) {
                 Ship::Context::GetInstance()->GetWindow()->SetMsaaLevel(CVarGetInteger(CVAR_MSAA_VALUE, 1));
             };
             UIWidgets::Tooltip(
-                "Activates multi-sample anti-aliasing when above 1x up to 8x for 8 samples for every pixel");
+                "Activates MSAA (multi-sample anti-aliasing) from 2x up to 8x, to smooth the edges of rendered "
+                "geometry.\n"
+                "Higher sample count will result in smoother edges on models, but may reduce performance.");
 #endif
 
             { // FPS Slider
@@ -440,14 +442,14 @@ void DrawEnhancementsMenu() {
             UIWidgets::CVarCheckbox(
                 "Pause Menu Save", "gEnhancements.Saving.PauseSave",
                 { .tooltip = "Re-introduce the pause menu save system. Pressing B in the pause menu will give you the "
-                             "option to create an Owl Save from your current location.\n\nWhen loading back into the "
-                             "game, you will be placed either at the entrance of the dungeon you saved in, or in South "
-                             "Clock Town." });
+                             "option to create a persistent Owl Save from your current location.\n\nWhen loading back "
+                             "into the game, you will be placed either at the entrance of the dungeon you saved in, or "
+                             "in South Clock Town." });
             if (UIWidgets::CVarCheckbox(
                     "Autosave", "gEnhancements.Saving.Autosave",
-                    { .tooltip = "Automatically create owl saves on the chosen interval.\n\nWhen loading back into the "
-                                 "game, you will be placed either at the entrance of the dungeon you saved in, or in "
-                                 "South Clock Town." })) {
+                    { .tooltip = "Automatically create a persistent Owl Save on the chosen interval.\n\nWhen loading "
+                                 "back into the game, you will be placed either at the entrance of the dungeon you "
+                                 "saved in, or in South Clock Town." })) {
                 RegisterAutosave();
             }
             UIWidgets::CVarSliderInt("Autosave Interval (minutes): %d", "gEnhancements.Saving.AutosaveInterval", 1, 60,
@@ -534,10 +536,8 @@ void DrawEnhancementsMenu() {
         }
 
         if (UIWidgets::BeginMenu("Modes")) {
-            if (UIWidgets::CVarCheckbox("Play As Kafei", "gModes.PlayAsKafei",
-                                        { .tooltip = "Requires scene reload to take effect." })) {
-                UpdatePlayAsKafeiSkeletons();
-            }
+            UIWidgets::CVarCheckbox("Play As Kafei", "gModes.PlayAsKafei",
+                                    { .tooltip = "Requires scene reload to take effect." });
             ImGui::EndMenu();
         }
         if (UIWidgets::BeginMenu("Player Movement")) {
