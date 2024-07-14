@@ -23,7 +23,7 @@ typedef enum SkyboxId {
 
 typedef struct SkyboxContext {
     /* 0x000 */ View view;
-    /* 0x168 */ void* staticSegments[2][5];
+    /* 0x168 */ void* staticSegments[2][6]; // 2S2H [Port] Changed to hold enough pointers to OTR resources
     /* 0x178 */ void* paletteStaticSegment;
     /* 0x17C */ Gfx (*dListBuf)[150];
     /* 0x180 */ Gfx* roomDL;
@@ -40,33 +40,6 @@ typedef struct SkyboxContext {
     /* 0x222 */ Color_RGB8 prim;
     /* 0x225 */ Color_RGB8 env;
 } SkyboxContext; // size = 0x228
-
-typedef struct {
-    char** file;
-    char* palette;
-} SkyboxFiles;
-
-#if 0
-typedef struct SkyboxContext {
-    /* 0x000 */ View view;
-    /* 0x168 */ void* staticSegments[4];
-    /* 0x178 */ void* paletteStaticSegment;
-    /* 0x17C */ Gfx (*dListBuf)[150];
-    /* 0x180 */ Gfx* roomDL;
-    /* 0x184 */ Vtx* roomVtx;
-    /* 0x188 */ DmaRequest unk188;
-    /* 0x1A8 */ DmaRequest unk1A8;
-    /* 0x1C8 */ DmaRequest unk1C8;
-    /* 0x1E8 */ OSMesgQueue loadQueue;
-    /* 0x200 */ OSMesg loadMsg;
-    /* 0x204 */ s16 skyboxShouldDraw;
-    /* 0x208 */ Vec3f rot;
-    /* 0x214 */ Vec3f eye;
-    /* 0x220 */ s16 angle;
-    /* 0x222 */ Color_RGB8 prim;
-    /* 0x225 */ Color_RGB8 env;
-} SkyboxContext; // size = 0x228
-#endif
 
 typedef struct struct_801C5F44 {
     /* 0x00 */ s32 unk0;
@@ -87,5 +60,14 @@ void Skybox_SetColors(SkyboxContext* skyboxCtx, u8 primR, u8 primG, u8 primB, u8
 void Skybox_Draw(SkyboxContext* skyboxCtx, struct GraphicsContext* gfxCtx, s16 skyboxId, s16 blend, f32 x, f32 y,
                  f32 z);
 void Skybox_Update(SkyboxContext* skyboxCtx);
+
+// #region 2S2H [Port]
+typedef enum SkyboxTexturesIndex {
+    /* 0 */ SKYBOX_TEXTURES_FINE,
+    /* 1 */ SKYBOX_TEXTURES_CLOUD,
+} SkyboxTexturesIndex;
+
+extern TexturePtr sSkyboxTextures[2][6];
+// #endregion
 
 #endif

@@ -4325,7 +4325,7 @@ s32 Inventory_ConsumeFairy(PlayState* play) {
             }
             // #region 2S2H [Dpad]
             if (CVarGetInteger("gEnhancements.Dpad.DpadEquips", 0)) {
-                for (u8 dpadBtn = EQUIP_SLOT_C_LEFT; dpadBtn <= EQUIP_SLOT_C_RIGHT; dpadBtn++) {
+                for (u8 dpadBtn = EQUIP_SLOT_D_RIGHT; dpadBtn <= EQUIP_SLOT_D_UP; dpadBtn++) {
                     if (DPAD_GET_CUR_FORM_BTN_ITEM(dpadBtn) == ITEM_FAIRY) {
                         DPAD_SET_CUR_FORM_BTN_ITEM(dpadBtn, ITEM_BOTTLE);
                         Interface_Dpad_LoadItemIconImpl(play, dpadBtn);

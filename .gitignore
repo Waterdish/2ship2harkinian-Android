@@ -66,3 +66,4 @@ _packages/
 
 /mm/src/boot/build.c
 /mm/windows/properties.h
+/clang-format.exe

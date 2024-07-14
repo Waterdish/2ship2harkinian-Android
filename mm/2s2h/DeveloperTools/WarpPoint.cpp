@@ -67,6 +67,7 @@ void RenderWarpPointSection() {
                                 CVarGetInteger(CV "Room", 0), PLAYER_PARAMS(0xFF, PLAYER_INITMODE_D), &pos,
                                 CVarGetFloat(CV "Rotation", 0.0f));
             func_80169EFC(&gPlayState->state);
+            gSaveContext.respawnFlag = -8;
         }
     }
 }

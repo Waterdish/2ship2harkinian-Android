@@ -130,7 +130,7 @@ jobs:
       run: |
         export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         if [ ! -d "SDL2-2.28.5" ]; then
-          wget https://www.libsdl.org/release/SDL2-2.28.5.tar.gz
+          wget https://github.com/libsdl-org/SDL/releases/download/release-2.28.5/SDL2-2.28.5.tar.gz
           tar -xzf SDL2-2.28.5.tar.gz
         fi
         cd SDL2-2.28.5
@@ -261,7 +261,7 @@ jobs:
       run: |
         export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         if [ ! -d "SDL2-2.30.3" ]; then
-          wget https://www.libsdl.org/release/SDL2-2.30.3.tar.gz
+          wget https://github.com/libsdl-org/SDL/releases/download/release-2.30.3/SDL2-2.30.3.tar.gz
           tar -xzf SDL2-2.30.3.tar.gz
         fi
         cd SDL2-2.30.3

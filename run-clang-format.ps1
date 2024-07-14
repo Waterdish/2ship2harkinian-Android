@@ -1,3 +1,4 @@
+Using Namespace System
 $url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-14.0.6/LLVM-14.0.6-win64.exe"
 $llvmInstallerPath = ".\LLVM-14.0.6-win64.exe"
 $clangFormatFilePath = ".\clang-format.exe"

@@ -21,24 +21,26 @@ extern s32 sCameraInterfaceFlags;
 static bool sCanFreeLook = false;
 
 void UpdateFreeLookState(Camera* camera) {
-    if (CAM_MODE_TARGET <= camera->mode && camera->mode <= CAM_MODE_BATTLE) {
-        sCanFreeLook = false;
-    }
-
-    if (CAM_MODE_FIRSTPERSON <= camera->mode && camera->mode <= CAM_MODE_CLIMBZ) {
-        sCanFreeLook = false;
-    }
-
-    if (camera->mode == CAM_MODE_HANGZ) {
-        sCanFreeLook = false;
-    }
-
-    if (CAM_MODE_BOOMERANG <= camera->mode && camera->mode <= CAM_MODE_ZORAFINZ) {
-        sCanFreeLook = false;
-    }
-
-    if (gPlayState != nullptr && Player_InCsMode(gPlayState)) {
-        sCanFreeLook = false;
+    switch (camera->mode) {
+        case CAM_MODE_BOWARROWZ:
+        case CAM_MODE_FIRSTPERSON:
+        case CAM_MODE_FOLLOWBOOMERANG:
+        case CAM_MODE_ZORAFIN:
+        case CAM_MODE_FOLLOWTARGET:
+        case CAM_MODE_TARGET:
+        case CAM_MODE_TALK:
+        case CAM_MODE_SLINGSHOT:
+        case CAM_MODE_BOWARROW:
+        case CAM_MODE_BATTLE:
+        case CAM_MODE_DEKUHIDE:
+        case CAM_MODE_CLIMBZ:
+        case CAM_MODE_HOOKSHOT:
+        case CAM_MODE_HANGZ:
+        case CAM_MODE_DEKUFLYZ:
+        case CAM_MODE_BOOMERANG:
+        case CAM_MODE_CHARGEZ:
+        case CAM_MODE_ZORAFINZ:
+            sCanFreeLook = false;
     }
 }
 
@@ -141,6 +143,15 @@ bool Camera_CanFreeLook(Camera* camera) {
     if (!sCanFreeLook && (fabsf(camX) >= 15.0f || fabsf(camY) >= 15.0f)) {
         sCanFreeLook = true;
     }
+    // Pressing Z will "Reset" Camera
+    if (CHECK_BTN_ALL(sCamPlayState->state.input[0].press.button, BTN_Z)) {
+        sCanFreeLook = false;
+    }
+    // Reset camera during cutscenes
+    if (gPlayState != nullptr && Player_InCsMode(gPlayState)) {
+        sCanFreeLook = false;
+    }
+
     return sCanFreeLook;
 }
 

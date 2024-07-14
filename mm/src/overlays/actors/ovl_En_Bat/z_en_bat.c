@@ -18,6 +18,7 @@ void EnBat_Init(Actor* thisx, PlayState* play);
 void EnBat_Destroy(Actor* thisx, PlayState* play);
 void EnBat_Update(Actor* thisx, PlayState* play);
 void EnBat_Draw(Actor* thisx, PlayState* play);
+void EnBat_Reset(void);
 
 s32 EnBat_IsGraveyardOnSecondDay(PlayState* play);
 void EnBat_SetupPerch(EnBat* this);
@@ -39,6 +40,7 @@ ActorInit En_Bat_InitVars = {
     /**/ EnBat_Destroy,
     /**/ EnBat_Update,
     /**/ EnBat_Draw,
+    /**/ EnBat_Reset,
 };
 
 static ColliderSphereInit sSphereInit = {
@@ -559,4 +561,9 @@ void EnBat_Draw(Actor* thisx, PlayState* play) {
         Actor_DrawDamageEffects(play, &this->actor, this->bodyPartsPos, BAD_BAT_BODYPART_MAX, this->drawDmgEffScale,
                                 this->drawDmgEffFrozenSteamScale, this->drawDmgEffAlpha, this->drawDmgEffType);
     }
+}
+
+void EnBat_Reset(void) {
+    sNumberAttacking = 0;
+    sAlreadySpawned = false;
 }

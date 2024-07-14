@@ -7,10 +7,13 @@ extern "C" {
 }
 
 SaveInfo saveInfoCopy;
+ShipSaveInfo shipSaveInfoCopy;
 
 void RegisterEndOfCycleSaveHooks() {
-    GameInteractor::Instance->RegisterGameHook<GameInteractor::BeforeEndOfCycleSave>(
-        []() { memcpy(&saveInfoCopy, &gSaveContext.save.saveInfo, sizeof(SaveInfo)); });
+    GameInteractor::Instance->RegisterGameHook<GameInteractor::BeforeEndOfCycleSave>([]() {
+        memcpy(&saveInfoCopy, &gSaveContext.save.saveInfo, sizeof(SaveInfo));
+        memcpy(&shipSaveInfoCopy, &gSaveContext.save.shipSaveInfo, sizeof(ShipSaveInfo));
+    });
 
     GameInteractor::Instance->RegisterGameHook<GameInteractor::AfterEndOfCycleSave>([]() {
         if (CVarGetInteger("gEnhancements.Cycle.DoNotResetRupees", 0)) {
@@ -68,14 +71,27 @@ void RegisterEndOfCycleSaveHooks() {
                     SET_CUR_FORM_BTN_ITEM(j, saveInfoCopy.equips.buttonItems[0][j]);
                 }
             }
+            for (int j = EQUIP_SLOT_D_RIGHT; j <= EQUIP_SLOT_D_UP; j++) {
+                if (DPAD_GET_CUR_FORM_BTN_ITEM(j) == ITEM_BOTTLE) {
+                    DPAD_SET_CUR_FORM_BTN_ITEM(j, shipSaveInfoCopy.dpadEquips.dpadItems[0][j]);
+                }
+            }
         }
 
-        if (CVarGetInteger("gEnhancements.Cycle.DoNotResetRazorSword", 0) &&
-            ((saveInfoCopy.equips.equipment & gEquipMasks[EQUIP_TYPE_SWORD]) >> gEquipShifts[EQUIP_TYPE_SWORD]) ==
-                EQUIP_VALUE_SWORD_RAZOR) {
+        if (CVarGetInteger("gEnhancements.Cycle.DoNotResetRazorSword", 0)) {
+            u8 curSword =
+                (saveInfoCopy.equips.equipment & gEquipMasks[EQUIP_TYPE_SWORD]) >> gEquipShifts[EQUIP_TYPE_SWORD];
 
-            SET_EQUIP_VALUE(EQUIP_TYPE_SWORD, EQUIP_VALUE_SWORD_RAZOR);
-            CUR_FORM_EQUIP(EQUIP_SLOT_B) = ITEM_SWORD_RAZOR;
+            // Check for razor sword equipped, stolen, or turned into the smithy
+            if (curSword == EQUIP_VALUE_SWORD_RAZOR ||
+                (curSword == EQUIP_VALUE_SWORD_NONE &&
+                 ((saveInfoCopy.permanentSceneFlags[SCENE_KAJIYA].unk_14 & 4) ||
+                  (((saveInfoCopy.stolenItems & 0xFF000000) >> 0x18) == ITEM_SWORD_RAZOR) ||
+                  (((saveInfoCopy.stolenItems & 0x00FF0000) >> 0x10) == ITEM_SWORD_RAZOR)))) {
+
+                SET_EQUIP_VALUE(EQUIP_TYPE_SWORD, EQUIP_VALUE_SWORD_RAZOR);
+                BUTTON_ITEM_EQUIP(0, EQUIP_SLOT_B) = ITEM_SWORD_RAZOR;
+            }
         }
     });
 }

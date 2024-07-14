@@ -5,11 +5,11 @@ set(CMAKE_CXX_STANDARD 20 CACHE STRING "The C++ standard to use")
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "Minimum OS X deployment version")
 
-project(2s2h VERSION 1.0.1 LANGUAGES C CXX)
+project(2s2h VERSION 1.0.2 LANGUAGES C CXX)
 include(CMake/2ship-cvars.cmake)
 include(CMake/lus-cvars.cmake)
-set(PROJECT_BUILD_NAME "Rika Bravo" CACHE STRING "")
-set(PROJECT_TEAM "github.com/harbourmasters" CACHE STRING "")
+set(PROJECT_BUILD_NAME "Rika Charlie" CACHE STRING "" FORCE)
+set(PROJECT_TEAM "github.com/harbourmasters" CACHE STRING "" FORCE)
 
 set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT 2ship)
 

@@ -32,6 +32,7 @@
 void EnFall_Init(Actor* thisx, PlayState* play);
 void EnFall_Destroy(Actor* thisx, PlayState* play);
 void EnFall_Update(Actor* thisx, PlayState* play);
+void EnFall_Reset(void);
 
 void EnFall_Setup(EnFall* this, PlayState* play);
 void EnFall_CrashingMoon_PerformCutsceneActions(EnFall* this, PlayState* play);
@@ -73,6 +74,7 @@ ActorInit En_Fall_InitVars = {
     /**/ EnFall_Destroy,
     /**/ EnFall_Update,
     /**/ NULL,
+    /**/ EnFall_Reset,
 };
 
 /**
@@ -316,8 +318,10 @@ void EnFall_Setup(EnFall* this, PlayState* play) {
     }
 }
 
+// 2S2H [Port] Moved static vars out of function scope so they can be cleared in actor reset
+static s32 sGiantsCutsceneState = 0;
+
 void EnFall_CrashingMoon_HandleGiantsCutscene(EnFall* this, PlayState* play) {
-    static s32 sGiantsCutsceneState = 0;
 
     if ((play->sceneId == SCENE_00KEIKOKU) && (gSaveContext.sceneLayer == 1) && (play->csCtx.scriptIndex == 0)) {
         switch (sGiantsCutsceneState) {
@@ -948,4 +952,8 @@ void EnFall_MoonsTear_Draw(Actor* thisx, PlayState* play) {
     gSPDisplayList(POLY_XLU_DISP++, gFallingMoonsTearFireDL);
 
     CLOSE_DISPS(play->state.gfxCtx);
+}
+
+void EnFall_Reset(void) {
+    sGiantsCutsceneState = 0;
 }

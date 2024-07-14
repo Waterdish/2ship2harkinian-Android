@@ -1509,6 +1509,9 @@ s32 MapDisp_ConvertBossSceneToDungeonScene(s32 sceneId) {
     }
 }
 
+// 2S2H [Port] Split u16 values into two u8 values for the custom palette below
+#define SPLIT(val) (val >> 8) & 0xFF, val & 0xFF
+
 /**
  * @brief Draws the dungeon room sprites for the pause menu dungeon map
  *
@@ -1534,6 +1537,25 @@ void MapDisp_DrawRooms(PlayState* play, s32 viewX, s32 viewY, s32 viewWidth, s32
         0x0000, 0x0623, 0xFFC1, 0x07C1, 0x07FF, 0x003F, 0xFB3F, 0xF305,
         0x0453, 0x0577, 0x0095, 0x82E5, 0xFD27, 0x7A49, 0x94A5, 0x0001,
     }; // palette 2
+
+    // 2S2H [Port] Merge the 3 map palettes into 1 memory address so that we can load it once
+    // at index 0, but when the map textures below use index 1 or 2, Fast3D will correctly
+    // offset in this address to get the expected values.
+    // Palette stored as u8 to avoid endianeness issues in Fast3D
+    // clang-format off
+    static u8 sMergedPal[0x10 * 2 * 3] = {
+        // sUnvisitedRoomPal - palette 0
+        SPLIT(0x0000), SPLIT(0x0000), SPLIT(0xFFC1), SPLIT(0x07C1), SPLIT(0x07FF), SPLIT(0x003F), SPLIT(0xFB3F), SPLIT(0xF305),
+        SPLIT(0x0453), SPLIT(0x0577), SPLIT(0x0095), SPLIT(0x82E5), SPLIT(0xFD27), SPLIT(0x7A49), SPLIT(0x94A5), SPLIT(0x0001),
+        // sVisitedRoomPal - palette 1
+        SPLIT(0x0000), SPLIT(0x027F), SPLIT(0xFFC1), SPLIT(0x07C1), SPLIT(0x07FF), SPLIT(0x003F), SPLIT(0xFB3F), SPLIT(0xF305),
+        SPLIT(0x0453), SPLIT(0x0577), SPLIT(0x0095), SPLIT(0x82E5), SPLIT(0xFD27), SPLIT(0x7A49), SPLIT(0x94A5), SPLIT(0x0001),
+        // sCurrentRoomPal - palette 2
+        SPLIT(0x0000), SPLIT(0x0623), SPLIT(0xFFC1), SPLIT(0x07C1), SPLIT(0x07FF), SPLIT(0x003F), SPLIT(0xFB3F), SPLIT(0xF305),
+        SPLIT(0x0453), SPLIT(0x0577), SPLIT(0x0095), SPLIT(0x82E5), SPLIT(0xFD27), SPLIT(0x7A49), SPLIT(0x94A5), SPLIT(0x0001),
+    };
+    // clang-format on
+
     PauseContext* pauseCtx = &play->pauseCtx;
     s32 pad[4];
     s32 i;
@@ -1542,23 +1564,40 @@ void MapDisp_DrawRooms(PlayState* play, s32 viewX, s32 viewY, s32 viewWidth, s32
 
     sCurrentRoomPal[1] = (green << 6) | (blue << 1) | 1;
 
+    // 2S2H [Port] Apply runtime palette updates by splitting the color across the low and high index
+    u16 pulseColor = (green << 6) | (blue << 1) | 1;
+    sMergedPal[(0x10 * 2 * 2) + (1 * 2) + 0] = (pulseColor >> 8) & 0xFF;
+    sMergedPal[(0x10 * 2 * 2) + (1 * 2) + 1] = pulseColor & 0xFF;
+
     if (CHECK_DUNGEON_ITEM(DUNGEON_MAP, dungeonIndex)) {
         s32 requiredScopeTemp;
 
         sUnvisitedRoomPal[0xF] = 0xAD5F;
         sVisitedRoomPal[0xF] = 0xAD5F;
         sCurrentRoomPal[0xF] = 0xAD5F;
+
+        for (i = 0; i <= 2; i++) {
+            sMergedPal[(0x10 * 2 * i) + (0xF * 2) + 0] = (0xAD5F >> 8) & 0xFF;
+            sMergedPal[(0x10 * 2 * i) + (0xF * 2) + 1] = 0xAD5F & 0xFF;
+        }
     } else {
         sCurrentRoomPal[0xF] = sVisitedRoomPal[0xF] = sUnvisitedRoomPal[0xF] = 0;
+
+        for (i = 0; i <= 2; i++) {
+            sMergedPal[(0x10 * 2 * i) + (0xF * 2) + 0] = sMergedPal[(0x10 * 2 * i) + (0xF * 2) + 1] = 0;
+        }
     }
 
     OPEN_DISPS(play->state.gfxCtx);
 
     Gfx_SetupDL39_Opa(play->state.gfxCtx);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, pauseCtx->alpha);
-    gDPLoadTLUT_pal16(POLY_OPA_DISP++, 0, sUnvisitedRoomPal);
-    gDPLoadTLUT_pal16(POLY_OPA_DISP++, 1, sVisitedRoomPal);
-    gDPLoadTLUT_pal16(POLY_OPA_DISP++, 2, sCurrentRoomPal);
+    // #region 2S2H [Port] Load our merged palette at index 0, the other indexes do not need to be loaded
+    gDPLoadTLUT_pal16(POLY_OPA_DISP++, 0, sMergedPal);
+    // gDPLoadTLUT_pal16(POLY_OPA_DISP++, 0, sUnvisitedRoomPal);
+    // gDPLoadTLUT_pal16(POLY_OPA_DISP++, 1, sVisitedRoomPal);
+    // gDPLoadTLUT_pal16(POLY_OPA_DISP++, 2, sCurrentRoomPal);
+    // #endregion
     gDPSetTextureLUT(POLY_OPA_DISP++, G_TT_RGBA16);
 
     for (i = 0; i < sSceneNumRooms; i++) {
@@ -1648,6 +1687,9 @@ void MapDisp_DrawRooms(PlayState* play, s32 viewX, s32 viewY, s32 viewWidth, s32
         } else {
             continue;
         }
+
+        // 2S2H [Port] Invalidate the map textures so that the palette updates apply
+        gSPInvalidateTexCache(POLY_OPA_DISP++, roomTexture);
         gSPTextureRectangle(POLY_OPA_DISP++, (texPosX << 2), (texPosY << 2), (texPosX + texWidth) << 2,
                             (texPosY + texHeight) << 2, 0, s, t, dsdx, dtdy);
         gDPPipeSync(POLY_OPA_DISP++);

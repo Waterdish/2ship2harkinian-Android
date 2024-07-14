@@ -56,6 +56,24 @@ static const std::unordered_map<int32_t, const char*> alwaysWinDoggyraceOptions 
 };
 
 namespace BenGui {
+std::shared_ptr<std::vector<Ship::WindowBackend>> availableWindowBackends;
+std::unordered_map<Ship::WindowBackend, const char*> availableWindowBackendsMap;
+Ship::WindowBackend configWindowBackend;
+
+void UpdateWindowBackendObjects() {
+    Ship::WindowBackend runningWindowBackend = Ship::Context::GetInstance()->GetWindow()->GetWindowBackend();
+    int32_t configWindowBackendId = Ship::Context::GetInstance()->GetConfig()->GetInt("Window.Backend.Id", -1);
+    if (configWindowBackendId != -1 && configWindowBackendId < static_cast<int>(Ship::WindowBackend::BACKEND_COUNT)) {
+        configWindowBackend = static_cast<Ship::WindowBackend>(configWindowBackendId);
+    } else {
+        configWindowBackend = runningWindowBackend;
+    }
+
+    availableWindowBackends = Ship::Context::GetInstance()->GetWindow()->GetAvailableWindowBackends();
+    for (auto& backend : *availableWindowBackends) {
+        availableWindowBackendsMap[backend] = windowBackendsMap[backend];
+    }
+}
 
 void DrawMenuBarIcon() {
     static bool gameIconLoaded = false;
@@ -247,32 +265,17 @@ void DrawSettingsMenu() {
             // UIWidgets::PaddedSeparator(true, true, 3.0f, 3.0f);
             //  #endregion */
 
-            Ship::WindowBackend runningWindowBackend = Ship::Context::GetInstance()->GetWindow()->GetWindowBackend();
-            Ship::WindowBackend configWindowBackend;
-            int32_t configWindowBackendId = Ship::Context::GetInstance()->GetConfig()->GetInt("Window.Backend.Id", -1);
-            if (configWindowBackendId != -1 &&
-                configWindowBackendId < static_cast<int>(Ship::WindowBackend::BACKEND_COUNT)) {
-                configWindowBackend = static_cast<Ship::WindowBackend>(configWindowBackendId);
-            } else {
-                configWindowBackend = runningWindowBackend;
-            }
-
-            auto availableWindowBackends = Ship::Context::GetInstance()->GetWindow()->GetAvailableWindowBackends();
-            std::unordered_map<Ship::WindowBackend, const char*> availableWindowBackendsMap;
-            for (auto& backend : *availableWindowBackends) {
-                availableWindowBackendsMap[backend] = windowBackendsMap[backend];
-            }
-
             if (UIWidgets::Combobox(
                     "Renderer API (Needs reload)", &configWindowBackend, availableWindowBackendsMap,
                     { .tooltip = "Sets the renderer API used by the game. Requires a relaunch to take effect.",
-                      .disabled = Ship::Context::GetInstance()->GetWindow()->GetAvailableWindowBackends()->size() <= 1,
+                      .disabled = availableWindowBackends->size() <= 1,
                       .disabledTooltip = "Only one renderer API is available on this platform." })) {
                 Ship::Context::GetInstance()->GetConfig()->SetInt("Window.Backend.Id",
                                                                   static_cast<int32_t>(configWindowBackend));
                 Ship::Context::GetInstance()->GetConfig()->SetString("Window.Backend.Name",
                                                                      windowBackendsMap.at(configWindowBackend));
                 Ship::Context::GetInstance()->GetConfig()->Save();
+                UpdateWindowBackendObjects();
             }
 
             if (Ship::Context::GetInstance()->GetWindow()->CanDisableVerticalSync()) {
@@ -618,8 +621,32 @@ const char* logLevels[] = {
 
 void DrawDeveloperToolsMenu() {
     if (UIWidgets::BeginMenu("Developer Tools", UIWidgets::Colors::Yellow)) {
-        UIWidgets::CVarCheckbox("Debug Mode", "gDeveloperTools.DebugEnabled",
-                                { .tooltip = "Enables Debug Mode, allowing you to select maps with L + R + Z." });
+        if (UIWidgets::CVarCheckbox("Debug Mode", "gDeveloperTools.DebugEnabled",
+                                    { .tooltip = "Enables Debug Mode, revealing some developer options and allows you "
+                                                 "to enter Map Select with L + R + Z" })) {
+            // If disabling debug mode, disable all debug features
+            if (!CVarGetInteger("gDeveloperTools.DebugEnabled", 0)) {
+                CVarClear("gDeveloperTools.DebugSaveFileMode");
+                CVarClear("gDeveloperTools.PreventActorUpdate");
+                CVarClear("gDeveloperTools.PreventActorDraw");
+                CVarClear("gDeveloperTools.PreventActorInit");
+                CVarClear("gDeveloperTools.DisableObjectDependency");
+                if (gPlayState != NULL) {
+                    gPlayState->frameAdvCtx.enabled = false;
+                }
+                RegisterDebugSaveCreate();
+                RegisterPreventActorUpdateHooks();
+                RegisterPreventActorDrawHooks();
+                RegisterPreventActorInitHooks();
+            }
+        }
+        if (ImGui::IsItemHovered()) {
+            ImGui::BeginTooltip();
+            ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f),
+                               "Warning: Some of these features can break your game,\nor cause unexpected behavior, "
+                               "please ensure you disable them\nbefore reporting any bugs.");
+            ImGui::EndTooltip();
+        }
 
         if (CVarGetInteger("gDeveloperTools.DebugEnabled", 0)) {
             UIWidgets::CVarCheckbox(
@@ -632,45 +659,48 @@ void DrawDeveloperToolsMenu() {
                           "Change the behavior of creating saves while debug mode is enabled:\n\n"
                           "- Empty Save: The default 3 heart save file in first cycle\n"
                           "- Vanilla Debug Save: Uses the title screen save info (8 hearts, all items and masks)\n"
-                          "- 100\% Save: All items, equipment, mask, quast status and bombers notebook complete" })) {
+                          "- 100\% Save: All items, equipment, mask, quast status and bombers notebook complete",
+                      .defaultIndex = DEBUG_SAVE_INFO_NONE })) {
                 RegisterDebugSaveCreate();
             }
-        }
 
-        if (UIWidgets::CVarCheckbox("Prevent Actor Update", "gDeveloperTools.PreventActorUpdate")) {
-            RegisterPreventActorUpdateHooks();
-        }
-        if (UIWidgets::CVarCheckbox("Prevent Actor Draw", "gDeveloperTools.PreventActorDraw")) {
-            RegisterPreventActorDrawHooks();
-        }
-        if (UIWidgets::CVarCheckbox("Prevent Actor Init", "gDeveloperTools.PreventActorInit")) {
-            RegisterPreventActorInitHooks();
-        }
-        if (UIWidgets::CVarCombobox("Log Level", "gDeveloperTools.LogLevel", logLevels,
-                                    {
-                                        .tooltip = "The log level determines which messages are printed to the "
-                                                   "console. This does not affect the log file output",
-                                        .defaultIndex = 1,
-                                    })) {
-            Ship::Context::GetInstance()->GetLogger()->set_level(
-                (spdlog::level::level_enum)CVarGetInteger("gDeveloperTools.LogLevel", 1));
-        }
+            if (UIWidgets::CVarCheckbox("Prevent Actor Update", "gDeveloperTools.PreventActorUpdate")) {
+                RegisterPreventActorUpdateHooks();
+            }
+            if (UIWidgets::CVarCheckbox("Prevent Actor Draw", "gDeveloperTools.PreventActorDraw")) {
+                RegisterPreventActorDrawHooks();
+            }
+            if (UIWidgets::CVarCheckbox("Prevent Actor Init", "gDeveloperTools.PreventActorInit")) {
+                RegisterPreventActorInitHooks();
+            }
+            UIWidgets::CVarCheckbox("Disable Object Dependency", "gDeveloperTools.DisableObjectDependency");
 
-        if (gPlayState != NULL) {
-            ImGui::Separator();
-            UIWidgets::Checkbox(
-                "Frame Advance", (bool*)&gPlayState->frameAdvCtx.enabled,
-                { .tooltip = "This allows you to advance through the game one frame at a time on command. "
-                             "To advance a frame, hold Z and tap R on the second controller. Holding Z "
-                             "and R will advance a frame every half second. You can also use the buttons below." });
-            if (gPlayState->frameAdvCtx.enabled) {
-                if (UIWidgets::Button("Advance 1", { .size = UIWidgets::Sizes::Inline })) {
-                    CVarSetInteger("gDeveloperTools.FrameAdvanceTick", 1);
-                }
-                ImGui::SameLine();
-                UIWidgets::Button("Advance (Hold)", { .size = UIWidgets::Sizes::Inline });
-                if (ImGui::IsItemActive()) {
-                    CVarSetInteger("gDeveloperTools.FrameAdvanceTick", 1);
+            if (UIWidgets::CVarCombobox("Log Level", "gDeveloperTools.LogLevel", logLevels,
+                                        {
+                                            .tooltip = "The log level determines which messages are printed to the "
+                                                       "console. This does not affect the log file output",
+                                            .defaultIndex = 1,
+                                        })) {
+                Ship::Context::GetInstance()->GetLogger()->set_level(
+                    (spdlog::level::level_enum)CVarGetInteger("gDeveloperTools.LogLevel", 1));
+            }
+
+            if (gPlayState != NULL) {
+                ImGui::Separator();
+                UIWidgets::Checkbox(
+                    "Frame Advance", (bool*)&gPlayState->frameAdvCtx.enabled,
+                    { .tooltip = "This allows you to advance through the game one frame at a time on command. "
+                                 "To advance a frame, hold Z and tap R on the second controller. Holding Z "
+                                 "and R will advance a frame every half second. You can also use the buttons below." });
+                if (gPlayState->frameAdvCtx.enabled) {
+                    if (UIWidgets::Button("Advance 1", { .size = UIWidgets::Sizes::Inline })) {
+                        CVarSetInteger("gDeveloperTools.FrameAdvanceTick", 1);
+                    }
+                    ImGui::SameLine();
+                    UIWidgets::Button("Advance (Hold)", { .size = UIWidgets::Sizes::Inline });
+                    if (ImGui::IsItemActive()) {
+                        CVarSetInteger("gDeveloperTools.FrameAdvanceTick", 1);
+                    }
                 }
             }
         }
@@ -712,6 +742,10 @@ void DrawDeveloperToolsMenu() {
         }
         ImGui::EndMenu();
     }
+}
+
+void BenMenuBar::InitElement() {
+    UpdateWindowBackendObjects();
 }
 
 void BenMenuBar::DrawElement() {

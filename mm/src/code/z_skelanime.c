@@ -1031,7 +1031,12 @@ void AnimationContext_SetLoadFrame(PlayState* play, PlayerAnimationHeader* anima
 
         s16* animData = /* ResourceMgr_LoadPlayerAnimByName*/ (animation->segmentVoid);
 
-        memcpy((void*)ram, (void*)(uintptr_t)animData + (((sizeof(Vec3s) * limbCount + 2) * frame)), sizeof(Vec3s) * limbCount + 2);
+        // 2S2H [Port] sometimes a HESS can set a negative frame value from a negative playback speed. When converted to
+        // a signed value this will cause a crash due to copying way much data.
+        if (frame < 0) {
+            frame = 0;
+        }
+        memcpy(ram, (void*)(uintptr_t)animData + (((sizeof(Vec3s) * limbCount + 2) * frame)), sizeof(Vec3s) * limbCount + 2);
     }
 }
 

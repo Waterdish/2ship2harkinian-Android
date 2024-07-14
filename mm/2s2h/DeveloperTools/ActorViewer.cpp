@@ -277,8 +277,15 @@ void ActorViewerWindow::DrawElement() {
             ImGui::InputScalar("rZ", ImGuiDataType_S16, &newActor.rot.z);
             ImGui::EndGroup();
 
-            UIWidgets::CVarCheckbox("Remove Obj Dep?", "gObjDep",
-                                    { .tooltip = "Allows actors to spawn where/when they normally wouldn't." });
+            UIWidgets::CVarCheckbox("Disable Object Dependency", "gDeveloperTools.DisableObjectDependency");
+            if (ImGui::IsItemHovered()) {
+                ImGui::BeginTooltip();
+                ImGui::TextColored(
+                    ImVec4(1.0f, 1.0f, 0.0f, 1.0f),
+                    "Warning: This will cause some actors to spawn in places they normally wouldn't,\nplease ensure "
+                    "this is disabled before reporting any actor related issues");
+                ImGui::EndTooltip();
+            }
 
             if (UIWidgets::Button("Fetch from Link")) {
                 Player* player = GET_PLAYER(gPlayState);

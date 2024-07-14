@@ -12,9 +12,18 @@
 
 RumbleManager gRumbleMgr;
 
+#define RUMBLE_FRAMES_PER_UPDATE (R_UPDATE_RATE > 0 ? R_UPDATE_RATE : 1)
+
 void Rumble_Update(void* arg0) {
-    RumbleManager_Update(&gRumbleMgr);
-    PadMgr_RumbleSet(gRumbleMgr.rumbleEnabled);
+    // BENTODO: Workaround for rumble being too long.
+    // On hardware, PadMgr_ThreadEntry would run once per VI (60hertz),
+    // however we do not have OS Threads implemented, and instead opted to execute the PadMgr alongside
+    // the Graph thread. This means it will run less often when the game is in 20fps or 30fps mode.
+    // Here we call the rumble manager extra times to simulate updates happening at 60hertz.
+    for (int i = 0; i < RUMBLE_FRAMES_PER_UPDATE; i++) {
+        RumbleManager_Update(&gRumbleMgr);
+        PadMgr_RumbleSet(gRumbleMgr.rumbleEnabled);
+    }
 }
 
 // Used by some bosses (and fishing)

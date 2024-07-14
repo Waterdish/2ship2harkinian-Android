@@ -110,7 +110,7 @@ s32 Object_GetSlot(ObjectContext* objectCtx, s16 objectId) {
         }
     }
 
-    return CVarGetInteger("gObjDep", 0) ? 0 : -1;
+    return CVarGetInteger("gDeveloperTools.DisableObjectDependency", 0) ? 0 : -1;
 }
 
 s32 Object_IsLoaded(ObjectContext* objectCtx, s32 slot) {

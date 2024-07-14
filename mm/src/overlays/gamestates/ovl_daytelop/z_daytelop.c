@@ -12,6 +12,7 @@
 #include "interface/icon_item_gameover_static/icon_item_gameover_static.h"
 
 #include "BenPort.h"
+#include "assets/2s2h_assets.h"
 
 // unused
 UNK_TYPE D_808158E0[] = {
@@ -126,10 +127,19 @@ TexturePtr sHoursLeftTextures[] = {
     gDaytelop72HoursNESTex,
     gDaytelop48HoursNESTex,
     gDaytelop24HoursNESTex,
+
+    // 2S2H [Port] Added empty texture to support "Dawn of" with the 4th day glitch and prevent crashing
+    gEmptyTexture,
 };
 
 void DayTelop_Draw(DayTelopState* this) {
     GraphicsContext* gfxCtx = this->state.gfxCtx;
+
+    // 2S2H [Port] Exit early for day 0 or less to avoid an OOB read on the texture arrays.
+    // This is only possible when using the save editor while the "Dawn of" screen is up.
+    if (CURRENT_DAY <= 0) {
+        return;
+    }
 
     OPEN_DISPS(gfxCtx);
 

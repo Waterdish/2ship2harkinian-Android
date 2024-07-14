@@ -15,6 +15,8 @@ void EnNiw_Init(Actor* thisx, PlayState* play);
 void EnNiw_Destroy(Actor* thisx, PlayState* play);
 void EnNiw_Update(Actor* thisx, PlayState* play);
 void EnNiw_Draw(Actor* thisx, PlayState* play);
+void EnNiw_Reset(void);
+
 void EnNiw_SetupIdle(EnNiw* this);
 void EnNiw_Idle(EnNiw* this, PlayState* play);
 void EnNiw_Thrown(EnNiw* this, PlayState* play);
@@ -58,6 +60,7 @@ ActorInit En_Niw_InitVars = {
     /**/ EnNiw_Destroy,
     /**/ EnNiw_Update,
     /**/ EnNiw_Draw,
+    /**/ EnNiw_Reset,
 };
 
 static f32 sHeadRotations[] = { 5000.0f, -5000.0f };
@@ -1030,4 +1033,8 @@ void EnNiw_DrawFeathers(EnNiw* this, PlayState* play) {
     }
 
     CLOSE_DISPS(gfxCtx);
+}
+
+void EnNiw_Reset(void) {
+    sCuccoStormActive = false;
 }

@@ -15,7 +15,7 @@ class BenMenuBar : public Ship::GuiMenuBar {
 
   protected:
     void DrawElement() override;
-    void InitElement() override{};
+    void InitElement() override;
     void UpdateElement() override{};
 };
 } // namespace BenGui

@@ -3,6 +3,7 @@
 #include "assets/misc/skyboxes/d2_cloud_static.h"
 #include "assets/misc/skyboxes/d2_fine_static.h"
 #include "assets/misc/skyboxes/d2_fine_pal_static.h"
+#include "assets/2s2h_assets.h"
 
 u32 D_801C5E30[] = { 0, 0x2000, 0x4000, 0x6000, 0x8000, 0xC000 };
 
@@ -21,18 +22,14 @@ s16 D_801C5EC4[] = {
     24, 7,  29, 28, 25, 26, 30, 10, 26, 27, 11, 30, 27, 28, 31, 11, 28, 29, 15, 31,
 };
 
-const char* sD2FineStaticTex[] = {
-    gClearSkybox1Tex, gClearSkybox2Tex, gClearSkybox3Tex, gClearSkybox4Tex, gClearSkybox5Tex,
-};
-
-const char* sD2CloudStaticTex[] = {
-    gCloudySkybox1Tex, gCloudySkybox2Tex, gCloudySkybox3Tex, gCloudySkybox4Tex, gCloudySkybox5Tex,
-};
-
-SkyboxFiles skyboxFiles[] = {
-    // 2S2H [Port] Renamed from files because of conflcit
-    { sD2FineStaticTex, gClearSkyboxTlue },
-    { sD2CloudStaticTex, gClearSkyboxTlue },
+// 2S2H [Port] Skybox textures for our resource manager.
+// The last texture is repeated for the top and bottom skybox faces.
+TexturePtr sSkyboxTextures[2][6] = {
+    // d2_fine_static
+    { gClearSkybox1Tex, gClearSkybox2Tex, gClearSkybox3Tex, gClearSkybox4Tex, gClearSkybox5Tex, gClearSkybox5Tex },
+    // d2_cloud_static
+    { gCloudySkybox1Tex, gCloudySkybox2Tex, gCloudySkybox3Tex, gCloudySkybox4Tex, gCloudySkybox5Tex,
+      gCloudySkybox5Tex },
 };
 
 s32 func_80142440(SkyboxContext* skyboxCtx, Vtx* roomVtx, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7,
@@ -221,25 +218,29 @@ void Skybox_Setup(GameState* gameState, SkyboxContext* skyboxCtx, s16 skyboxId) 
             // size = SEGMENT_ROM_SIZE(d2_cloud_static);
             // segment = (void*)ALIGN8((uintptr_t)skyboxCtx->staticSegments[0] + size);
             // DmaMgr_SendRequest0(skyboxCtx->staticSegments[0], SEGMENT_ROM_START(d2_cloud_static), size);
-            for (size_t i = 0; i < ARRAY_COUNTU(sD2FineStaticTex); i++) {
-                skyboxCtx->staticSegments[0][i] = sD2FineStaticTex[i];
+
+            // 2S2h [Port] Bypass DMA request and assign each skybox texture directly to the static segment
+            for (size_t i = 0; i < ARRAY_COUNTU(skyboxCtx->staticSegments[0]); i++) {
+                skyboxCtx->staticSegments[0][i] = sSkyboxTextures[SKYBOX_TEXTURES_CLOUD][i];
             }
-            for (size_t i = 0; i < ARRAY_COUNTU(sD2FineStaticTex); i++) {
-                skyboxCtx->staticSegments[1][i] = sD2CloudStaticTex[i];
-            }
-            skyboxCtx->paletteStaticSegment = gClearSkyboxTlue;
+
             // Send a DMA request for the clear sky texture
             // skyboxCtx->staticSegments[1] = segment;
             // size = SEGMENT_ROM_SIZE(d2_fine_static);
             // segment = (void*)ALIGN8((uintptr_t)segment + size);
             // DmaMgr_SendRequest0(skyboxCtx->staticSegments[1], SEGMENT_ROM_START(d2_fine_static), size);
+            for (size_t i = 0; i < ARRAY_COUNTU(skyboxCtx->staticSegments[1]); i++) {
+                skyboxCtx->staticSegments[1][i] = sSkyboxTextures[SKYBOX_TEXTURES_FINE][i];
+            }
 
             // Send a DMA request for the skybox palette
             // skyboxCtx->paletteStaticSegment = segment;
             // size = SEGMENT_ROM_SIZE(d2_fine_pal_static);
             // segment = (void*)ALIGN8((uintptr_t)segment + size);
             // ResourceMgr_LoadTexOrDListByName(gClearSkyboxTlue);
-            ////DmaMgr_SendRequest0(skyboxCtx->paletteStaticSegment, SEGMENT_ROM_START(d2_fine_pal_static), size);
+            // DmaMgr_SendRequest0(skyboxCtx->paletteStaticSegment, SEGMENT_ROM_START(d2_fine_pal_static), size);
+            skyboxCtx->paletteStaticSegment = gClearSkyboxTlue;
+            // #endregion
 
             skyboxCtx->prim.r = 145;
             skyboxCtx->prim.g = 120;
@@ -256,17 +257,18 @@ void Skybox_Setup(GameState* gameState, SkyboxContext* skyboxCtx, s16 skyboxId) 
             break;
 
         case SKYBOX_2:
-            // BENTODO: in the original code, this case does nothing
-            // however this causes skyboxCtx->staticSegments to be 0 which in turn causes
-            // the draw calls in func_80142440 to crash because of the texture address ends up being 0
-            // I'm not sure if this is a mm bug or a 2s2h bug
-            for (size_t i = 0; i < ARRAY_COUNTU(sD2FineStaticTex); i++) {
-                skyboxCtx->staticSegments[0][i] = sD2FineStaticTex[i];
+            // #region 2S2H [Port] In the original code, this case does nothing
+            // however because we changed skyboxCtx->staticSegments to be pointers to OTR strings
+            // the draw calls in func_80142440 will crash because NULL being passed to the renderer.
+            // Here we set the segments to point to the empty texture to prevent the crash
+            for (size_t i = 0; i < ARRAY_COUNTU(skyboxCtx->staticSegments[0]); i++) {
+                skyboxCtx->staticSegments[0][i] = gEmptyTexture;
             }
-            for (size_t i = 0; i < ARRAY_COUNTU(sD2FineStaticTex); i++) {
-                skyboxCtx->staticSegments[1][i] = sD2CloudStaticTex[i];
+            for (size_t i = 0; i < ARRAY_COUNTU(skyboxCtx->staticSegments[1]); i++) {
+                skyboxCtx->staticSegments[1][i] = gEmptyTexture;
             }
-            skyboxCtx->paletteStaticSegment = gClearSkyboxTlue;
+            skyboxCtx->paletteStaticSegment = gEmptyTexture;
+            // #endregion
             break;
 
         default:
@@ -282,59 +284,70 @@ void func_80143324(PlayState* play, SkyboxContext* skyboxCtx, s16 skyboxId) {
             osCreateMesgQueue(&skyboxCtx->loadQueue, &skyboxCtx->loadMsg, 1);
 
             if (play->envCtx.skybox1Index == 0) {
-                for (size_t i = 0; i < ARRAY_COUNTU(sD2FineStaticTex); i++) {
-                    skyboxCtx->staticSegments[0][i] = sD2FineStaticTex[i];
-                }
-                //// Send a DMA request for the clear sky texture
+                // Send a DMA request for the clear sky texture
                 // size = SEGMENT_ROM_SIZE(d2_fine_static);
-                //
+
                 // DmaMgr_SendRequestImpl(&skyboxCtx->unk188, skyboxCtx->staticSegments[0],
                 //                       SEGMENT_ROM_START(d2_fine_static), size, 0, &skyboxCtx->loadQueue, NULL);
-            } else {
-                for (size_t i = 0; i < ARRAY_COUNTU(sD2FineStaticTex); i++) {
-                    skyboxCtx->staticSegments[0][i] = sD2CloudStaticTex[i];
+
+                // 2S2h [Port] Bypass DMA request and assign each skybox texture directly to the static segment
+                for (size_t i = 0; i < ARRAY_COUNTU(skyboxCtx->staticSegments[0]); i++) {
+                    skyboxCtx->staticSegments[0][i] = sSkyboxTextures[SKYBOX_TEXTURES_FINE][i];
                 }
-                //// Send a DMA request for the cloudy sky texture
+            } else {
+                // Send a DMA request for the cloudy sky texture
                 // size = SEGMENT_ROM_SIZE(d2_cloud_static);
-                //
+
                 // DmaMgr_SendRequestImpl(&skyboxCtx->unk188, skyboxCtx->staticSegments[0],
                 //                       SEGMENT_ROM_START(d2_cloud_static), size, 0, &skyboxCtx->loadQueue, NULL);
+
+                for (size_t i = 0; i < ARRAY_COUNTU(skyboxCtx->staticSegments[0]); i++) {
+                    skyboxCtx->staticSegments[0][i] = sSkyboxTextures[SKYBOX_TEXTURES_CLOUD][i];
+                }
             }
 
             osRecvMesg(&skyboxCtx->loadQueue, NULL, OS_MESG_BLOCK);
             osCreateMesgQueue(&skyboxCtx->loadQueue, &skyboxCtx->loadMsg, 1);
 
             if (play->envCtx.skybox2Index == 0) {
-
-                for (size_t i = 0; i < ARRAY_COUNTU(sD2FineStaticTex); i++) {
-                    skyboxCtx->staticSegments[1][i] = sD2FineStaticTex[i];
-                }
                 // Send a DMA request for the clear sky texture
                 // size = SEGMENT_ROM_SIZE(d2_fine_static);
-                //
+
                 // DmaMgr_SendRequestImpl(&skyboxCtx->unk1A8, skyboxCtx->staticSegments[1],
                 //                       SEGMENT_ROM_START(d2_fine_static), size, 0, &skyboxCtx->loadQueue, NULL);
-            } else {
-                for (size_t i = 0; i < ARRAY_COUNTU(sD2FineStaticTex); i++) {
-                    skyboxCtx->staticSegments[1][i] = sD2CloudStaticTex[i];
+
+                for (size_t i = 0; i < ARRAY_COUNTU(skyboxCtx->staticSegments[1]); i++) {
+                    skyboxCtx->staticSegments[1][i] = sSkyboxTextures[SKYBOX_TEXTURES_FINE][i];
                 }
+            } else {
                 // Send a DMA request for the cloudy sky texture
                 // size = SEGMENT_ROM_SIZE(d2_cloud_static);
-                //
+
                 // DmaMgr_SendRequestImpl(&skyboxCtx->unk1A8, skyboxCtx->staticSegments[1],
                 //                       SEGMENT_ROM_START(d2_cloud_static), size, 0, &skyboxCtx->loadQueue, NULL);
+
+                for (size_t i = 0; i < ARRAY_COUNTU(skyboxCtx->staticSegments[1]); i++) {
+                    skyboxCtx->staticSegments[1][i] = sSkyboxTextures[SKYBOX_TEXTURES_CLOUD][i];
+                }
             }
 
             osRecvMesg(&skyboxCtx->loadQueue, NULL, OS_MESG_BLOCK);
             osCreateMesgQueue(&skyboxCtx->loadQueue, &skyboxCtx->loadMsg, 1);
-            skyboxCtx->paletteStaticSegment = gClearSkyboxTlue;
+
             // size = SEGMENT_ROM_SIZE(d2_fine_pal_static);
-            //
-            //// Send a DMA request for the skybox palette
+
+            // Send a DMA request for the skybox palette
             // DmaMgr_SendRequestImpl(&skyboxCtx->unk1C8, skyboxCtx->paletteStaticSegment,
             //                       SEGMENT_ROM_START(d2_fine_pal_static), size, 0, &skyboxCtx->loadQueue, NULL);
-            //
-            // osRecvMesg(&skyboxCtx->loadQueue, NULL, OS_MESG_BLOCK);
+
+            osRecvMesg(&skyboxCtx->loadQueue, NULL, OS_MESG_BLOCK);
+
+            skyboxCtx->paletteStaticSegment = gClearSkyboxTlue;
+
+            // 2S2H [Port] Since the skybox static segments point to OTR strings, we need to re-create the skybox
+            // display lists to have the new textures loaded
+            func_80143148(skyboxCtx, 5);
+            // #endregion
 
             break;
 

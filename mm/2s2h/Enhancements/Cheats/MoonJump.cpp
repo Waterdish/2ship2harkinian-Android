@@ -19,7 +19,7 @@ void RegisterMoonJumpOnL() {
 
                 Player* player = GET_PLAYER(gPlayState);
 
-                if (CHECK_BTN_ANY(gPlayState->state.input[0].cur.button, BTN_L)) {
+                if (player != nullptr && CHECK_BTN_ANY(gPlayState->state.input[0].cur.button, BTN_L)) {
                     player->actor.velocity.y = 6.34375f;
                 }
             });

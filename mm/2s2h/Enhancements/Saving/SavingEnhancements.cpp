@@ -74,6 +74,13 @@ extern "C" bool SavingEnhancements_CanSave() {
         return false;
     }
 
+    // Not in minigames that set temporary flags
+    if (CHECK_WEEKEVENTREG(WEEKEVENTREG_08_01) || CHECK_WEEKEVENTREG(WEEKEVENTREG_82_08) ||
+        CHECK_WEEKEVENTREG(WEEKEVENTREG_90_20) || CHECK_WEEKEVENTREG(WEEKEVENTREG_KICKOUT_WAIT) ||
+        CHECK_EVENTINF(EVENTINF_34) || CHECK_EVENTINF(EVENTINF_41)) {
+        return false;
+    }
+
     return true;
 }
 

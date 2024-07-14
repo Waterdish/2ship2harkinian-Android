@@ -20,13 +20,40 @@ void MapSelect_LoadConsoleLogo(MapSelectState* this) {
 void MapSelect_LoadGame(MapSelectState* this, u32 entrance, s32 spawn) {
     if (gSaveContext.fileNum == 0xFF) {
         Sram_InitDebugSave();
+
+        // #region 2S2H [Debug] Clear all flags when using debug file slot.
+        // This is mostly copied from Sram_OpenSave.
+        for (size_t i = 0; i < ARRAY_COUNT(gSaveContext.eventInf); i++) {
+            gSaveContext.eventInf[i] = 0;
+        }
+
+        for (size_t i = 0; i < ARRAY_COUNT(gSaveContext.cycleSceneFlags); i++) {
+            gSaveContext.cycleSceneFlags[i].chest = gSaveContext.save.saveInfo.permanentSceneFlags[i].chest;
+            gSaveContext.cycleSceneFlags[i].switch0 = gSaveContext.save.saveInfo.permanentSceneFlags[i].switch0;
+            gSaveContext.cycleSceneFlags[i].switch1 = gSaveContext.save.saveInfo.permanentSceneFlags[i].switch1;
+            gSaveContext.cycleSceneFlags[i].clearedRoom = gSaveContext.save.saveInfo.permanentSceneFlags[i].clearedRoom;
+            gSaveContext.cycleSceneFlags[i].collectible = gSaveContext.save.saveInfo.permanentSceneFlags[i].collectible;
+        }
+        // #endregion
     }
+
+    // #region 2S2H [Debug] Clear some potential lingering flags and values
+    CLEAR_WEEKEVENTREG(WEEKEVENTREG_08_01);
+    CLEAR_WEEKEVENTREG(WEEKEVENTREG_KICKOUT_WAIT);
+    CLEAR_WEEKEVENTREG(WEEKEVENTREG_82_08);
+    CLEAR_WEEKEVENTREG(WEEKEVENTREG_90_20);
+    CLEAR_EVENTINF(EVENTINF_17);
+    CLEAR_EVENTINF(EVENTINF_34);
+    CLEAR_EVENTINF(EVENTINF_41);
+    CLEAR_EVENTINF(EVENTINF_TRIGGER_DAYTELOP);
+    gSaveContext.save.equippedMask = PLAYER_MASK_NONE;
+    // #endregion
 
     gSaveContext.buttonStatus[EQUIP_SLOT_B] = BTN_ENABLED;
     gSaveContext.buttonStatus[EQUIP_SLOT_C_LEFT] = BTN_ENABLED;
     gSaveContext.buttonStatus[EQUIP_SLOT_C_DOWN] = BTN_ENABLED;
     gSaveContext.buttonStatus[EQUIP_SLOT_C_RIGHT] = BTN_ENABLED;
-    // #region 2S2H
+    // #region 2S2H [Dpad]
     gSaveContext.shipSaveContext.dpad.status[EQUIP_SLOT_D_RIGHT] = BTN_ENABLED;
     gSaveContext.shipSaveContext.dpad.status[EQUIP_SLOT_D_LEFT] = BTN_ENABLED;
     gSaveContext.shipSaveContext.dpad.status[EQUIP_SLOT_D_DOWN] = BTN_ENABLED;

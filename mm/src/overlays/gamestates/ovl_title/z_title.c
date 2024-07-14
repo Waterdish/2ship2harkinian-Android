@@ -201,6 +201,9 @@ void ConsoleLogo_Main(GameState* thisx) {
 
         STOP_GAMESTATE(&this->state);
         if (CVarGetInteger("gEnhancements.Cutscenes.SkipToFileSelect", 0)) {
+            // Normally the PRNG seed is set at least once from the title opening running Play_Init
+            // We need to call it manually before file select creates RNG values for new saves
+            Rand_Seed(osGetTime());
             SET_NEXT_GAMESTATE(&this->state, FileSelect_Init, sizeof(FileSelectState));
         } else {
             SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, sizeof(TitleSetupState));

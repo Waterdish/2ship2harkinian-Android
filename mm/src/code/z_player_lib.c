@@ -2415,7 +2415,7 @@ s32 Player_OverrideLimbDrawGameplayDefault(PlayState* play, s32 limbIndex, Gfx**
                     if (handIndex != 0) {
                         handIndex = (handIndex >> 8) - 1;
                         if (CVarGetInteger("gEnhancements.Fixes.HessCrash", 1)) {
-                            if (handIndex > 2) {
+                            if (handIndex >= 2) {
                                 handIndex = 0;
                             }
                         }
