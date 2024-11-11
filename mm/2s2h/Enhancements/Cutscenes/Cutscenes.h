@@ -14,5 +14,6 @@ void RegisterSkipClockTowerOpen();
 void RegisterHideTitleCards();
 void RegisterSkipEntranceCutscenes();
 void RegisterSkipIntroSequence();
+void RegisterSkipToFileSelect();
 
 #endif // CUTSCENES_H

@@ -1,5 +1,7 @@
 #include "global.h"
 
+#include "2s2h/GameInteractor/GameInteractor.h"
+
 #define MSCRIPT_CONTINUE 0
 #define MSCRIPT_STOP 1
 
@@ -875,6 +877,10 @@ s32 MsgEvent_Cmd41(Actor* actor, PlayState* play, u8** scriptPtr, MsgEventCallba
 s32 MsgEvent_Cmd42(Actor* actor, PlayState* play, u8** scriptPtr, MsgEventCallback callback, s32* endScript) {
     u8* script = *scriptPtr;
     s16 item = MSCRIPT_GET_16(script, 1);
+
+    if (!GameInteractor_Should(VB_MSG_SCRIPT_DEL_ITEM, true, actor, item)) {
+        return MSCRIPT_CONTINUE;
+    }
 
     Inventory_DeleteItem(item, SLOT(item));
     return MSCRIPT_CONTINUE;

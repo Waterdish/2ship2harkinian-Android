@@ -1043,6 +1043,7 @@ void EnKanban_Draw(Actor* thisx, PlayState* play) {
             }
         }
 
+        gSPInvalidateTexCache(POLY_XLU_DISP++, shadowTex);
         gSPSegment(POLY_XLU_DISP++, 0x08, Lib_SegmentedToVirtual(shadowTex));
         gSPDisplayList(POLY_XLU_DISP++, gEnKanban_D_80957DE0);
     }

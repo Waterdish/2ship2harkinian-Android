@@ -165,6 +165,9 @@ void func_80C04BA0(EnBombers2* this, PlayState* play) {
     player = GET_PLAYER(play);
 
     switch (player->transformation) {
+        // #region 2S2H - Enhancements. Fierce Deity gets same dialog as Goron and Zora
+        case PLAYER_FORM_FIERCE_DEITY:
+        // #endregion
         case PLAYER_FORM_GORON:
         case PLAYER_FORM_ZORA:
             this->textIdIndex = 1;
@@ -233,6 +236,9 @@ void func_80C04D8C(EnBombers2* this, PlayState* play) {
             this->unk_28E = -0xFA0;
             break;
 
+        // #region 2S2H - Enhancements. Fierce Deity.
+        case PLAYER_FORM_FIERCE_DEITY:
+        // #endregion
         case PLAYER_FORM_GORON:
         case PLAYER_FORM_ZORA:
             this->unk_28E = -0x1770;

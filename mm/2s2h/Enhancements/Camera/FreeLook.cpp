@@ -1,6 +1,5 @@
-#include "FreeLook.h"
 #include <libultraship/bridge.h>
-#include "Enhancements/GameInteractor/GameInteractor.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 #include "CameraUtils.h"
 
 extern "C" {
@@ -155,8 +154,8 @@ bool Camera_CanFreeLook(Camera* camera) {
     return sCanFreeLook;
 }
 
-static uint32_t freeLookCameraSettingChangeHookId = 0;
-static uint32_t freeLookCameraVBHookId = 0;
+static HOOK_ID freeLookCameraSettingChangeHookId = 0;
+static HOOK_ID freeLookCameraVBHookId = 0;
 
 void RegisterCameraFreeLook() {
     if (freeLookCameraVBHookId) {
@@ -172,8 +171,8 @@ void RegisterCameraFreeLook() {
     }
 
     if (CVarGetInteger("gEnhancements.Camera.FreeLook.Enable", 0)) {
-        freeLookCameraVBHookId = REGISTER_VB_SHOULD(GI_VB_USE_CUSTOM_CAMERA, {
-            Camera* camera = static_cast<Camera*>(opt);
+        freeLookCameraVBHookId = REGISTER_VB_SHOULD(VB_USE_CUSTOM_CAMERA, {
+            Camera* camera = va_arg(args, Camera*);
             switch (sCameraSettings[camera->setting].cameraModes[camera->mode].funcId) {
                 case CAM_FUNC_NORMAL0:
                 case CAM_FUNC_NORMAL1:

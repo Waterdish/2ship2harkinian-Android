@@ -6,6 +6,7 @@
 
 #include "z_en_fsn.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_10)
 
@@ -452,6 +453,10 @@ void EnFsn_UpdateCursorPos(EnFsn* this, PlayState* play) {
     this->cursorPos.x = x + xOffset;
     this->cursorPos.y = y + yOffset;
     this->cursorPos.z = 1.2f;
+
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0)) {
+        this->cursorPos.x = SCREEN_WIDTH - this->cursorPos.x;
+    }
 }
 
 s32 EnFsn_FacingShopkeeperDialogResult(EnFsn* this, PlayState* play) {
@@ -508,6 +513,8 @@ s32 EnFsn_HasPlayerSelectedItem(EnFsn* this, PlayState* play, Input* input) {
 void EnFsn_UpdateJoystickInputState(EnFsn* this, PlayState* play) {
     s8 stickX = CONTROLLER1(&play->state)->rel.stick_x;
     s8 stickY = CONTROLLER1(&play->state)->rel.stick_y;
+
+    stickX *= GameInteractor_InvertControl(GI_INVERT_SHOP_X);
 
     if (this->stickAccumX == 0) {
         if ((stickX > 30) || (stickX < -30)) {
@@ -1601,6 +1608,11 @@ void EnFsn_DrawTextRec(PlayState* play, s32 r, s32 g, s32 b, s32 a, f32 x, f32 y
 void EnFsn_DrawStickDirectionPrompts(EnFsn* this, PlayState* play) {
     s32 drawStickRightPrompt = this->stickLeftPrompt.isEnabled;
     s32 drawStickLeftPrompt = this->stickRightPrompt.isEnabled;
+
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0) && (drawStickLeftPrompt != drawStickRightPrompt)) {
+        drawStickLeftPrompt = !drawStickLeftPrompt;
+        drawStickRightPrompt = !drawStickRightPrompt;
+    }
 
     OPEN_DISPS(play->state.gfxCtx);
 

@@ -1009,6 +1009,8 @@ void SubS_DrawShadowTex(Actor* actor, GameState* gameState, u8* tex) {
 
     OPEN_DISPS(gfxCtx);
 
+    gSPInvalidateTexCache(POLY_OPA_DISP++, tex);
+
     Gfx_SetupDL25_Opa(gfxCtx);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 0, 0, 0, 100);
     gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 0);

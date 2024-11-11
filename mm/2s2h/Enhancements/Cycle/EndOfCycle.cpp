@@ -1,5 +1,5 @@
 #include <libultraship/libultraship.h>
-#include "Enhancements/GameInteractor/GameInteractor.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 extern "C" {
 #include <variables.h>
@@ -8,11 +8,13 @@ extern "C" {
 
 SaveInfo saveInfoCopy;
 ShipSaveInfo shipSaveInfoCopy;
+s32 timeSpeedOffsetCopy = 0;
 
 void RegisterEndOfCycleSaveHooks() {
     GameInteractor::Instance->RegisterGameHook<GameInteractor::BeforeEndOfCycleSave>([]() {
         memcpy(&saveInfoCopy, &gSaveContext.save.saveInfo, sizeof(SaveInfo));
         memcpy(&shipSaveInfoCopy, &gSaveContext.save.shipSaveInfo, sizeof(ShipSaveInfo));
+        timeSpeedOffsetCopy = gSaveContext.save.timeSpeedOffset;
     });
 
     GameInteractor::Instance->RegisterGameHook<GameInteractor::AfterEndOfCycleSave>([]() {
@@ -92,6 +94,10 @@ void RegisterEndOfCycleSaveHooks() {
                 SET_EQUIP_VALUE(EQUIP_TYPE_SWORD, EQUIP_VALUE_SWORD_RAZOR);
                 BUTTON_ITEM_EQUIP(0, EQUIP_SLOT_B) = ITEM_SWORD_RAZOR;
             }
+        }
+
+        if (CVarGetInteger("gEnhancements.Cycle.DoNotResetTimeSpeed", 0)) {
+            gSaveContext.save.timeSpeedOffset = timeSpeedOffsetCopy;
         }
     });
 }

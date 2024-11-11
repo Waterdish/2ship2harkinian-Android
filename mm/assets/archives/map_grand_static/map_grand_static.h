@@ -3,297 +3,297 @@
 
 #include "align_asset_macro.h"
 
-#define dmap_grand_static_Blob_000000 "__OTR__map_grand_static/map_grand_static_Blob_000000"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_000000[] = dmap_grand_static_Blob_000000;
+#define dgMapGrandStatic100Tex "__OTR__map_grand_static/gMapGrandStatic100Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic100Tex[] = dgMapGrandStatic100Tex;
 
-#define dmap_grand_static_Blob_000FF0 "__OTR__map_grand_static/map_grand_static_Blob_000FF0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_000FF0[] = dmap_grand_static_Blob_000FF0;
+#define dgMapGrandStatic101Tex "__OTR__map_grand_static/gMapGrandStatic101Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic101Tex[] = dgMapGrandStatic101Tex;
 
-#define dmap_grand_static_Blob_001FE0 "__OTR__map_grand_static/map_grand_static_Blob_001FE0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_001FE0[] = dmap_grand_static_Blob_001FE0;
+#define dgMapGrandStatic102Tex "__OTR__map_grand_static/gMapGrandStatic102Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic102Tex[] = dgMapGrandStatic102Tex;
 
-#define dmap_grand_static_Blob_002FD0 "__OTR__map_grand_static/map_grand_static_Blob_002FD0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_002FD0[] = dmap_grand_static_Blob_002FD0;
+#define dgMapGrandStatic103Tex "__OTR__map_grand_static/gMapGrandStatic103Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic103Tex[] = dgMapGrandStatic103Tex;
 
-#define dmap_grand_static_Blob_003FC0 "__OTR__map_grand_static/map_grand_static_Blob_003FC0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_003FC0[] = dmap_grand_static_Blob_003FC0;
+#define dgMapGrandStatic104Tex "__OTR__map_grand_static/gMapGrandStatic104Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic104Tex[] = dgMapGrandStatic104Tex;
 
-#define dmap_grand_static_Blob_004FB0 "__OTR__map_grand_static/map_grand_static_Blob_004FB0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_004FB0[] = dmap_grand_static_Blob_004FB0;
+#define dgMapGrandStatic105Tex "__OTR__map_grand_static/gMapGrandStatic105Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic105Tex[] = dgMapGrandStatic105Tex;
 
-#define dmap_grand_static_Blob_005AF0 "__OTR__map_grand_static/map_grand_static_Blob_005AF0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_005AF0[] = dmap_grand_static_Blob_005AF0;
+#define dgMapGrandStatic106Tex "__OTR__map_grand_static/gMapGrandStatic106Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic106Tex[] = dgMapGrandStatic106Tex;
 
-#define dmap_grand_static_Blob_006AE0 "__OTR__map_grand_static/map_grand_static_Blob_006AE0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_006AE0[] = dmap_grand_static_Blob_006AE0;
+#define dgMapGrandStatic107Tex "__OTR__map_grand_static/gMapGrandStatic107Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic107Tex[] = dgMapGrandStatic107Tex;
 
-#define dmap_grand_static_Blob_007AD0 "__OTR__map_grand_static/map_grand_static_Blob_007AD0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_007AD0[] = dmap_grand_static_Blob_007AD0;
+#define dgMapGrandStatic108Tex "__OTR__map_grand_static/gMapGrandStatic108Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic108Tex[] = dgMapGrandStatic108Tex;
 
-#define dmap_grand_static_Blob_008AC0 "__OTR__map_grand_static/map_grand_static_Blob_008AC0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_008AC0[] = dmap_grand_static_Blob_008AC0;
+#define dgMapGrandStatic109Tex "__OTR__map_grand_static/gMapGrandStatic109Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic109Tex[] = dgMapGrandStatic109Tex;
 
-#define dmap_grand_static_Blob_009AB0 "__OTR__map_grand_static/map_grand_static_Blob_009AB0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_009AB0[] = dmap_grand_static_Blob_009AB0;
+#define dgMapGrandStatic10ATex "__OTR__map_grand_static/gMapGrandStatic10ATex"
+static const ALIGN_ASSET(2) char gMapGrandStatic10ATex[] = dgMapGrandStatic10ATex;
 
-#define dmap_grand_static_Blob_009ED0 "__OTR__map_grand_static/map_grand_static_Blob_009ED0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_009ED0[] = dmap_grand_static_Blob_009ED0;
+#define dgMapGrandStatic10BTex "__OTR__map_grand_static/gMapGrandStatic10BTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic10BTex[] = dgMapGrandStatic10BTex;
 
-#define dmap_grand_static_Blob_00AEC0 "__OTR__map_grand_static/map_grand_static_Blob_00AEC0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_00AEC0[] = dmap_grand_static_Blob_00AEC0;
+#define dgMapGrandStatic10CTex "__OTR__map_grand_static/gMapGrandStatic10CTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic10CTex[] = dgMapGrandStatic10CTex;
 
-#define dmap_grand_static_Blob_00B310 "__OTR__map_grand_static/map_grand_static_Blob_00B310"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_00B310[] = dmap_grand_static_Blob_00B310;
+#define dgMapGrandStatic10DTex "__OTR__map_grand_static/gMapGrandStatic10DTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic10DTex[] = dgMapGrandStatic10DTex;
 
-#define dmap_grand_static_Blob_00BAB0 "__OTR__map_grand_static/map_grand_static_Blob_00BAB0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_00BAB0[] = dmap_grand_static_Blob_00BAB0;
+#define dgMapGrandStatic10ETex "__OTR__map_grand_static/gMapGrandStatic10ETex"
+static const ALIGN_ASSET(2) char gMapGrandStatic10ETex[] = dgMapGrandStatic10ETex;
 
-#define dmap_grand_static_Blob_00CAA0 "__OTR__map_grand_static/map_grand_static_Blob_00CAA0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_00CAA0[] = dmap_grand_static_Blob_00CAA0;
+#define dgMapGrandStatic10FTex "__OTR__map_grand_static/gMapGrandStatic10FTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic10FTex[] = dgMapGrandStatic10FTex;
 
-#define dmap_grand_static_Blob_00DA90 "__OTR__map_grand_static/map_grand_static_Blob_00DA90"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_00DA90[] = dmap_grand_static_Blob_00DA90;
+#define dgMapGrandStatic110Tex "__OTR__map_grand_static/gMapGrandStatic110Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic110Tex[] = dgMapGrandStatic110Tex;
 
-#define dmap_grand_static_Blob_00EA80 "__OTR__map_grand_static/map_grand_static_Blob_00EA80"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_00EA80[] = dmap_grand_static_Blob_00EA80;
+#define dgMapGrandStatic111Tex "__OTR__map_grand_static/gMapGrandStatic111Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic111Tex[] = dgMapGrandStatic111Tex;
 
-#define dmap_grand_static_Blob_00F200 "__OTR__map_grand_static/map_grand_static_Blob_00F200"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_00F200[] = dmap_grand_static_Blob_00F200;
+#define dgMapGrandStatic112Tex "__OTR__map_grand_static/gMapGrandStatic112Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic112Tex[] = dgMapGrandStatic112Tex;
 
-#define dmap_grand_static_Blob_00FA00 "__OTR__map_grand_static/map_grand_static_Blob_00FA00"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_00FA00[] = dmap_grand_static_Blob_00FA00;
+#define dgMapGrandStatic113Tex "__OTR__map_grand_static/gMapGrandStatic113Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic113Tex[] = dgMapGrandStatic113Tex;
 
-#define dmap_grand_static_Blob_010250 "__OTR__map_grand_static/map_grand_static_Blob_010250"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_010250[] = dmap_grand_static_Blob_010250;
+#define dgMapGrandStatic114Tex "__OTR__map_grand_static/gMapGrandStatic114Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic114Tex[] = dgMapGrandStatic114Tex;
 
-#define dmap_grand_static_Blob_010760 "__OTR__map_grand_static/map_grand_static_Blob_010760"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_010760[] = dmap_grand_static_Blob_010760;
+#define dgMapGrandStatic115Tex "__OTR__map_grand_static/gMapGrandStatic115Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic115Tex[] = dgMapGrandStatic115Tex;
 
-#define dmap_grand_static_Blob_010E70 "__OTR__map_grand_static/map_grand_static_Blob_010E70"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_010E70[] = dmap_grand_static_Blob_010E70;
+#define dgMapGrandStatic116Tex "__OTR__map_grand_static/gMapGrandStatic116Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic116Tex[] = dgMapGrandStatic116Tex;
 
-#define dmap_grand_static_Blob_011950 "__OTR__map_grand_static/map_grand_static_Blob_011950"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_011950[] = dmap_grand_static_Blob_011950;
+#define dgMapGrandStatic117Tex "__OTR__map_grand_static/gMapGrandStatic117Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic117Tex[] = dgMapGrandStatic117Tex;
 
-#define dmap_grand_static_Blob_011FB0 "__OTR__map_grand_static/map_grand_static_Blob_011FB0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_011FB0[] = dmap_grand_static_Blob_011FB0;
+#define dgMapGrandStatic118Tex "__OTR__map_grand_static/gMapGrandStatic118Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic118Tex[] = dgMapGrandStatic118Tex;
 
-#define dmap_grand_static_Blob_012C10 "__OTR__map_grand_static/map_grand_static_Blob_012C10"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_012C10[] = dmap_grand_static_Blob_012C10;
+#define dgMapGrandStatic119Tex "__OTR__map_grand_static/gMapGrandStatic119Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic119Tex[] = dgMapGrandStatic119Tex;
 
-#define dmap_grand_static_Blob_013A20 "__OTR__map_grand_static/map_grand_static_Blob_013A20"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_013A20[] = dmap_grand_static_Blob_013A20;
+#define dgMapGrandStatic11ATex "__OTR__map_grand_static/gMapGrandStatic11ATex"
+static const ALIGN_ASSET(2) char gMapGrandStatic11ATex[] = dgMapGrandStatic11ATex;
 
-#define dmap_grand_static_Blob_013E00 "__OTR__map_grand_static/map_grand_static_Blob_013E00"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_013E00[] = dmap_grand_static_Blob_013E00;
+#define dgMapGrandStatic11BTex "__OTR__map_grand_static/gMapGrandStatic11BTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic11BTex[] = dgMapGrandStatic11BTex;
 
-#define dmap_grand_static_Blob_0143A0 "__OTR__map_grand_static/map_grand_static_Blob_0143A0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_0143A0[] = dmap_grand_static_Blob_0143A0;
+#define dgMapGrandStatic11CTex "__OTR__map_grand_static/gMapGrandStatic11CTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic11CTex[] = dgMapGrandStatic11CTex;
 
-#define dmap_grand_static_Blob_014BC0 "__OTR__map_grand_static/map_grand_static_Blob_014BC0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_014BC0[] = dmap_grand_static_Blob_014BC0;
+#define dgMapGrandStatic11DTex "__OTR__map_grand_static/gMapGrandStatic11DTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic11DTex[] = dgMapGrandStatic11DTex;
 
-#define dmap_grand_static_Blob_015000 "__OTR__map_grand_static/map_grand_static_Blob_015000"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_015000[] = dmap_grand_static_Blob_015000;
+#define dgMapGrandStatic11ETex "__OTR__map_grand_static/gMapGrandStatic11ETex"
+static const ALIGN_ASSET(2) char gMapGrandStatic11ETex[] = dgMapGrandStatic11ETex;
 
-#define dmap_grand_static_Blob_015590 "__OTR__map_grand_static/map_grand_static_Blob_015590"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_015590[] = dmap_grand_static_Blob_015590;
+#define dgMapGrandStatic11FTex "__OTR__map_grand_static/gMapGrandStatic11FTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic11FTex[] = dgMapGrandStatic11FTex;
 
-#define dmap_grand_static_Blob_015B30 "__OTR__map_grand_static/map_grand_static_Blob_015B30"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_015B30[] = dmap_grand_static_Blob_015B30;
+#define dgMapGrandStatic120Tex "__OTR__map_grand_static/gMapGrandStatic120Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic120Tex[] = dgMapGrandStatic120Tex;
 
-#define dmap_grand_static_Blob_0162D0 "__OTR__map_grand_static/map_grand_static_Blob_0162D0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_0162D0[] = dmap_grand_static_Blob_0162D0;
+#define dgMapGrandStatic121Tex "__OTR__map_grand_static/gMapGrandStatic121Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic121Tex[] = dgMapGrandStatic121Tex;
 
-#define dmap_grand_static_Blob_016A70 "__OTR__map_grand_static/map_grand_static_Blob_016A70"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_016A70[] = dmap_grand_static_Blob_016A70;
+#define dgMapGrandStatic122Tex "__OTR__map_grand_static/gMapGrandStatic122Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic122Tex[] = dgMapGrandStatic122Tex;
 
-#define dmap_grand_static_Blob_017860 "__OTR__map_grand_static/map_grand_static_Blob_017860"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_017860[] = dmap_grand_static_Blob_017860;
+#define dgMapGrandStatic123Tex "__OTR__map_grand_static/gMapGrandStatic123Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic123Tex[] = dgMapGrandStatic123Tex;
 
-#define dmap_grand_static_Blob_0180B0 "__OTR__map_grand_static/map_grand_static_Blob_0180B0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_0180B0[] = dmap_grand_static_Blob_0180B0;
+#define dgMapGrandStatic124Tex "__OTR__map_grand_static/gMapGrandStatic124Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic124Tex[] = dgMapGrandStatic124Tex;
 
-#define dmap_grand_static_Blob_018A70 "__OTR__map_grand_static/map_grand_static_Blob_018A70"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_018A70[] = dmap_grand_static_Blob_018A70;
+#define dgMapGrandStatic125Tex "__OTR__map_grand_static/gMapGrandStatic125Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic125Tex[] = dgMapGrandStatic125Tex;
 
-#define dmap_grand_static_Blob_0192F0 "__OTR__map_grand_static/map_grand_static_Blob_0192F0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_0192F0[] = dmap_grand_static_Blob_0192F0;
+#define dgMapGrandStatic126Tex "__OTR__map_grand_static/gMapGrandStatic126Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic126Tex[] = dgMapGrandStatic126Tex;
 
-#define dmap_grand_static_Blob_019950 "__OTR__map_grand_static/map_grand_static_Blob_019950"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_019950[] = dmap_grand_static_Blob_019950;
+#define dgMapGrandStatic127Tex "__OTR__map_grand_static/gMapGrandStatic127Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic127Tex[] = dgMapGrandStatic127Tex;
 
-#define dmap_grand_static_Blob_019CB0 "__OTR__map_grand_static/map_grand_static_Blob_019CB0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_019CB0[] = dmap_grand_static_Blob_019CB0;
+#define dgMapGrandStatic128Tex "__OTR__map_grand_static/gMapGrandStatic128Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic128Tex[] = dgMapGrandStatic128Tex;
 
-#define dmap_grand_static_Blob_019F10 "__OTR__map_grand_static/map_grand_static_Blob_019F10"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_019F10[] = dmap_grand_static_Blob_019F10;
+#define dgMapGrandStatic129Tex "__OTR__map_grand_static/gMapGrandStatic129Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic129Tex[] = dgMapGrandStatic129Tex;
 
-#define dmap_grand_static_Blob_01A870 "__OTR__map_grand_static/map_grand_static_Blob_01A870"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_01A870[] = dmap_grand_static_Blob_01A870;
+#define dgMapGrandStatic12ATex "__OTR__map_grand_static/gMapGrandStatic12ATex"
+static const ALIGN_ASSET(2) char gMapGrandStatic12ATex[] = dgMapGrandStatic12ATex;
 
-#define dmap_grand_static_Blob_01ABC0 "__OTR__map_grand_static/map_grand_static_Blob_01ABC0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_01ABC0[] = dmap_grand_static_Blob_01ABC0;
+#define dgMapGrandStatic12BTex "__OTR__map_grand_static/gMapGrandStatic12BTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic12BTex[] = dgMapGrandStatic12BTex;
 
-#define dmap_grand_static_Blob_01B570 "__OTR__map_grand_static/map_grand_static_Blob_01B570"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_01B570[] = dmap_grand_static_Blob_01B570;
+#define dgMapGrandStatic12CTex "__OTR__map_grand_static/gMapGrandStatic12CTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic12CTex[] = dgMapGrandStatic12CTex;
 
-#define dmap_grand_static_Blob_01BEF0 "__OTR__map_grand_static/map_grand_static_Blob_01BEF0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_01BEF0[] = dmap_grand_static_Blob_01BEF0;
+#define dgMapGrandStatic12DTex "__OTR__map_grand_static/gMapGrandStatic12DTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic12DTex[] = dgMapGrandStatic12DTex;
 
-#define dmap_grand_static_Blob_01CEE0 "__OTR__map_grand_static/map_grand_static_Blob_01CEE0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_01CEE0[] = dmap_grand_static_Blob_01CEE0;
+#define dgMapGrandStatic12ETex "__OTR__map_grand_static/gMapGrandStatic12ETex"
+static const ALIGN_ASSET(2) char gMapGrandStatic12ETex[] = dgMapGrandStatic12ETex;
 
-#define dmap_grand_static_Blob_01DA00 "__OTR__map_grand_static/map_grand_static_Blob_01DA00"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_01DA00[] = dmap_grand_static_Blob_01DA00;
+#define dgMapGrandStatic12FTex "__OTR__map_grand_static/gMapGrandStatic12FTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic12FTex[] = dgMapGrandStatic12FTex;
 
-#define dmap_grand_static_Blob_01E7A0 "__OTR__map_grand_static/map_grand_static_Blob_01E7A0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_01E7A0[] = dmap_grand_static_Blob_01E7A0;
+#define dgMapGrandStatic130Tex "__OTR__map_grand_static/gMapGrandStatic130Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic130Tex[] = dgMapGrandStatic130Tex;
 
-#define dmap_grand_static_Blob_01EFC0 "__OTR__map_grand_static/map_grand_static_Blob_01EFC0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_01EFC0[] = dmap_grand_static_Blob_01EFC0;
+#define dgMapGrandStatic131Tex "__OTR__map_grand_static/gMapGrandStatic131Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic131Tex[] = dgMapGrandStatic131Tex;
 
-#define dmap_grand_static_Blob_01F3A0 "__OTR__map_grand_static/map_grand_static_Blob_01F3A0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_01F3A0[] = dmap_grand_static_Blob_01F3A0;
+#define dgMapGrandStatic132Tex "__OTR__map_grand_static/gMapGrandStatic132Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic132Tex[] = dgMapGrandStatic132Tex;
 
-#define dmap_grand_static_Blob_01FD20 "__OTR__map_grand_static/map_grand_static_Blob_01FD20"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_01FD20[] = dmap_grand_static_Blob_01FD20;
+#define dgMapGrandStatic133Tex "__OTR__map_grand_static/gMapGrandStatic133Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic133Tex[] = dgMapGrandStatic133Tex;
 
-#define dmap_grand_static_Blob_020680 "__OTR__map_grand_static/map_grand_static_Blob_020680"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_020680[] = dmap_grand_static_Blob_020680;
+#define dgMapGrandStatic134Tex "__OTR__map_grand_static/gMapGrandStatic134Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic134Tex[] = dgMapGrandStatic134Tex;
 
-#define dmap_grand_static_Blob_020DE0 "__OTR__map_grand_static/map_grand_static_Blob_020DE0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_020DE0[] = dmap_grand_static_Blob_020DE0;
+#define dgMapGrandStatic135Tex "__OTR__map_grand_static/gMapGrandStatic135Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic135Tex[] = dgMapGrandStatic135Tex;
 
-#define dmap_grand_static_Blob_021740 "__OTR__map_grand_static/map_grand_static_Blob_021740"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_021740[] = dmap_grand_static_Blob_021740;
+#define dgMapGrandStatic136Tex "__OTR__map_grand_static/gMapGrandStatic136Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic136Tex[] = dgMapGrandStatic136Tex;
 
-#define dmap_grand_static_Blob_021910 "__OTR__map_grand_static/map_grand_static_Blob_021910"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_021910[] = dmap_grand_static_Blob_021910;
+#define dgMapGrandStatic137Tex "__OTR__map_grand_static/gMapGrandStatic137Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic137Tex[] = dgMapGrandStatic137Tex;
 
-#define dmap_grand_static_Blob_021F40 "__OTR__map_grand_static/map_grand_static_Blob_021F40"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_021F40[] = dmap_grand_static_Blob_021F40;
+#define dgMapGrandStatic138Tex "__OTR__map_grand_static/gMapGrandStatic138Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic138Tex[] = dgMapGrandStatic138Tex;
 
-#define dmap_grand_static_Blob_0225C0 "__OTR__map_grand_static/map_grand_static_Blob_0225C0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_0225C0[] = dmap_grand_static_Blob_0225C0;
+#define dgMapGrandStatic139Tex "__OTR__map_grand_static/gMapGrandStatic139Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic139Tex[] = dgMapGrandStatic139Tex;
 
-#define dmap_grand_static_Blob_022D90 "__OTR__map_grand_static/map_grand_static_Blob_022D90"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_022D90[] = dmap_grand_static_Blob_022D90;
+#define dgMapGrandStatic13ATex "__OTR__map_grand_static/gMapGrandStatic13ATex"
+static const ALIGN_ASSET(2) char gMapGrandStatic13ATex[] = dgMapGrandStatic13ATex;
 
-#define dmap_grand_static_Blob_023600 "__OTR__map_grand_static/map_grand_static_Blob_023600"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_023600[] = dmap_grand_static_Blob_023600;
+#define dgMapGrandStatic13BTex "__OTR__map_grand_static/gMapGrandStatic13BTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic13BTex[] = dgMapGrandStatic13BTex;
 
-#define dmap_grand_static_Blob_024460 "__OTR__map_grand_static/map_grand_static_Blob_024460"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_024460[] = dmap_grand_static_Blob_024460;
+#define dgMapGrandStatic13CTex "__OTR__map_grand_static/gMapGrandStatic13CTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic13CTex[] = dgMapGrandStatic13CTex;
 
-#define dmap_grand_static_Blob_024B70 "__OTR__map_grand_static/map_grand_static_Blob_024B70"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_024B70[] = dmap_grand_static_Blob_024B70;
+#define dgMapGrandStatic13DTex "__OTR__map_grand_static/gMapGrandStatic13DTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic13DTex[] = dgMapGrandStatic13DTex;
 
-#define dmap_grand_static_Blob_025190 "__OTR__map_grand_static/map_grand_static_Blob_025190"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_025190[] = dmap_grand_static_Blob_025190;
+#define dgMapGrandStatic13ETex "__OTR__map_grand_static/gMapGrandStatic13ETex"
+static const ALIGN_ASSET(2) char gMapGrandStatic13ETex[] = dgMapGrandStatic13ETex;
 
-#define dmap_grand_static_Blob_0257B0 "__OTR__map_grand_static/map_grand_static_Blob_0257B0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_0257B0[] = dmap_grand_static_Blob_0257B0;
+#define dgMapGrandStatic13FTex "__OTR__map_grand_static/gMapGrandStatic13FTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic13FTex[] = dgMapGrandStatic13FTex;
 
-#define dmap_grand_static_Blob_025E30 "__OTR__map_grand_static/map_grand_static_Blob_025E30"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_025E30[] = dmap_grand_static_Blob_025E30;
+#define dgMapGrandStatic140Tex "__OTR__map_grand_static/gMapGrandStatic140Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic140Tex[] = dgMapGrandStatic140Tex;
 
-#define dmap_grand_static_Blob_026450 "__OTR__map_grand_static/map_grand_static_Blob_026450"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_026450[] = dmap_grand_static_Blob_026450;
+#define dgMapGrandStatic141Tex "__OTR__map_grand_static/gMapGrandStatic141Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic141Tex[] = dgMapGrandStatic141Tex;
 
-#define dmap_grand_static_Blob_026660 "__OTR__map_grand_static/map_grand_static_Blob_026660"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_026660[] = dmap_grand_static_Blob_026660;
+#define dgMapGrandStatic142Tex "__OTR__map_grand_static/gMapGrandStatic142Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic142Tex[] = dgMapGrandStatic142Tex;
 
-#define dmap_grand_static_Blob_026B10 "__OTR__map_grand_static/map_grand_static_Blob_026B10"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_026B10[] = dmap_grand_static_Blob_026B10;
+#define dgMapGrandStatic143Tex "__OTR__map_grand_static/gMapGrandStatic143Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic143Tex[] = dgMapGrandStatic143Tex;
 
-#define dmap_grand_static_Blob_027190 "__OTR__map_grand_static/map_grand_static_Blob_027190"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_027190[] = dmap_grand_static_Blob_027190;
+#define dgMapGrandStatic144Tex "__OTR__map_grand_static/gMapGrandStatic144Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic144Tex[] = dgMapGrandStatic144Tex;
 
-#define dmap_grand_static_Blob_0274E0 "__OTR__map_grand_static/map_grand_static_Blob_0274E0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_0274E0[] = dmap_grand_static_Blob_0274E0;
+#define dgMapGrandStatic145Tex "__OTR__map_grand_static/gMapGrandStatic145Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic145Tex[] = dgMapGrandStatic145Tex;
 
-#define dmap_grand_static_Blob_027B40 "__OTR__map_grand_static/map_grand_static_Blob_027B40"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_027B40[] = dmap_grand_static_Blob_027B40;
+#define dgMapGrandStatic146Tex "__OTR__map_grand_static/gMapGrandStatic146Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic146Tex[] = dgMapGrandStatic146Tex;
 
-#define dmap_grand_static_Blob_027E90 "__OTR__map_grand_static/map_grand_static_Blob_027E90"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_027E90[] = dmap_grand_static_Blob_027E90;
+#define dgMapGrandStatic147Tex "__OTR__map_grand_static/gMapGrandStatic147Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic147Tex[] = dgMapGrandStatic147Tex;
 
-#define dmap_grand_static_Blob_028390 "__OTR__map_grand_static/map_grand_static_Blob_028390"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_028390[] = dmap_grand_static_Blob_028390;
+#define dgMapGrandStatic148Tex "__OTR__map_grand_static/gMapGrandStatic148Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic148Tex[] = dgMapGrandStatic148Tex;
 
-#define dmap_grand_static_Blob_028A30 "__OTR__map_grand_static/map_grand_static_Blob_028A30"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_028A30[] = dmap_grand_static_Blob_028A30;
+#define dgMapGrandStatic149Tex "__OTR__map_grand_static/gMapGrandStatic149Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic149Tex[] = dgMapGrandStatic149Tex;
 
-#define dmap_grand_static_Blob_029010 "__OTR__map_grand_static/map_grand_static_Blob_029010"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_029010[] = dmap_grand_static_Blob_029010;
+#define dgMapGrandStatic14ATex "__OTR__map_grand_static/gMapGrandStatic14ATex"
+static const ALIGN_ASSET(2) char gMapGrandStatic14ATex[] = dgMapGrandStatic14ATex;
 
-#define dmap_grand_static_Blob_029690 "__OTR__map_grand_static/map_grand_static_Blob_029690"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_029690[] = dmap_grand_static_Blob_029690;
+#define dgMapGrandStatic14BTex "__OTR__map_grand_static/gMapGrandStatic14BTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic14BTex[] = dgMapGrandStatic14BTex;
 
-#define dmap_grand_static_Blob_029B10 "__OTR__map_grand_static/map_grand_static_Blob_029B10"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_029B10[] = dmap_grand_static_Blob_029B10;
+#define dgMapGrandStatic14CTex "__OTR__map_grand_static/gMapGrandStatic14CTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic14CTex[] = dgMapGrandStatic14CTex;
 
-#define dmap_grand_static_Blob_02A5F0 "__OTR__map_grand_static/map_grand_static_Blob_02A5F0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_02A5F0[] = dmap_grand_static_Blob_02A5F0;
+#define dgMapGrandStatic14DTex "__OTR__map_grand_static/gMapGrandStatic14DTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic14DTex[] = dgMapGrandStatic14DTex;
 
-#define dmap_grand_static_Blob_02A8C0 "__OTR__map_grand_static/map_grand_static_Blob_02A8C0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_02A8C0[] = dmap_grand_static_Blob_02A8C0;
+#define dgMapGrandStatic14ETex "__OTR__map_grand_static/gMapGrandStatic14ETex"
+static const ALIGN_ASSET(2) char gMapGrandStatic14ETex[] = dgMapGrandStatic14ETex;
 
-#define dmap_grand_static_Blob_02B450 "__OTR__map_grand_static/map_grand_static_Blob_02B450"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_02B450[] = dmap_grand_static_Blob_02B450;
+#define dgMapGrandStatic14FTex "__OTR__map_grand_static/gMapGrandStatic14FTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic14FTex[] = dgMapGrandStatic14FTex;
 
-#define dmap_grand_static_Blob_02C1F0 "__OTR__map_grand_static/map_grand_static_Blob_02C1F0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_02C1F0[] = dmap_grand_static_Blob_02C1F0;
+#define dgMapGrandStatic150Tex "__OTR__map_grand_static/gMapGrandStatic150Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic150Tex[] = dgMapGrandStatic150Tex;
 
-#define dmap_grand_static_Blob_02CAB0 "__OTR__map_grand_static/map_grand_static_Blob_02CAB0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_02CAB0[] = dmap_grand_static_Blob_02CAB0;
+#define dgMapGrandStatic151Tex "__OTR__map_grand_static/gMapGrandStatic151Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic151Tex[] = dgMapGrandStatic151Tex;
 
-#define dmap_grand_static_Blob_02D4E0 "__OTR__map_grand_static/map_grand_static_Blob_02D4E0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_02D4E0[] = dmap_grand_static_Blob_02D4E0;
+#define dgMapGrandStatic152Tex "__OTR__map_grand_static/gMapGrandStatic152Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic152Tex[] = dgMapGrandStatic152Tex;
 
-#define dmap_grand_static_Blob_02D610 "__OTR__map_grand_static/map_grand_static_Blob_02D610"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_02D610[] = dmap_grand_static_Blob_02D610;
+#define dgMapGrandStatic153Tex "__OTR__map_grand_static/gMapGrandStatic153Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic153Tex[] = dgMapGrandStatic153Tex;
 
-#define dmap_grand_static_Blob_02E240 "__OTR__map_grand_static/map_grand_static_Blob_02E240"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_02E240[] = dmap_grand_static_Blob_02E240;
+#define dgMapGrandStatic154Tex "__OTR__map_grand_static/gMapGrandStatic154Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic154Tex[] = dgMapGrandStatic154Tex;
 
-#define dmap_grand_static_Blob_02EAE0 "__OTR__map_grand_static/map_grand_static_Blob_02EAE0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_02EAE0[] = dmap_grand_static_Blob_02EAE0;
+#define dgMapGrandStatic155Tex "__OTR__map_grand_static/gMapGrandStatic155Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic155Tex[] = dgMapGrandStatic155Tex;
 
-#define dmap_grand_static_Blob_02FA30 "__OTR__map_grand_static/map_grand_static_Blob_02FA30"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_02FA30[] = dmap_grand_static_Blob_02FA30;
+#define dgMapGrandStatic156Tex "__OTR__map_grand_static/gMapGrandStatic156Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic156Tex[] = dgMapGrandStatic156Tex;
 
-#define dmap_grand_static_Blob_0303E0 "__OTR__map_grand_static/map_grand_static_Blob_0303E0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_0303E0[] = dmap_grand_static_Blob_0303E0;
+#define dgMapGrandStatic157Tex "__OTR__map_grand_static/gMapGrandStatic157Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic157Tex[] = dgMapGrandStatic157Tex;
 
-#define dmap_grand_static_Blob_030B90 "__OTR__map_grand_static/map_grand_static_Blob_030B90"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_030B90[] = dmap_grand_static_Blob_030B90;
+#define dgMapGrandStatic158Tex "__OTR__map_grand_static/gMapGrandStatic158Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic158Tex[] = dgMapGrandStatic158Tex;
 
-#define dmap_grand_static_Blob_0314F0 "__OTR__map_grand_static/map_grand_static_Blob_0314F0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_0314F0[] = dmap_grand_static_Blob_0314F0;
+#define dgMapGrandStatic159Tex "__OTR__map_grand_static/gMapGrandStatic159Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic159Tex[] = dgMapGrandStatic159Tex;
 
-#define dmap_grand_static_Blob_031C30 "__OTR__map_grand_static/map_grand_static_Blob_031C30"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_031C30[] = dmap_grand_static_Blob_031C30;
+#define dgMapGrandStatic15ATex "__OTR__map_grand_static/gMapGrandStatic15ATex"
+static const ALIGN_ASSET(2) char gMapGrandStatic15ATex[] = dgMapGrandStatic15ATex;
 
-#define dmap_grand_static_Blob_032630 "__OTR__map_grand_static/map_grand_static_Blob_032630"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_032630[] = dmap_grand_static_Blob_032630;
+#define dgMapGrandStatic15BTex "__OTR__map_grand_static/gMapGrandStatic15BTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic15BTex[] = dgMapGrandStatic15BTex;
 
-#define dmap_grand_static_Blob_032C70 "__OTR__map_grand_static/map_grand_static_Blob_032C70"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_032C70[] = dmap_grand_static_Blob_032C70;
+#define dgMapGrandStatic15CTex "__OTR__map_grand_static/gMapGrandStatic15CTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic15CTex[] = dgMapGrandStatic15CTex;
 
-#define dmap_grand_static_Blob_0336A0 "__OTR__map_grand_static/map_grand_static_Blob_0336A0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_0336A0[] = dmap_grand_static_Blob_0336A0;
+#define dgMapGrandStatic15DTex "__OTR__map_grand_static/gMapGrandStatic15DTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic15DTex[] = dgMapGrandStatic15DTex;
 
-#define dmap_grand_static_Blob_033A70 "__OTR__map_grand_static/map_grand_static_Blob_033A70"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_033A70[] = dmap_grand_static_Blob_033A70;
+#define dgMapGrandStatic15ETex "__OTR__map_grand_static/gMapGrandStatic15ETex"
+static const ALIGN_ASSET(2) char gMapGrandStatic15ETex[] = dgMapGrandStatic15ETex;
 
-#define dmap_grand_static_Blob_034770 "__OTR__map_grand_static/map_grand_static_Blob_034770"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_034770[] = dmap_grand_static_Blob_034770;
+#define dgMapGrandStatic15FTex "__OTR__map_grand_static/gMapGrandStatic15FTex"
+static const ALIGN_ASSET(2) char gMapGrandStatic15FTex[] = dgMapGrandStatic15FTex;
 
-#define dmap_grand_static_Blob_034BB0 "__OTR__map_grand_static/map_grand_static_Blob_034BB0"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_034BB0[] = dmap_grand_static_Blob_034BB0;
+#define dgMapGrandStatic160Tex "__OTR__map_grand_static/gMapGrandStatic160Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic160Tex[] = dgMapGrandStatic160Tex;
 
-#define dmap_grand_static_Blob_034F50 "__OTR__map_grand_static/map_grand_static_Blob_034F50"
-static const ALIGN_ASSET(2) char map_grand_static_Blob_034F50[] = dmap_grand_static_Blob_034F50;
+#define dgMapGrandStatic161Tex "__OTR__map_grand_static/gMapGrandStatic161Tex"
+static const ALIGN_ASSET(2) char gMapGrandStatic161Tex[] = dgMapGrandStatic161Tex;
 #endif // ARCHIVES_MAP_GRAND_STATIC_H

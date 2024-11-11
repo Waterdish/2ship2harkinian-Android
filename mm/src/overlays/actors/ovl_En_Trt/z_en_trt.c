@@ -7,6 +7,7 @@
 #include "z_en_trt.h"
 #include "objects/object_trt/object_trt.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY)
 
@@ -166,6 +167,10 @@ void EnTrt_UpdateCursorPos(PlayState* play, EnTrt* this) {
     this->cursorPos.x = x + xOffset;
     this->cursorPos.y = y + yOffset;
     this->cursorPos.z = 1.2f;
+
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0)) {
+        this->cursorPos.x = SCREEN_WIDTH - this->cursorPos.x;
+    }
 }
 
 void EnTrt_SetupGetMushroomCutscene(EnTrt* this) {
@@ -272,6 +277,8 @@ void EnTrt_StartShopping(PlayState* play, EnTrt* this) {
 void EnTrt_UpdateJoystickInputState(PlayState* play, EnTrt* this) {
     s8 stickX = CONTROLLER1(&play->state)->rel.stick_x;
     s8 stickY = CONTROLLER1(&play->state)->rel.stick_y;
+
+    stickX *= GameInteractor_InvertControl(GI_INVERT_SHOP_X);
 
     if (this->stickAccumX == 0) {
         if ((stickX > 30) || (stickX < -30)) {
@@ -1656,6 +1663,11 @@ void EnTrt_DrawTextRec(PlayState* play, s32 r, s32 g, s32 b, s32 a, f32 x, f32 y
 void EnTrt_DrawStickDirectionPrompt(PlayState* play, EnTrt* this) {
     s32 drawStickRightPrompt = this->stickLeftPrompt.isEnabled;
     s32 drawStickLeftPrompt = this->stickRightPrompt.isEnabled;
+
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0) && (drawStickLeftPrompt != drawStickRightPrompt)) {
+        drawStickLeftPrompt = !drawStickLeftPrompt;
+        drawStickRightPrompt = !drawStickRightPrompt;
+    }
 
     (void)"../z_en_trt.c";
 

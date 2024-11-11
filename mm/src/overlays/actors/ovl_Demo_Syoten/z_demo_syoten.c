@@ -7,6 +7,8 @@
 #include "z_demo_syoten.h"
 #include "objects/object_syoten/object_syoten.h"
 
+#include "2s2h/BenPort.h"
+
 #define FLAGS (ACTOR_FLAG_10 | ACTOR_FLAG_20)
 
 #define THIS ((DemoSyoten*)thisx)
@@ -200,7 +202,7 @@ void func_80C168D0(DemoSyoten* this, PlayState* play) {
 }
 
 void func_80C16974(f32 arg0) {
-    Vtx* vtx = Lib_SegmentedToVirtual(&object_syotenVtx_0018C0);
+    Vtx* vtx = ResourceMgr_LoadVtxByName(Lib_SegmentedToVirtual(&object_syotenVtx_0018C0));
     u8 sp20[3];
     s32 i;
 

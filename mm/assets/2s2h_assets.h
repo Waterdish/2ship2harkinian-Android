@@ -59,6 +59,60 @@ static const ALIGN_ASSET(2) char gThreeDayClockHour24Tex[] = dgThreeDayClockHour
 #define dgEmptyTexture "__OTR__textures/virtual/gEmptyTexture"
 static const ALIGN_ASSET(2) char gEmptyTexture[] = dgEmptyTexture;
 
+#define dgThreeDayClock3DSEdgeTex "__OTR__textures/parameter_static/gThreeDayClock3DSEdgeTex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSEdgeTex[] = dgThreeDayClock3DSEdgeTex;
+
+#define dgThreeDayClock3DSMiddleTex "__OTR__textures/parameter_static/gThreeDayClock3DSMiddleTex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSMiddleTex[] = dgThreeDayClock3DSMiddleTex;
+
+#define dgThreeDayClock3DSFillTex "__OTR__textures/parameter_static/gThreeDayClock3DSFillTex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSFillTex[] = dgThreeDayClock3DSFillTex;
+
+#define dgThreeDayClock3DSArrowTex "__OTR__textures/parameter_static/gThreeDayClock3DSArrowTex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSArrowTex[] = dgThreeDayClock3DSArrowTex;
+
+#define dgThreeDayClock3DSTimeBackdropTex "__OTR__textures/parameter_static/gThreeDayClock3DSTimeBackdropTex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSTimeBackdropTex[] = dgThreeDayClock3DSTimeBackdropTex;
+
+#define dgThreeDayClock3DSSlowTimeTex "__OTR__textures/parameter_static/gThreeDayClock3DSSlowTimeTex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSSlowTimeTex[] = dgThreeDayClock3DSSlowTimeTex;
+
+#define dgThreeDayClock3DSFinalHoursMoonTex "__OTR__textures/parameter_static/gThreeDayClock3DSFinalHoursMoonTex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSFinalHoursMoonTex[] = dgThreeDayClock3DSFinalHoursMoonTex;
+
+#define dgThreeDayClock3DSFinalHoursDigit0Tex "__OTR__textures/parameter_static/gThreeDayClock3DSFinalHoursDigit0Tex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSFinalHoursDigit0Tex[] = dgThreeDayClock3DSFinalHoursDigit0Tex;
+
+#define dgThreeDayClock3DSFinalHoursDigit1Tex "__OTR__textures/parameter_static/gThreeDayClock3DSFinalHoursDigit1Tex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSFinalHoursDigit1Tex[] = dgThreeDayClock3DSFinalHoursDigit1Tex;
+
+#define dgThreeDayClock3DSFinalHoursDigit2Tex "__OTR__textures/parameter_static/gThreeDayClock3DSFinalHoursDigit2Tex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSFinalHoursDigit2Tex[] = dgThreeDayClock3DSFinalHoursDigit2Tex;
+
+#define dgThreeDayClock3DSFinalHoursDigit3Tex "__OTR__textures/parameter_static/gThreeDayClock3DSFinalHoursDigit3Tex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSFinalHoursDigit3Tex[] = dgThreeDayClock3DSFinalHoursDigit3Tex;
+
+#define dgThreeDayClock3DSFinalHoursDigit4Tex "__OTR__textures/parameter_static/gThreeDayClock3DSFinalHoursDigit4Tex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSFinalHoursDigit4Tex[] = dgThreeDayClock3DSFinalHoursDigit4Tex;
+
+#define dgThreeDayClock3DSFinalHoursDigit5Tex "__OTR__textures/parameter_static/gThreeDayClock3DSFinalHoursDigit5Tex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSFinalHoursDigit5Tex[] = dgThreeDayClock3DSFinalHoursDigit5Tex;
+
+#define dgThreeDayClock3DSFinalHoursDigit6Tex "__OTR__textures/parameter_static/gThreeDayClock3DSFinalHoursDigit6Tex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSFinalHoursDigit6Tex[] = dgThreeDayClock3DSFinalHoursDigit6Tex;
+
+#define dgThreeDayClock3DSFinalHoursDigit7Tex "__OTR__textures/parameter_static/gThreeDayClock3DSFinalHoursDigit7Tex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSFinalHoursDigit7Tex[] = dgThreeDayClock3DSFinalHoursDigit7Tex;
+
+#define dgThreeDayClock3DSFinalHoursDigit8Tex "__OTR__textures/parameter_static/gThreeDayClock3DSFinalHoursDigit8Tex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSFinalHoursDigit8Tex[] = dgThreeDayClock3DSFinalHoursDigit8Tex;
+
+#define dgThreeDayClock3DSFinalHoursDigit9Tex "__OTR__textures/parameter_static/gThreeDayClock3DSFinalHoursDigit9Tex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSFinalHoursDigit9Tex[] = dgThreeDayClock3DSFinalHoursDigit9Tex;
+
+#define dgThreeDayClock3DSFinalHoursColonTex "__OTR__textures/parameter_static/gThreeDayClock3DSFinalHoursColonTex"
+static const ALIGN_ASSET(2) char gThreeDayClock3DSFinalHoursColonTex[] = dgThreeDayClock3DSFinalHoursColonTex;
+
 #define dgPauseSavePromptENGTex "__OTR__textures/icon_item_static/gPauseSavePromptENGTex"
 static const ALIGN_ASSET(2) char gPauseSavePromptENGTex[] = dgPauseSavePromptENGTex;
 

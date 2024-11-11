@@ -34,6 +34,8 @@
 #include "overlays/actors/ovl_En_Tanron1/z_en_tanron1.h"
 #include "overlays/actors/ovl_Item_B_Heart/z_item_b_heart.h"
 
+#include "2s2h/BenPort.h"
+
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_10 | ACTOR_FLAG_20)
 
 #define THIS ((Boss01*)thisx)
@@ -2612,7 +2614,7 @@ void Boss01_DrawSwordTrail(Boss01* this, PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx);
 
-    vtx = Lib_SegmentedToVirtual(&gOdolwaSwordTrailVtx);
+    vtx = ResourceMgr_LoadVtxByName(Lib_SegmentedToVirtual(&gOdolwaSwordTrailVtx));
 
     for (i = 0; i < ARRAY_COUNT(sSwordTrailOuterVertexIndices); i++) {
         vtx[sSwordTrailOuterVertexIndices[i]].v.ob[0] = cosf((i * M_PI) / sSwordTrailAngularRangeDivisor) * 200.0f;
@@ -3105,6 +3107,8 @@ void Boss01_DrawShadowTex(u8* tex, Boss01* this, PlayState* play) {
     GraphicsContext* gfxCtx = play->state.gfxCtx;
 
     OPEN_DISPS(gfxCtx);
+
+    gSPInvalidateTexCache(POLY_OPA_DISP++, tex);
 
     Gfx_SetupDL25_Opa(play->state.gfxCtx);
 

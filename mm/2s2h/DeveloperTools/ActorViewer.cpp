@@ -1,7 +1,17 @@
 #include "ActorViewer.h"
 #include "2s2h/BenGui/UIWidgets.hpp"
-#include "global.h"
-#include "2s2h/Enhancements/GameInteractor/GameInteractor.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
+#include "2s2h/NameTag/NameTag.h"
+#include <spdlog/fmt/fmt.h>
+#include <string>
+#include <vector>
+#include <unordered_map>
+
+extern "C" {
+#include "z64actor.h"
+#include "functions.h"
+#include "variables.h"
+}
 
 typedef struct ActorInfo {
     u16 id;
@@ -10,14 +20,8 @@ typedef struct ActorInfo {
     Vec3s rot;
 } ActorInfo;
 
-typedef enum Method {
-    LIST,
-    TARGET,
-    HOLD,
-} Method;
-
-std::array<const char*, 12> acMapping = { "Switch", "Background",  "Player", "Explosive", "NPC",  "Enemy",
-                                          "Prop",   "Item/Action", "Misc.",  "Boss",      "Door", "Chest" };
+std::array<const char*, ACTORCAT_MAX> acMapping = { "Switch", "Background",  "Player", "Explosive", "NPC",  "Enemy",
+                                                    "Prop",   "Item/Action", "Misc.",  "Boss",      "Door", "Chest" };
 
 #define DEFINE_ACTOR(name, _enumValue, _allocType, _debugName, _humanName) { _enumValue, _humanName },
 #define DEFINE_ACTOR_INTERNAL(_name, _enumValue, _allocType, _debugName, _humanName) { _enumValue, _humanName },
@@ -31,13 +35,33 @@ std::unordered_map<s16, const char*> actorDescriptions = {
 #undef DEFINE_ACTOR_INTERNAL
 #undef DEFINE_ACTOR_UNSET
 
+#define DEFINE_ACTOR(name, _enumValue, _allocType, _debugName, _humanName) { _enumValue, _debugName },
+#define DEFINE_ACTOR_INTERNAL(_name, _enumValue, _allocType, _debugName, _humanName) { _enumValue, _debugName },
+#define DEFINE_ACTOR_UNSET(_enumValue) { _enumValue, "Unset" },
+
+std::unordered_map<s16, const char*> actorDebugNames = {
+#include "tables/actor_table.h"
+};
+
+#undef DEFINE_ACTOR
+#undef DEFINE_ACTOR_INTERNAL
+#undef DEFINE_ACTOR_UNSET
+
+#define DEBUG_ACTOR_NAMETAG_TAG "debug_actor_viewer"
+#define CVAR_ACTOR_NAME_TAGS(val) "gDeveloperTools.ActorNameTags." val
+
 std::string GetActorDescription(u16 actorNum) {
     return actorDescriptions.contains(actorNum) ? actorDescriptions[actorNum] : "???";
 }
 
+std::string GetActorDebugName(u16 actorNum) {
+    return actorDebugNames.contains(actorNum) ? actorDebugNames[actorNum] : "???";
+}
+
 std::vector<Actor*> GetCurrentSceneActors() {
-    if (!gPlayState)
+    if (!gPlayState) {
         return {};
+    }
 
     std::vector<Actor*> sceneActors;
     for (size_t category = ACTORCAT_SWITCH; category < ACTORCAT_MAX; category++) {
@@ -52,88 +76,199 @@ std::vector<Actor*> GetCurrentSceneActors() {
     return sceneActors;
 }
 
-static bool needs_reset = false;
-
-static Actor* display{};
-static Actor* fetch;
+static Actor* selectedActor = nullptr;
 static ActorInfo newActor;
-static std::vector<Actor*> list;
+static s16 lastSceneId = -1;
+static std::string comboBoxLabel = "Please select";
 
-static s16 lastSceneId = 0;
-static s16 newActorId = 0;
-static u8 category = 0;
-static s8 method = -1;
-static std::string filler = "Please select";
 static HOOK_ID preventActorDrawHookId = 0;
 static HOOK_ID preventActorUpdateHookId = 0;
+static HOOK_ID actorDeleteHookID = 0;
 
 void ResetVariables() {
-    display = fetch = {};
-    newActor = {};
-    filler = "Please select";
+    selectedActor = nullptr;
+    comboBoxLabel = "Please select";
     GameInteractor::Instance->UnregisterGameHookForPtr<GameInteractor::ShouldActorDraw>(preventActorDrawHookId);
     GameInteractor::Instance->UnregisterGameHookForPtr<GameInteractor::ShouldActorUpdate>(preventActorUpdateHookId);
+    GameInteractor::Instance->UnregisterGameHook<GameInteractor::OnActorDestroy>(actorDeleteHookID);
     preventActorDrawHookId = 0;
     preventActorUpdateHookId = 0;
+    actorDeleteHookID = 0;
 }
 
-void ActorViewerWindow::DrawElement() {
-    ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-    if (!ImGui::Begin("Actor Viewer", &mIsVisible, ImGuiWindowFlags_NoFocusOnAppearing)) {
-        ImGui::End();
+void SetSelectedActor(Actor* actor) {
+    ResetVariables();
+    selectedActor = actor;
+
+    actorDeleteHookID = GameInteractor::Instance->RegisterGameHookForPtr<GameInteractor::OnActorDestroy>(
+        (uintptr_t)selectedActor, [](Actor* _) { ResetVariables(); });
+}
+
+void ActorViewer_AddTagForActor(Actor* actor) {
+    if (!CVarGetInteger(CVAR_ACTOR_NAME_TAGS("Enabled"), 0)) {
         return;
     }
 
+    std::vector<std::string> parts;
+
+    if (CVarGetInteger(CVAR_ACTOR_NAME_TAGS("DisplayID"), 0)) {
+        parts.push_back(GetActorDebugName(actor->id));
+    }
+    if (CVarGetInteger(CVAR_ACTOR_NAME_TAGS("DisplayDescription"), 0)) {
+        parts.push_back(GetActorDescription(actor->id));
+    }
+    if (CVarGetInteger(CVAR_ACTOR_NAME_TAGS("DisplayCategory"), 0)) {
+        parts.push_back(acMapping[actor->category]);
+    }
+    if (CVarGetInteger(CVAR_ACTOR_NAME_TAGS("DisplayParams"), 0)) {
+        parts.push_back(fmt::format("0x{:04X} ({})", (u16)actor->params, actor->params));
+    }
+
+    std::string tag = "";
+    for (size_t i = 0; i < parts.size(); i++) {
+        if (i != 0) {
+            tag += "\n";
+        }
+        tag += parts.at(i);
+    }
+
+    bool withZBuffer = CVarGetInteger(CVAR_ACTOR_NAME_TAGS("WithZBuffer"), 0);
+
+    NameTag_RegisterForActorWithOptions(actor, tag.c_str(),
+                                        { .tag = DEBUG_ACTOR_NAMETAG_TAG, .noZBuffer = !withZBuffer });
+}
+
+void ActorViewer_AddTagForAllActors() {
+    if (gPlayState == nullptr) {
+        return;
+    }
+
+    for (size_t i = 0; i < ARRAY_COUNT(gPlayState->actorCtx.actorLists); i++) {
+        ActorListEntry currList = gPlayState->actorCtx.actorLists[i];
+        Actor* currAct = currList.first;
+        while (currAct != nullptr) {
+            ActorViewer_AddTagForActor(currAct);
+            currAct = currAct->next;
+        }
+    }
+}
+
+void ActorViewer_RegisterNameTagHooks() {
+    static HOOK_ID actorInitHookID = 0;
+    GameInteractor::Instance->UnregisterGameHook<GameInteractor::OnActorInit>(actorInitHookID);
+    actorInitHookID = 0;
+
+    if (!CVarGetInteger(CVAR_ACTOR_NAME_TAGS("Enabled"), 0)) {
+        return;
+    }
+
+    actorInitHookID =
+        GameInteractor::Instance->RegisterGameHook<GameInteractor::OnActorInit>(ActorViewer_AddTagForActor);
+}
+
+void ActorViewerWindow::UpdateElement() {
+    static bool lastVisibleState = mIsVisible;
+
+    if (!mIsVisible && lastVisibleState != mIsVisible) {
+        ResetVariables();
+    }
+
+    lastVisibleState = mIsVisible;
+}
+
+void ActorViewerWindow::DrawElement() {
     if (gPlayState != nullptr) {
-        needs_reset = lastSceneId != gPlayState->sceneId;
-        if (needs_reset) {
+        if (lastSceneId != gPlayState->sceneId) {
             ResetVariables();
             lastSceneId = gPlayState->sceneId;
-            needs_reset = false;
         }
 
-        if (ImGui::BeginCombo("Actor", filler.c_str())) {
-            if (gPlayState != nullptr) {
-                list = GetCurrentSceneActors();
-                lastSceneId = gPlayState->sceneId;
+        if (ImGui::BeginChild("options", ImVec2(0, 0), ImGuiChildFlags_Border | ImGuiChildFlags_AutoResizeY)) {
+            bool toggled = false;
+            bool optionChange = false;
+
+            ImGui::SeparatorText("Options");
+
+            toggled = UIWidgets::CVarCheckbox("Actor Name Tags", CVAR_ACTOR_NAME_TAGS("Enabled"),
+                                              { .tooltip = "Adds \"name tags\" above actors for identification" });
+
+            ImGui::SameLine();
+
+            UIWidgets::Button("Display Items", { .tooltip = "Click to add display items on the name tags" });
+
+            if (ImGui::BeginPopupContextItem(nullptr, ImGuiPopupFlags_MouseButtonLeft | ImGuiPopupFlags_NoReopen)) {
+                optionChange |= UIWidgets::CVarCheckbox("ID", CVAR_ACTOR_NAME_TAGS("DisplayID"));
+                optionChange |= UIWidgets::CVarCheckbox("Description", CVAR_ACTOR_NAME_TAGS("DisplayDescription"));
+                optionChange |= UIWidgets::CVarCheckbox("Category", CVAR_ACTOR_NAME_TAGS("DisplayCategory"));
+                optionChange |= UIWidgets::CVarCheckbox("Params", CVAR_ACTOR_NAME_TAGS("DisplayParams"));
+
+                ImGui::EndPopup();
             }
-            if (!list.empty()) {
-                u8 count = 0;
-                u8 prev_category = 0xff;
-                for (size_t i = 0; i < list.size(); i++) {
-                    std::string label = acMapping[list[i]->category];
-                    if (list[i]->category != prev_category) {
-                        prev_category = list[i]->category;
-                        count = 1;
+
+            optionChange |= UIWidgets::CVarCheckbox(
+                "Name tags with Z-Buffer", CVAR_ACTOR_NAME_TAGS("WithZBuffer"),
+                { .tooltip = "Allow name tags to be obstructed when behind geometry and actors" });
+
+            if (toggled || optionChange) {
+                bool tagsEnabled = CVarGetInteger(CVAR_ACTOR_NAME_TAGS("Enabled"), 0);
+                bool noOptionsEnabled = !CVarGetInteger(CVAR_ACTOR_NAME_TAGS("DisplayID"), 0) &&
+                                        !CVarGetInteger(CVAR_ACTOR_NAME_TAGS("DisplayDescription"), 0) &&
+                                        !CVarGetInteger(CVAR_ACTOR_NAME_TAGS("DisplayCategory"), 0) &&
+                                        !CVarGetInteger(CVAR_ACTOR_NAME_TAGS("DisplayParams"), 0);
+
+                // Save the user an extra click and prevent adding "empty" tags by enabling,
+                // disabling, or setting an option based on what changed
+                if (tagsEnabled && noOptionsEnabled) {
+                    if (toggled) {
+                        CVarSetInteger(CVAR_ACTOR_NAME_TAGS("DisplayID"), 1);
                     } else {
-                        count++;
+                        CVarSetInteger(CVAR_ACTOR_NAME_TAGS("Enabled"), 0);
                     }
-                    label += " " + std::to_string(count) + ": " + GetActorDescription(list[i]->id);
-                    if (ImGui::Selectable(label.c_str())) {
-                        method = LIST;
-                        display = list[i];
-                        newActorId = i;
-                        filler = label;
-                        GameInteractor::Instance->UnregisterGameHookForPtr<GameInteractor::ShouldActorDraw>(
-                            preventActorDrawHookId);
-                        GameInteractor::Instance->UnregisterGameHookForPtr<GameInteractor::ShouldActorUpdate>(
-                            preventActorUpdateHookId);
-                        preventActorDrawHookId = 0;
-                        preventActorUpdateHookId = 0;
-                        break;
+                } else if (optionChange && !tagsEnabled && !noOptionsEnabled) {
+                    CVarSetInteger(CVAR_ACTOR_NAME_TAGS("Enabled"), 1);
+                }
+
+                ActorViewer_RegisterNameTagHooks();
+                NameTag_RemoveAllByTag(DEBUG_ACTOR_NAMETAG_TAG);
+                ActorViewer_AddTagForAllActors();
+            }
+        }
+        ImGui::EndChild();
+
+        if (ImGui::TreeNode("Select existing Actor")) {
+            if (ImGui::BeginCombo("Actor", comboBoxLabel.c_str())) {
+                auto list = GetCurrentSceneActors();
+                lastSceneId = gPlayState->sceneId;
+
+                if (!list.empty()) {
+                    u8 count = 0;
+                    u8 prev_category = 0xff;
+                    for (size_t i = 0; i < list.size(); i++) {
+                        std::string label = acMapping[list[i]->category];
+                        if (list[i]->category != prev_category) {
+                            prev_category = list[i]->category;
+                            count = 1;
+                        } else {
+                            count++;
+                        }
+                        label += " " + std::to_string(count) + ": " + GetActorDescription(list[i]->id);
+                        if (ImGui::Selectable(label.c_str())) {
+                            SetSelectedActor(list[i]);
+                            comboBoxLabel = label;
+
+                            break;
+                        }
                     }
                 }
+                ImGui::EndCombo();
             }
-            ImGui::EndCombo();
-        }
 
-        if (ImGui::TreeNode("Selected Actor")) {
-            if (display != nullptr) {
+            if (selectedActor != nullptr) {
                 ImGui::BeginGroup();
-                ImGui::Text("ID: %hd", display->id);
-                ImGui::Text("Description: %s", GetActorDescription(display->id).c_str());
-                ImGui::Text("Category: %s", acMapping[display->category]);
-                ImGui::Text("Params: %hd", display->params);
+                ImGui::Text("ID: %hd", selectedActor->id);
+                ImGui::Text("Description: %s", GetActorDescription(selectedActor->id).c_str());
+                ImGui::Text("Category: %s", acMapping[selectedActor->category]);
+                ImGui::Text("Params: %hd", selectedActor->params);
                 ImGui::EndGroup();
 
                 ImGui::BeginGroup();
@@ -147,7 +282,7 @@ void ActorViewerWindow::DrawElement() {
                     if (ImGui::Button("Stop Drawing", ImVec2(ImGui::GetFontSize() * 10, 0))) {
                         preventActorDrawHookId =
                             GameInteractor::Instance->RegisterGameHookForPtr<GameInteractor::ShouldActorDraw>(
-                                (uintptr_t)display, [](Actor* _, bool* result) { *result = false; });
+                                (uintptr_t)selectedActor, [](Actor* _, bool* result) { *result = false; });
                     }
                 }
                 ImGui::SameLine();
@@ -161,7 +296,7 @@ void ActorViewerWindow::DrawElement() {
                     if (ImGui::Button("Stop Updating", ImVec2(ImGui::GetFontSize() * 10, 0))) {
                         preventActorUpdateHookId =
                             GameInteractor::Instance->RegisterGameHookForPtr<GameInteractor::ShouldActorUpdate>(
-                                (uintptr_t)display, [](Actor* _, bool* result) { *result = false; });
+                                (uintptr_t)selectedActor, [](Actor* _, bool* result) { *result = false; });
                     }
                 }
                 ImGui::EndGroup();
@@ -170,88 +305,71 @@ void ActorViewerWindow::DrawElement() {
 
                 ImGui::BeginGroup();
                 ImGui::Text("Actor Position");
-                ImGui::InputScalar("x", ImGuiDataType_Float, &display->world.pos.x);
+                ImGui::InputScalar("x", ImGuiDataType_Float, &selectedActor->world.pos.x);
                 ImGui::SameLine();
-                ImGui::InputScalar("y", ImGuiDataType_Float, &display->world.pos.y);
+                ImGui::InputScalar("y", ImGuiDataType_Float, &selectedActor->world.pos.y);
                 ImGui::SameLine();
-                ImGui::InputScalar("z", ImGuiDataType_Float, &display->world.pos.z);
+                ImGui::InputScalar("z", ImGuiDataType_Float, &selectedActor->world.pos.z);
                 ImGui::EndGroup();
 
                 ImGui::BeginGroup();
                 ImGui::Text("Actor Rotation");
-                ImGui::InputScalar("rx", ImGuiDataType_S16, &display->world.rot.x);
+                ImGui::InputScalar("rx", ImGuiDataType_S16, &selectedActor->world.rot.x);
                 ImGui::SameLine();
-                ImGui::InputScalar("ry", ImGuiDataType_S16, &display->world.rot.y);
+                ImGui::InputScalar("ry", ImGuiDataType_S16, &selectedActor->world.rot.y);
                 ImGui::SameLine();
-                ImGui::InputScalar("rz", ImGuiDataType_S16, &display->world.rot.z);
+                ImGui::InputScalar("rz", ImGuiDataType_S16, &selectedActor->world.rot.z);
                 ImGui::EndGroup();
 
                 ImGui::PopItemWidth();
                 ImGui::PushItemWidth(ImGui::GetFontSize() * 5);
 
-                if ((display->category == ACTORCAT_BOSS || display->category == ACTORCAT_ENEMY) &&
-                    display->colChkInfo.health > 0) {
-                    ImGui::InputScalar("Enemy Health", ImGuiDataType_U8, &display->colChkInfo.health);
+                if ((selectedActor->category == ACTORCAT_BOSS || selectedActor->category == ACTORCAT_ENEMY) &&
+                    selectedActor->colChkInfo.health > 0) {
+                    ImGui::InputScalar("Enemy Health", ImGuiDataType_U8, &selectedActor->colChkInfo.health);
                 }
                 ImGui::PopItemWidth();
 
                 ImGui::BeginGroup();
                 ImGui::Text("Flags");
-                UIWidgets::DrawFlagArray32("flags", display->flags);
+                UIWidgets::DrawFlagArray32("flags", selectedActor->flags);
                 ImGui::EndGroup();
 
                 ImGui::BeginGroup();
                 ImGui::Text("BG Check");
-                UIWidgets::DrawFlagArray16("bgCheckFlags", display->bgCheckFlags);
+                UIWidgets::DrawFlagArray16("bgCheckFlags", selectedActor->bgCheckFlags);
                 ImGui::EndGroup();
-            }
-
-            if (UIWidgets::Button("Refresh")) {
-                list = GetCurrentSceneActors();
-                display = list[newActorId];
             }
 
             if (UIWidgets::Button("Go to Actor")) {
                 Player* player = GET_PLAYER(gPlayState);
-                if (display != nullptr) {
-                    Math_Vec3f_Copy(&player->actor.world.pos, &display->world.pos);
-                    Math_Vec3f_Copy(&player->actor.home.pos, &display->world.pos);
+                if (selectedActor != nullptr) {
+                    Math_Vec3f_Copy(&player->actor.world.pos, &selectedActor->world.pos);
+                    Math_Vec3f_Copy(&player->actor.home.pos, &selectedActor->world.pos);
                 }
             }
 
             if (UIWidgets::Button("Fetch: Target", { .tooltip = "Grabs actor with target arrow above it." })) {
                 Player* player = GET_PLAYER(gPlayState);
-                fetch = player->lockOnActor;
-                if (fetch != nullptr) {
-                    display = fetch;
-                    category = fetch->category;
-                    list = GetCurrentSceneActors();
-                    method = TARGET;
-                } else {
-                    display = {};
+                if (player->lockOnActor != nullptr) {
+                    SetSelectedActor(player->lockOnActor);
                 }
             }
             if (UIWidgets::Button("Fetch: Held", { .tooltip = "Grabs actor Link is currently holding." })) {
                 Player* player = GET_PLAYER(gPlayState);
-                fetch = player->heldActor;
-                if (fetch != nullptr) {
-                    display = fetch;
-                    category = fetch->category;
-                    list = GetCurrentSceneActors();
-                    method = HOLD;
-                } else {
-                    display = {};
+                if (player->heldActor != nullptr) {
+                    SetSelectedActor(player->heldActor);
                 }
             }
 
-            if (UIWidgets::Button("Kill", { .color = UIWidgets::Colors::Red }) && display != nullptr &&
-                display->id != ACTOR_PLAYER) {
-                Actor_Kill(display);
+            if (UIWidgets::Button("Kill", { .color = UIWidgets::Colors::Red }) && selectedActor != nullptr &&
+                selectedActor->id != ACTOR_PLAYER) {
+                Actor_Kill(selectedActor);
             }
             ImGui::TreePop();
         }
 
-        if (ImGui::TreeNode("New...")) {
+        if (ImGui::TreeNode("Spawn new Actor")) {
             ImGui::PushItemWidth(ImGui::GetFontSize() * 10);
             ImU16 one = 1;
 
@@ -299,8 +417,8 @@ void ActorViewerWindow::DrawElement() {
             }
 
             if (UIWidgets::Button("Spawn as Child", { .color = UIWidgets::Colors::Green })) {
-                Actor* parent = display;
-                if (parent != nullptr) {
+                Actor* parent = selectedActor;
+                if (parent != nullptr && parent->child == nullptr) {
                     Actor_SpawnAsChild(&gPlayState->actorCtx, parent, gPlayState, newActor.id, newActor.pos.x,
                                        newActor.pos.y, newActor.pos.z, newActor.rot.x, newActor.rot.y, newActor.rot.z,
                                        newActor.params);
@@ -318,8 +436,8 @@ void ActorViewerWindow::DrawElement() {
     } else {
         ImGui::Text("Playstate needed for actors!");
     }
-    ImGui::End();
 }
 
 void ActorViewerWindow::InitElement() {
+    ActorViewer_RegisterNameTagHooks();
 }

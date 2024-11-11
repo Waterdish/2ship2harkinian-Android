@@ -13,6 +13,8 @@
 
 #include "BenPort.h"
 
+#include "2s2h/Enhancements/Songs/Songs.h"
+
 // 2S2H [Port] (and line 26) don't do pointer math and access the list of digits directly.
 extern const char* sCounterTextures[];
 
@@ -548,13 +550,25 @@ void KaleidoScope_DrawWorldMap(PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx);
 
+    // Use matrix scaling to flip the entire overworld map for mirror world
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0)) {
+        // Invert culling to counter act the matrix flip
+        gSPSetExtraGeometryMode(POLY_OPA_DISP++, G_EX_INVERT_CULLING);
+        Matrix_Push();
+        // We need to shift the matrix a little to the left before flipping it so that it aligns in the same spot
+        Matrix_Translate(-2.0f, 0.0f, 0.0f, MTXMODE_APPLY);
+        Matrix_Scale(-1.0f, 1.0f, 1.0f, MTXMODE_APPLY);
+        gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        Matrix_Pop();
+    }
+
     KaleidoScope_SetCursorVtxPos(pauseCtx, pauseCtx->cursorSlot[PAUSE_MAP] * 4, pauseCtx->mapPageVtx);
 
     // Draw the world map image
     if ((pauseCtx->pageIndex == PAUSE_MAP) && (pauseCtx->state == PAUSE_STATE_MAIN) &&
         ((pauseCtx->mainState == PAUSE_MAIN_STATE_IDLE) || (pauseCtx->mainState == PAUSE_MAIN_STATE_EQUIP_ITEM)) &&
         YREG(6) && (pauseCtx->state != PAUSE_STATE_SAVEPROMPT) && !IS_PAUSE_STATE_GAMEOVER) {
-        char* tex = ResourceMgr_LoadTexOrDListByName(gWorldMapImageTex);
+
         // Draw the world map image flat
         // Because it is flat, the texture is loaded by filling it in 8 rows at a time.
         // 8 is chosen because it is smaller than `TMEM_SIZE / 2 / textureWidth` and divides the texture's height.
@@ -572,9 +586,19 @@ void KaleidoScope_DrawWorldMap(PlayState* play) {
         // Process the 128 rows of pixels for gWorldMapImageTex, 8 rows at a time over 16 iterations
         // Loop over yPos (t), textureIndex (j)
         for (t = 62, j = 0; j < 16; j++, t += 8) {
-            gDPLoadTextureBlock(POLY_OPA_DISP++, &tex[j * (WORLD_MAP_IMAGE_WIDTH * 8)], G_IM_FMT_CI, G_IM_SIZ_8b,
-                                WORLD_MAP_IMAGE_WIDTH, 8, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
-                                G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            // 2S2H [Port][HD Textures] Here and below we use LoadMultTile and SetTileSize to allow us to pass the
+            // resource path to the renderer and calculate the tile offset after the renderer loads it
+            /*
+            gDPLoadTextureBlock(POLY_OPA_DISP++, (u8*)gWorldMapImageTex + j * (WORLD_MAP_IMAGE_WIDTH * 8), G_IM_FMT_CI,
+                                G_IM_SIZ_8b, WORLD_MAP_IMAGE_WIDTH, 8, 0, G_TX_NOMIRROR | G_TX_WRAP,
+                                G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            */
+            gDPLoadMultiTile(POLY_OPA_DISP++, gWorldMapImageTex, 0, G_TX_RENDERTILE, G_IM_FMT_CI, G_IM_SIZ_8b,
+                             WORLD_MAP_IMAGE_WIDTH, WORLD_MAP_IMAGE_HEIGHT, 0, j * 8, WORLD_MAP_IMAGE_WIDTH - 1,
+                             (j + 1) * 8 - 1, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+                             G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            gDPSetTileSize(POLY_OPA_DISP++, G_TX_RENDERTILE, 0, 0, (WORLD_MAP_IMAGE_WIDTH - 1) << G_TEXTURE_IMAGE_FRAC,
+                           (8 - 1) << G_TEXTURE_IMAGE_FRAC);
 
             rectLeft = 51 << 2;
             rectRight = rectLeft + (WORLD_MAP_IMAGE_WIDTH << 2);
@@ -608,12 +632,19 @@ void KaleidoScope_DrawWorldMap(PlayState* play) {
 
         // Process the first 72 rows of pixels for gWorldMapImageTex, 9 rows at a time over 8 iterations
         // Loop over quadIndex of this loop (i), quadIndex of the entire texture (k), vtxIndex (j)
-        char* tex = ResourceMgr_LoadTexOrDListByName(gWorldMapImageTex);
         for (i = 0, k = 0, j = 0; i < 8; i++, k++, j += 4) {
-            gDPLoadTextureBlock(POLY_OPA_DISP++, &tex[k * (WORLD_MAP_IMAGE_WIDTH * WORLD_MAP_IMAGE_FRAG_HEIGHT)],
-                                G_IM_FMT_CI, G_IM_SIZ_8b, WORLD_MAP_IMAGE_WIDTH, WORLD_MAP_IMAGE_FRAG_HEIGHT, 0,
-                                G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
-                                G_TX_NOLOD, G_TX_NOLOD);
+            /*
+            gDPLoadTextureBlock(
+                POLY_OPA_DISP++, (u8*)gWorldMapImageTex + k * (WORLD_MAP_IMAGE_WIDTH * WORLD_MAP_IMAGE_FRAG_HEIGHT),
+                G_IM_FMT_CI, G_IM_SIZ_8b, WORLD_MAP_IMAGE_WIDTH, WORLD_MAP_IMAGE_FRAG_HEIGHT, 0,
+                G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+             */
+            gDPLoadMultiTile(POLY_OPA_DISP++, gWorldMapImageTex, 0, G_TX_RENDERTILE, G_IM_FMT_CI, G_IM_SIZ_8b,
+                             WORLD_MAP_IMAGE_WIDTH, WORLD_MAP_IMAGE_HEIGHT, 0, k * 9, WORLD_MAP_IMAGE_WIDTH - 1,
+                             (k + 1) * 9 - 1, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+                             G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            gDPSetTileSize(POLY_OPA_DISP++, G_TX_RENDERTILE, 0, 0, (WORLD_MAP_IMAGE_WIDTH - 1) << G_TEXTURE_IMAGE_FRAC,
+                           (9 - 1) << G_TEXTURE_IMAGE_FRAC);
 
             gSP1Quadrangle(POLY_OPA_DISP++, j, j + 2, j + 3, j + 1, 0);
         }
@@ -625,19 +656,36 @@ void KaleidoScope_DrawWorldMap(PlayState* play) {
         // Process the next 54 rows of pixels for gWorldMapImageTex, 9 rows at a time over 6 iterations
         // Loop over quadIndex of this loop (i), quadIndex of the entire texture (k), vtxIndex (j)
         for (i = 0, j = 0; i < 6; i++, k++, j += 4) {
-            gDPLoadTextureBlock(POLY_OPA_DISP++, &tex[k * (WORLD_MAP_IMAGE_WIDTH * WORLD_MAP_IMAGE_FRAG_HEIGHT)],
-                                G_IM_FMT_CI, G_IM_SIZ_8b, WORLD_MAP_IMAGE_WIDTH, WORLD_MAP_IMAGE_FRAG_HEIGHT, 0,
-                                G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
-                                G_TX_NOLOD, G_TX_NOLOD);
+            /*
+            gDPLoadTextureBlock(
+                POLY_OPA_DISP++, (u8*)gWorldMapImageTex + k * (WORLD_MAP_IMAGE_WIDTH * WORLD_MAP_IMAGE_FRAG_HEIGHT),
+                G_IM_FMT_CI, G_IM_SIZ_8b, WORLD_MAP_IMAGE_WIDTH, WORLD_MAP_IMAGE_FRAG_HEIGHT, 0,
+                G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            */
+            gDPLoadMultiTile(POLY_OPA_DISP++, gWorldMapImageTex, 0, G_TX_RENDERTILE, G_IM_FMT_CI, G_IM_SIZ_8b,
+                             WORLD_MAP_IMAGE_WIDTH, WORLD_MAP_IMAGE_HEIGHT, 0, k * 9, WORLD_MAP_IMAGE_WIDTH - 1,
+                             (k + 1) * 9 - 1, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+                             G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            gDPSetTileSize(POLY_OPA_DISP++, G_TX_RENDERTILE, 0, 0, (WORLD_MAP_IMAGE_WIDTH - 1) << G_TEXTURE_IMAGE_FRAC,
+                           (9 - 1) << G_TEXTURE_IMAGE_FRAC);
 
             gSP1Quadrangle(POLY_OPA_DISP++, j, j + 2, j + 3, j + 1, 0);
         }
 
         // Process the last 2 rows of pixels for gWorldMapImageTex
-        gDPLoadTextureBlock(POLY_OPA_DISP++, &tex[k * (WORLD_MAP_IMAGE_WIDTH * WORLD_MAP_IMAGE_FRAG_HEIGHT)],
-                            G_IM_FMT_CI, G_IM_SIZ_8b, WORLD_MAP_IMAGE_WIDTH,
-                            WORLD_MAP_IMAGE_HEIGHT % WORLD_MAP_IMAGE_FRAG_HEIGHT, 0, G_TX_NOMIRROR | G_TX_WRAP,
-                            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+        /*
+        gDPLoadTextureBlock(
+            POLY_OPA_DISP++, (u8*)gWorldMapImageTex + k * (WORLD_MAP_IMAGE_WIDTH * WORLD_MAP_IMAGE_FRAG_HEIGHT),
+            G_IM_FMT_CI, G_IM_SIZ_8b, WORLD_MAP_IMAGE_WIDTH, WORLD_MAP_IMAGE_HEIGHT % WORLD_MAP_IMAGE_FRAG_HEIGHT, 0,
+            G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+        */
+        gDPLoadMultiTile(POLY_OPA_DISP++, gWorldMapImageTex, 0, G_TX_RENDERTILE, G_IM_FMT_CI, G_IM_SIZ_8b,
+                         WORLD_MAP_IMAGE_WIDTH, WORLD_MAP_IMAGE_HEIGHT, 0, k * 9, WORLD_MAP_IMAGE_WIDTH - 1,
+                         (k * 9 + 2) - 1, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+                         G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+        gDPSetTileSize(POLY_OPA_DISP++, G_TX_RENDERTILE, 0, 0, (WORLD_MAP_IMAGE_WIDTH - 1) << G_TEXTURE_IMAGE_FRAC,
+                       (2 - 1) << G_TEXTURE_IMAGE_FRAC);
+
         gSP1Quadrangle(POLY_OPA_DISP++, j, j + 2, j + 3, j + 1, 0);
     }
 
@@ -675,7 +723,7 @@ void KaleidoScope_DrawWorldMap(PlayState* play) {
 
     Gfx_SetupDL42_Opa(play->state.gfxCtx);
 
-    if (!IS_PAUSE_STATE_OWLWARP) {
+    if (!IS_PAUSE_STATE_OWLWARP && !PauseOwlWarp_IsOwlWarpEnabled()) {
         // Browsing the world map regions on the pause menu
         gDPLoadTextureBlock(POLY_OPA_DISP++, gWorldMapDotTex, G_IM_FMT_IA, G_IM_SIZ_8b, 8, 8, 0,
                             G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
@@ -816,13 +864,23 @@ void KaleidoScope_DrawWorldMap(PlayState* play) {
 
             gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, pauseCtx->alpha);
 
-            POLY_OPA_DISP =
-                Gfx_DrawTexRectRGBA16(POLY_OPA_DISP, gQuestIconLinkHumanFaceTex, 16, 16, sWorldMapCursorsRectLeft[n],
-                                      sWorldMapCursorsRectTop[n], 16, 16, 1 << 10, 1 << 10);
+            if (CVarGetInteger("gModes.MirroredWorld.State", 0)) {
+                POLY_OPA_DISP = Gfx_DrawTexRectRGBA16(POLY_OPA_DISP, gQuestIconLinkHumanFaceTex, 16, 16,
+                                                      (SCREEN_WIDTH - sWorldMapCursorsRectLeft[n] - 16 - 1),
+                                                      sWorldMapCursorsRectTop[n], 16, 16, 1 << 10, 1 << 10);
+            } else {
+                POLY_OPA_DISP = Gfx_DrawTexRectRGBA16(POLY_OPA_DISP, gQuestIconLinkHumanFaceTex, 16, 16,
+                                                      sWorldMapCursorsRectLeft[n], sWorldMapCursorsRectTop[n], 16, 16,
+                                                      1 << 10, 1 << 10);
+            }
         }
     }
 
     gDPPipeSync(POLY_OPA_DISP++);
+
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0)) {
+        gSPClearExtraGeometryMode(POLY_OPA_DISP++, G_EX_INVERT_CULLING);
+    }
 
     CLOSE_DISPS(play->state.gfxCtx);
 }
@@ -840,13 +898,124 @@ u16 sOwlWarpPauseItems[] = {
     ITEM_MAP_POINT_STONE_TOWER,      // OWL_WARP_STONE_TOWER
 };
 
+// 2S2H [Enhancement] Same as KaleidoScope_UpdateWorldMapCursor but with behavior and controls inverted to account for
+// mirrored world being used
+void Ship_UpdateWorldMapCursorMirrorWorld(PlayState* play) {
+    PauseContext* pauseCtx = &play->pauseCtx;
+    s16 oldCursorPoint;
+
+    bool goingLeft = pauseCtx->stickAdjX < -30;
+    bool goingRight = pauseCtx->stickAdjX > 30;
+
+    if ((pauseCtx->state == PAUSE_STATE_MAIN) && (pauseCtx->mainState == PAUSE_MAIN_STATE_IDLE) &&
+        (pauseCtx->pageIndex == PAUSE_MAP) && !PauseOwlWarp_IsOwlWarpEnabled()) {
+        pauseCtx->cursorColorSet = PAUSE_CURSOR_COLOR_SET_WHITE;
+        oldCursorPoint = pauseCtx->cursorPoint[PAUSE_WORLD_MAP];
+
+        if (gSaveContext.buttonStatus[EQUIP_SLOT_A] != BTN_DISABLED) {
+            gSaveContext.buttonStatus[EQUIP_SLOT_A] = BTN_DISABLED;
+            gSaveContext.hudVisibility = HUD_VISIBILITY_IDLE;
+            Interface_SetHudVisibility(HUD_VISIBILITY_ALL);
+        }
+
+        if (pauseCtx->cursorSpecialPos == PAUSE_CURSOR_PAGE_LEFT && goingRight) {
+            pauseCtx->cursorSpecialPos = 0;
+            pauseCtx->cursorPoint[PAUSE_WORLD_MAP] = REGION_MAX;
+            Audio_PlaySfx(NA_SE_SY_CURSOR);
+        } else if (pauseCtx->cursorSpecialPos == PAUSE_CURSOR_PAGE_RIGHT && goingLeft) {
+            pauseCtx->cursorSpecialPos = 0;
+            pauseCtx->cursorPoint[PAUSE_WORLD_MAP] = REGION_NONE;
+            Audio_PlaySfx(NA_SE_SY_CURSOR);
+        }
+
+        if (pauseCtx->cursorSpecialPos == 0 && (goingLeft || goingRight)) {
+            pauseCtx->cursorShrinkRate = 4.0f;
+            goingLeft = !goingLeft;
+            goingRight = !goingRight;
+        }
+
+        if (goingRight) {
+            do {
+                pauseCtx->cursorPoint[PAUSE_WORLD_MAP]++;
+                if (pauseCtx->cursorPoint[PAUSE_WORLD_MAP] >= REGION_MAX) {
+                    KaleidoScope_MoveCursorToSpecialPos(play, PAUSE_CURSOR_PAGE_LEFT);
+                    pauseCtx->cursorItem[PAUSE_MAP] = PAUSE_ITEM_NONE;
+                    break;
+                }
+            } while (!pauseCtx->worldMapPoints[pauseCtx->cursorPoint[PAUSE_WORLD_MAP]]);
+        } else if (goingLeft) {
+            do {
+                pauseCtx->cursorPoint[PAUSE_WORLD_MAP]--;
+                if (pauseCtx->cursorPoint[PAUSE_WORLD_MAP] <= REGION_NONE) {
+                    KaleidoScope_MoveCursorToSpecialPos(play, PAUSE_CURSOR_PAGE_RIGHT);
+                    pauseCtx->cursorItem[PAUSE_MAP] = PAUSE_ITEM_NONE;
+                    break;
+                }
+            } while (!pauseCtx->worldMapPoints[pauseCtx->cursorPoint[PAUSE_WORLD_MAP]]);
+        }
+
+        if (pauseCtx->cursorSpecialPos == 0) {
+            pauseCtx->cursorItem[PAUSE_MAP] = pauseCtx->cursorPoint[PAUSE_WORLD_MAP];
+            // Used as cursor vtxIndex
+            pauseCtx->cursorSlot[PAUSE_MAP] = 31 + pauseCtx->cursorPoint[PAUSE_WORLD_MAP];
+        }
+
+        if (!pauseCtx->worldMapPoints[pauseCtx->cursorPoint[PAUSE_WORLD_MAP]]) {
+            pauseCtx->cursorItem[PAUSE_MAP] = PAUSE_ITEM_NONE;
+        }
+        if (oldCursorPoint != pauseCtx->cursorPoint[PAUSE_WORLD_MAP]) {
+            Audio_PlaySfx(NA_SE_SY_CURSOR);
+        }
+    } else if (pauseCtx->state == PAUSE_STATE_OWLWARP_SELECT) {
+        pauseCtx->cursorColorSet = PAUSE_CURSOR_COLOR_SET_BLUE;
+        oldCursorPoint = pauseCtx->cursorPoint[PAUSE_WORLD_MAP];
+
+        if (goingLeft || goingRight) {
+            pauseCtx->cursorShrinkRate = 4.0f;
+            goingLeft = !goingLeft;
+            goingRight = !goingRight;
+        }
+
+        if (goingRight) {
+            do {
+                pauseCtx->cursorPoint[PAUSE_WORLD_MAP]++;
+                if (pauseCtx->cursorPoint[PAUSE_WORLD_MAP] > OWL_WARP_STONE_TOWER) {
+                    pauseCtx->cursorPoint[PAUSE_WORLD_MAP] = OWL_WARP_GREAT_BAY_COAST;
+                }
+            } while (!pauseCtx->worldMapPoints[pauseCtx->cursorPoint[PAUSE_WORLD_MAP]]);
+        } else if (goingLeft) {
+            do {
+                pauseCtx->cursorPoint[PAUSE_WORLD_MAP]--;
+                if (pauseCtx->cursorPoint[PAUSE_WORLD_MAP] < OWL_WARP_GREAT_BAY_COAST) {
+                    pauseCtx->cursorPoint[PAUSE_WORLD_MAP] = OWL_WARP_STONE_TOWER;
+                }
+            } while (!pauseCtx->worldMapPoints[pauseCtx->cursorPoint[PAUSE_WORLD_MAP]]);
+        }
+
+        // Offset from `ITEM_MAP_POINT_GREAT_BAY` is to get the correct ordering in `map_name_static`
+        pauseCtx->cursorItem[PAUSE_MAP] =
+            sOwlWarpPauseItems[pauseCtx->cursorPoint[PAUSE_WORLD_MAP]] - ITEM_MAP_POINT_GREAT_BAY;
+        // Used as cursor vtxIndex
+        pauseCtx->cursorSlot[PAUSE_MAP] = 31 + pauseCtx->cursorPoint[PAUSE_WORLD_MAP];
+
+        if (oldCursorPoint != pauseCtx->cursorPoint[PAUSE_WORLD_MAP]) {
+            Audio_PlaySfx(NA_SE_SY_CURSOR);
+        }
+    }
+}
+
 void KaleidoScope_UpdateWorldMapCursor(PlayState* play) {
     static u16 sStickAdjTimer = 0; // unused timer that counts up every frame. Resets on reading a stickAdj.
     PauseContext* pauseCtx = &play->pauseCtx;
     s16 oldCursorPoint;
 
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0)) {
+        Ship_UpdateWorldMapCursorMirrorWorld(play);
+        return;
+    }
+
     if ((pauseCtx->state == PAUSE_STATE_MAIN) && (pauseCtx->mainState == PAUSE_MAIN_STATE_IDLE) &&
-        (pauseCtx->pageIndex == PAUSE_MAP)) {
+        (pauseCtx->pageIndex == PAUSE_MAP) && !PauseOwlWarp_IsOwlWarpEnabled()) {
         pauseCtx->cursorColorSet = PAUSE_CURSOR_COLOR_SET_WHITE;
         oldCursorPoint = pauseCtx->cursorPoint[PAUSE_WORLD_MAP];
 

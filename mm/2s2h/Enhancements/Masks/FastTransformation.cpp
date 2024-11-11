@@ -1,5 +1,5 @@
 #include <libultraship/bridge.h>
-#include "Enhancements/GameInteractor/GameInteractor.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 extern "C" {
 #include <z64.h>
@@ -16,7 +16,7 @@ void TransitionFade_SetColor(void* thisx, u32 color);
 }
 
 void RegisterFastTransformation() {
-    REGISTER_VB_SHOULD(GI_VB_PREVENT_MASK_TRANSFORMATION_CS, {
+    REGISTER_VB_SHOULD(VB_PREVENT_MASK_TRANSFORMATION_CS, {
         if (CVarGetInteger("gEnhancements.Masks.FastTransformation", 0)) {
             *should = true;
             Player* player = GET_PLAYER(gPlayState);

@@ -257,7 +257,11 @@ void func_80C039A8(EnBombers* this, PlayState* play) {
                 this->actor.textId = 0x744;
             }
             break;
-
+        // #region 2S2H - Enhancements. Fierce Deity gets same dialog as Human without notebook
+        case PLAYER_FORM_FIERCE_DEITY:
+            this->actor.textId = 0x73D;
+            break;
+        // #endregion
         default:
             break;
     }

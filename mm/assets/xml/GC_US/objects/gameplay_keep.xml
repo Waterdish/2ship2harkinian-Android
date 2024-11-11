@@ -85,6 +85,8 @@
 
         <Texture Name="gameplay_keep_Tex_00C830" OutName="tex_00C830" Format="rgba16" Width="16" Height="16" Offset="0xC830" />
         <Texture Name="gameplay_keep_Tex_00CA30" OutName="tex_00CA30" Format="rgba16" Width="16" Height="16" Offset="0xCA30" />
+        <!-- 2S2H [Port] Additional entry for authentic overflowed texture usage. This entry has its offset off by "one pixel" due to ZAPD not allowing duplicates -->
+        <Texture Name="gameplay_keep_Tex_00CA30_Overflow" OutName="tex_00CA30_overflow" Format="rgba16" Width="32" Height="32" Offset="0xCA2E" />
 
         <!-- 2S2H [Port] - gDekuStickDL loads this as a 16x16 texture, despite it being 8x8. We need to extract this extra 'garbage' data too -->
         <Texture Name="gDekuStickTex" OutName="deku_stick" Format="i8" Width="16" Height="16" Offset="0xCC30" />
@@ -1158,6 +1160,8 @@
         <Texture Name="gameplay_keep_Tex_0447B0" OutName="tex_0447B0" Format="i8" Width="32" Height="32" Offset="0x44800" />
         <Texture Name="gameplay_keep_Tex_044BB0" OutName="tex_044BB0" Format="i8" Width="32" Height="32" Offset="0x44C00" />
         <Texture Name="gEffIceFragmentTex" OutName="eff_ice_fragment" Format="i8" Width="32" Height="32" Offset="0x45000" />
+        <!-- 2S2H [Port] Additional entry for authentic overflowed texture usage. This entry has its offset off by "one pixel" due to ZAPD not allowing duplicates -->
+        <Texture Name="gEffIceFragmentTex_Overflow" OutName="eff_ice_fragment_overflow" Format="ia16" Width="32" Height="32" Offset="0x44FFF" />
         <Texture Name="gameplay_keep_Tex_0453B0" OutName="tex_0453B0" Format="i8" Width="32" Height="32" Offset="0x45400" />
 
         <!-- Goron Elegy of Emptiness Shell -->

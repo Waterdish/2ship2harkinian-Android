@@ -6,7 +6,7 @@
 #include <cassert>
 #include <utils/StringHelper.h>
 #include <DisplayList.h>
-#include "2s2h/Enhancements/GameInteractor/GameInteractor.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 #include "2s2h/resource/type/Scene.h"
 #include "2s2h/resource/type/CollisionHeader.h"
 #include "2s2h/resource/type/Cutscene.h"
@@ -258,6 +258,7 @@ void Scene_CommandTransiActorList(PlayState* play, SOH::ISceneCommand* cmd) {
 
     play->transitionActors.count = list->numTransitionActors;
     play->transitionActors.list = (TransitionActorEntry*)list->GetRawPointer();
+    MapDisp_InitTransitionActorData(play, play->transitionActors.count, play->transitionActors.list);
 }
 
 void Scene_CommandEnvLightSettings(PlayState* play, SOH::ISceneCommand* cmd) {

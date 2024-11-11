@@ -3066,6 +3066,8 @@ void BossHakugin_DrawShadowTex(u8* tex, BossHakugin* this, PlayState* play) {
 
     OPEN_DISPS(gfxCtx);
 
+    gSPInvalidateTexCache(POLY_OPA_DISP++, tex);
+
     Gfx_SetupDL25_Opa(play->state.gfxCtx);
 
     alpha = (400.0f - this->actor.world.pos.y) * (1.0f / 400.0f);

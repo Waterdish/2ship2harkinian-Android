@@ -5,7 +5,7 @@
  */
 
 #include "z_en_ja.h"
-#include "Enhancements/FrameInterpolation/FrameInterpolation.h"
+#include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
 
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_10)
 

@@ -17,6 +17,7 @@ HudEditorElement hudEditorElements[HUD_EDITOR_ELEMENT_MAX] = {
     HUD_EDITOR_ELEMENT(HUD_EDITOR_ELEMENT_D_PAD, "D-Pad", "DPad", 271, 55, 255, 255, 255, 255),
     HUD_EDITOR_ELEMENT(HUD_EDITOR_ELEMENT_MINIMAP, "Minimap", "Minimap", 295, 220, 0, 255, 255, 160),
     HUD_EDITOR_ELEMENT(HUD_EDITOR_ELEMENT_START, "Start Button", "Start", 136, 17, 255, 130, 60, 255),
+    HUD_EDITOR_ELEMENT(HUD_EDITOR_ELEMENT_CARROT, "Horse Carrots", "Carrots", 160, 64, 236, 92, 41, 255),
     HUD_EDITOR_ELEMENT(HUD_EDITOR_ELEMENT_CLOCK, "Three Day Clock", "Clock", 160, 206, 255, 255, 255, 255),
     HUD_EDITOR_ELEMENT(HUD_EDITOR_ELEMENT_HEARTS, "Hearts", "Hearts", 30, 26, 255, 70, 50, 255),
     HUD_EDITOR_ELEMENT(HUD_EDITOR_ELEMENT_MAGIC_METER, "Magic", "Magic", 18, 34, 0, 200, 0, 255),
@@ -166,12 +167,6 @@ enum Presets {
 };
 
 void HudEditorWindow::DrawElement() {
-    ImGui::SetNextWindowSize(ImVec2(480, 600), ImGuiCond_FirstUseEver);
-    if (!ImGui::Begin("Hud Editor", &mIsVisible, ImGuiWindowFlags_NoFocusOnAppearing)) {
-        ImGui::End();
-        return;
-    }
-
     static HudEditor::Presets preset = HudEditor::Presets::VANILLA;
     if (UIWidgets::Combobox("Preset", &preset, presetNames)) {
         for (int i = HUD_EDITOR_ELEMENT_B; i < HUD_EDITOR_ELEMENT_MAX; i++) {
@@ -206,6 +201,8 @@ void HudEditorWindow::DrawElement() {
                                HUD_EDITOR_ELEMENT_MODE_MOVABLE_RIGHT);
                 CVarSetInteger(hudEditorElements[HUD_EDITOR_ELEMENT_START].modeCvar,
                                HUD_EDITOR_ELEMENT_MODE_MOVABLE_RIGHT);
+                CVarSetInteger(hudEditorElements[HUD_EDITOR_ELEMENT_CARROT].modeCvar,
+                               HUD_EDITOR_ELEMENT_MODE_MOVABLE_43);
                 CVarSetInteger(hudEditorElements[HUD_EDITOR_ELEMENT_CLOCK].modeCvar,
                                HUD_EDITOR_ELEMENT_MODE_MOVABLE_43);
                 CVarSetInteger(hudEditorElements[HUD_EDITOR_ELEMENT_HEARTS].modeCvar,
@@ -249,7 +246,9 @@ void HudEditorWindow::DrawElement() {
         }
         if (CVarGetInteger(hudEditorElements[i].modeCvar, HUD_EDITOR_ELEMENT_MODE_VANILLA) >=
             HUD_EDITOR_ELEMENT_MODE_MOVABLE_43) {
-            if (ImGui::BeginTable("##table", 3, ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_NoBordersInBody)) {
+            if (ImGui::BeginTable("##table", 3,
+                                  ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_NoBordersInBody |
+                                      ImGuiTableFlags_SizingStretchSame)) {
                 ImGui::TableNextColumn();
                 UIWidgets::CVarSliderInt("X", hudEditorElements[i].xCvar, -10, 330, hudEditorElements[i].defaultX,
                                          {
@@ -276,6 +275,4 @@ void HudEditorWindow::DrawElement() {
         }
         ImGui::PopID();
     }
-
-    ImGui::End();
 }

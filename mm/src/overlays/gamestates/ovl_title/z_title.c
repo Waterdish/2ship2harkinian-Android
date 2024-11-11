@@ -11,9 +11,9 @@
 #include "overlays/gamestates/ovl_opening/z_opening.h"
 #include "misc/nintendo_rogo_static/nintendo_rogo_static.h"
 
-#include "overlays/gamestates/ovl_file_choose/z_file_select.h"
 #include "build.h"
 #include "BenPort.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 #include <stdlib.h>
 
 #define dgShipLogoDL "__OTR__misc/nintendo_rogo_static/gShipLogoDL"
@@ -200,15 +200,10 @@ void ConsoleLogo_Main(GameState* thisx) {
         gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
 
         STOP_GAMESTATE(&this->state);
-        if (CVarGetInteger("gEnhancements.Cutscenes.SkipToFileSelect", 0)) {
-            // Normally the PRNG seed is set at least once from the title opening running Play_Init
-            // We need to call it manually before file select creates RNG values for new saves
-            Rand_Seed(osGetTime());
-            SET_NEXT_GAMESTATE(&this->state, FileSelect_Init, sizeof(FileSelectState));
-        } else {
-            SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, sizeof(TitleSetupState));
-        }
+        SET_NEXT_GAMESTATE(&this->state, TitleSetup_Init, sizeof(TitleSetupState));
     }
+
+    GameInteractor_ExecuteOnConsoleLogoUpdate();
 
     CLOSE_DISPS(this->state.gfxCtx);
 }

@@ -41,6 +41,7 @@ typedef struct View {
     /* 0x15C */ u16 perspNorm; // used to normalize the projection matrix
     /* 0x160 */ u32 flags;  // bit 3: Render to an orthographic perspective
     /* 0x164 */ s32 unk164;
+    /*       */ Mtx* shipMirrorProjectionPtr;
 } View; // size = 0x168
 
 #define VIEW_VIEWING (1 << 0)

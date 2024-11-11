@@ -22,7 +22,8 @@
 
 #include <string.h>
 #include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
-#include "2s2h/Enhancements/GameInteractor/GameInteractor.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
+#include "2s2h/BenPort.h"
 
 // bss
 // FaultClient sActorFaultClient; // 2 funcs
@@ -966,7 +967,9 @@ void TitleCard_Draw(GameState* gameState, TitleCardContext* titleCtx) {
         OPEN_DISPS(gameState->gfxCtx);
 
         if (width * height > TMEM_SIZE) {
-            height = TMEM_SIZE / width;
+            // 2S2H [HD Textures] Commenting out the below so that we can render the full texture in one rectangle,
+            // as we are not restricted to the console TMEM limit
+            // height = TMEM_SIZE / width;
         }
 
         titleSecondY = titleY + (height * 4);
@@ -1399,6 +1402,10 @@ void func_800B6F20(PlayState* play, Input* input, f32 magnitude, s16 baseYaw) {
     s16 relativeYaw = baseYaw - Camera_GetInputDirYaw(GET_ACTIVE_CAM(play));
 
     input->cur.stick_x = -Math_SinS(relativeYaw) * magnitude;
+    // 2S2H [Enhancement] Allow inverting the X axis with GI, primarily for mirror mode,
+    // otherwise link moves in the opposite direction and likely get soft locked, and
+    // kafei turns the wrong direction as he paths.
+    input->cur.stick_x *= GameInteractor_InvertControl(GI_INVERT_MOVEMENT_X);
     input->rel.stick_x = input->cur.stick_x;
     input->cur.stick_y = Math_CosS(relativeYaw) * magnitude;
     input->rel.stick_y = input->cur.stick_y;
@@ -3070,6 +3077,59 @@ s32 func_800BA2FC(PlayState* play, Actor* actor, Vec3f* projectedPos, f32 projec
     return false;
 }
 
+// #region 2S2H [Enhancements] Allows us to increase the draw and update distance independently, mostly a modified
+// version of the function above
+void Ship_CalcShouldDrawAndUpdate(PlayState* play, Actor* actor, Vec3f* projectedPos, f32 projectedW, bool* shouldDraw,
+                                  bool* shouldUpdate) {
+    s32 updateMulti = CVarGetInteger("gEnhancements.Graphics.IncreaseActorUpdateDistance", 1);
+    s32 drawMulti = CVarGetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance", 1);
+    bool updateCheck =
+        (-(actor->uncullZoneScale * updateMulti) < projectedPos->z) &&
+        (projectedPos->z < ((actor->uncullZoneForward * updateMulti) + (actor->uncullZoneScale * updateMulti)));
+    bool drawCheck =
+        (-(actor->uncullZoneScale * drawMulti) < projectedPos->z) &&
+        (projectedPos->z < ((actor->uncullZoneForward * drawMulti) + (actor->uncullZoneScale * drawMulti)));
+
+    if (updateCheck || drawCheck) {
+        // Ensure the projected W value is at least 1.0
+        f32 clampedProjectedW = CLAMP_MIN(projectedW, 1.0f);
+        f32 uncullZoneScaleDiagonal;
+        f32 uncullZoneScaleVertical;
+        f32 uncullZoneDownwardAdjusted;
+
+        // Adjust calculations if the field of view is not the default 60 degrees
+        if (play->view.fovy != 60.0f) {
+            uncullZoneScaleDiagonal =
+                actor->uncullZoneScale * play->projectionMtxFDiagonal.x * 0.76980036f; // sqrt(16/27)
+
+            uncullZoneScaleVertical = play->projectionMtxFDiagonal.y * 0.57735026f; // 1 / sqrt(3)
+            uncullZoneDownwardAdjusted = actor->uncullZoneScale * uncullZoneScaleVertical;
+            uncullZoneScaleVertical *= actor->uncullZoneDownward;
+        } else {
+            uncullZoneDownwardAdjusted = uncullZoneScaleDiagonal = actor->uncullZoneScale;
+            uncullZoneScaleVertical = actor->uncullZoneDownward;
+        }
+
+        if (CVarGetInteger("gEnhancements.Graphics.ActorCullingAccountsForWidescreen", 0)) {
+            float originalAspectRatio = 4.0f / 3.0f;
+            float currentAspectRatio = OTRGetAspectRatio();
+            float aspectRatioMultiplier = MAX(currentAspectRatio / originalAspectRatio, 1.0f);
+
+            clampedProjectedW *= aspectRatioMultiplier;
+        }
+
+        bool isWithinHorizontalCullZone = ((fabsf(projectedPos->x) - uncullZoneScaleDiagonal) < clampedProjectedW);
+        bool isAboveBottomOfCullZone = ((-clampedProjectedW < (projectedPos->y + uncullZoneScaleVertical)));
+        bool isBelowTopOfCullZone = ((projectedPos->y - uncullZoneDownwardAdjusted) < clampedProjectedW);
+
+        if (isWithinHorizontalCullZone && isAboveBottomOfCullZone && isBelowTopOfCullZone) {
+            *shouldDraw = drawCheck;
+            *shouldUpdate = updateCheck;
+        }
+    }
+}
+// #endregion
+
 void Actor_DrawAll(PlayState* play, ActorContext* actorCtx) {
     s32 pad[2];
     Gfx* ref2;
@@ -3105,14 +3165,31 @@ void Actor_DrawAll(PlayState* play, ActorContext* actorCtx) {
                 Actor_UpdateFlaggedAudio(actor);
             }
 
-            if (func_800BA2D8(play, actor)) {
-                actor->flags |= ACTOR_FLAG_40;
+            // #region 2S2H
+            bool shipShouldDraw = false;
+            bool shipShouldUpdate = false;
+            if (CVarGetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance", 1) > 1 ||
+                CVarGetInteger("gEnhancements.Graphics.IncreaseActorUpdateDistance", 1) > 1 ||
+                CVarGetInteger("gEnhancements.Graphics.ActorCullingAccountsForWidescreen", 0)) {
+                Ship_CalcShouldDrawAndUpdate(play, actor, &actor->projectedPos, actor->projectedW, &shipShouldDraw,
+                                             &shipShouldUpdate);
+
+                if (shipShouldUpdate) {
+                    actor->flags |= ACTOR_FLAG_40;
+                } else {
+                    actor->flags &= ~ACTOR_FLAG_40;
+                }
             } else {
-                actor->flags &= ~ACTOR_FLAG_40;
+                if (func_800BA2D8(play, actor)) {
+                    actor->flags |= ACTOR_FLAG_40;
+                } else {
+                    actor->flags &= ~ACTOR_FLAG_40;
+                }
             }
 
             actor->isDrawn = false;
-            if ((actor->init == NULL) && (actor->draw != NULL) && (actor->flags & actorFlags)) {
+            if ((actor->init == NULL) && (actor->draw != NULL) && ((actor->flags & actorFlags) || shipShouldDraw)) {
+                // #endregion
                 if ((actor->flags & ACTOR_FLAG_REACT_TO_LENS) &&
                     ((play->roomCtx.curRoom.lensMode == LENS_MODE_HIDE_ACTORS) ||
                      (play->actorCtx.lensMaskSize == LENS_MASK_ACTIVE_SIZE) ||
@@ -3575,6 +3652,9 @@ Actor* Actor_Delete(ActorContext* actorCtx, Actor* actor, PlayState* play) {
     Player* player = GET_PLAYER(play);
     Actor* newHead;
     ActorOverlay* overlayEntry = actor->overlayEntry;
+
+    // Execute before actor memory is freed
+    GameInteractor_ExecuteOnActorDestroy(actor);
 
     if ((player != NULL) && (actor == player->lockOnActor)) {
         Player_Untarget(player);

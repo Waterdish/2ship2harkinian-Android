@@ -57,42 +57,18 @@
 
 extern "C" uint32_t CRC32C(unsigned char* data, size_t dataSize);
 
-static constexpr uint32_t OOT_PAL_GC = 0x09465AC3;
-static constexpr uint32_t OOT_PAL_MQ = 0x1D4136F3;
-static constexpr uint32_t OOT_PAL_GC_DBG1 = 0x871E1C92; // 03-21-2002 build
-static constexpr uint32_t OOT_PAL_GC_DBG2 = 0x87121EFE; // 03-13-2002 build
-static constexpr uint32_t OOT_PAL_GC_MQ_DBG = 0x917D18F6;
-static constexpr uint32_t OOT_PAL_10 = 0xB044B569;
-static constexpr uint32_t OOT_PAL_11 = 0xB2055FBD;
-
 static constexpr uint32_t MM_US_10 = 0x5354631C;
 static constexpr uint32_t MM_US_GC = 0xB443EB08;
 
 static const std::unordered_map<uint32_t, const char*> verMap = {
-    { MM_US_10, "US 1.0" }, { MM_US_GC, "US GC" },
-    //{ OOT_PAL_GC, "PAL Gamecube" },
-    //{ OOT_PAL_MQ, "PAL MQ" },
-    //{ OOT_PAL_GC_DBG1, "PAL Debug 1" },
-    //{ OOT_PAL_GC_DBG2, "PAL Debug 2" },
-    //{ OOT_PAL_GC_MQ_DBG, "PAL MQ Debug" },
-    //{ OOT_PAL_10, "PAL N64 1.0" },
-    //{ OOT_PAL_11, "PAL N64 1.1" },
+    { MM_US_10, "US 1.0" },
+    { MM_US_GC, "US GC" },
 };
 
 // TODO only check the first 54MB of the rom.
 static constexpr std::array<const uint32_t, 10> goodCrcs = {
     0x96F49400, // MM US 1.0 32MB
     0xBB434787, // MM GC
-    // 0xfa8c0555, // MQ DBG 64MB (Original overdump)
-    // 0x8652ac4c, // MQ DBG 64MB
-    // 0x5B8A1EB7, // MQ DBG 64MB (Empty overdump)
-    // 0x1f731ffe, // MQ DBG 54MB
-    // 0x044b3982, // NMQ DBG 54MB
-    // 0xEB15D7B9, // NMQ DBG 64MB
-    // 0xDA8E61BF, // GC PAL
-    // 0x7A2FAE68, // GC MQ PAL
-    // 0xFD9913B1, // N64 PAL 1.0
-    // 0xE033FBBA, // N64 PAL 1.1
 };
 
 enum class ButtonId : int {
@@ -140,7 +116,13 @@ void Extractor::ShowSizeErrorBox() const {
 }
 
 void Extractor::ShowCrcErrorBox() const {
-    ShowErrorBox("Rom CRC invalid", "Rom CRC did not match the list of known good roms. Please find another.");
+    ShowErrorBox("Rom CRC invalid",
+                 "Rom CRC did not match the list of known compatible roms. Please find another.\n\n"
+                 "Visit https://2ship.equipment/ to validate your ROM and see a list of compatible versions");
+}
+
+void Extractor::ShowCompressedErrorBox() const {
+    ShowErrorBox("File is Compressed", "The selected file appears to be compressed. Please extract before using.");
 }
 
 int Extractor::ShowRomPickBox(uint32_t verCrc) const {
@@ -253,7 +235,7 @@ void Extractor::GetRoms(std::vector<std::string>& roms) {
     //}
 #elif unix
     // Open the directory of the app.
-    DIR* d = opendir(".");
+    DIR* d = opendir(mSearchPath.c_str());
     struct dirent* dir;
 
     if (d != NULL) {
@@ -275,7 +257,7 @@ void Extractor::GetRoms(std::vector<std::string>& roms) {
     }
     closedir(d);
 #else
-    for (const auto& file : std::filesystem::directory_iterator("./")) {
+    for (const auto& file : std::filesystem::directory_iterator(mSearchPath)) {
         if (file.is_directory())
             continue;
         if ((file.path().extension() == ".n64") || (file.path().extension() == ".z64") ||
@@ -326,7 +308,7 @@ bool Extractor::GetRomPathFromBox() {
     mCurrentRomPath = nameBuffer;
 #else
 #ifndef __ANDROID__
-    auto selection = pfd::open_file("Select a file", ".", { "N64 Roms", "*.z64 *.n64 *.v64" }).result();
+    auto selection = pfd::open_file("Select a file", mSearchPath, { "N64 Roms", "*.z64 *.n64 *.v64" }).result();
 #else
     JNIEnv* javaEnv = (JNIEnv*)SDL_AndroidGetJNIEnv();
     jobject javaObject = (jobject)SDL_AndroidGetActivity();
@@ -364,11 +346,6 @@ size_t Extractor::GetCurRomSize() const {
 }
 
 bool Extractor::ValidateAndFixRom() {
-    // The MQ debug rom sometimes has the header patched to look like a US rom. Change it back
-    if (GetRomVerCrc() == OOT_PAL_GC_MQ_DBG) {
-        mRomData[0x3E] = 'P';
-    }
-
     const uint32_t actualCrc = CRC32C(mRomData.get(), mCurRomSize);
 
     for (const uint32_t crc : goodCrcs) {
@@ -379,6 +356,25 @@ bool Extractor::ValidateAndFixRom() {
     return false;
 }
 
+// The file box will only allow selecting an n64 rom but typing in the file name will allow selecting anything.
+bool Extractor::ValidateNotCompressed() const {
+    // ZIP file header
+    if (mRomData[0] == 'P' && mRomData[1] == 'K' && mRomData[2] == 0x03 && mRomData[3] == 0x04) {
+        return false;
+    }
+    // RAR file header. Only the first 4 bytes.
+    if (mRomData[0] == 'R' && mRomData[1] == 'a' && mRomData[2] == 'r' && mRomData[3] == 0x21) {
+        return false;
+    }
+    // 7z file header. 37 7A BC AF 27 1C
+    if (mRomData[0] == '7' && mRomData[1] == 'z' && mRomData[2] == 0xBC && mRomData[3] == 0xAF && mRomData[4] == 0x27 &&
+        mRomData[5] == 0x1C) {
+        return false;
+    }
+
+    return true;
+}
+
 bool Extractor::ValidateRomSize() const {
     if (mCurRomSize != MB32 && mCurRomSize != MB54 && mCurRomSize != MB64) {
         return false;
@@ -387,6 +383,10 @@ bool Extractor::ValidateRomSize() const {
 }
 
 bool Extractor::ValidateRom(bool skipCrcTextBox) {
+    if (!ValidateNotCompressed()) {
+        ShowCompressedErrorBox();
+        return false;
+    }
     if (!ValidateRomSize()) {
         ShowSizeErrorBox();
         return false;
@@ -456,9 +456,11 @@ bool Extractor::ManuallySearchForRomMatchingType(RomSearchMode searchMode) {
     return true;
 }
 
-bool Extractor::Run(RomSearchMode searchMode) {
+bool Extractor::Run(std::string searchPath, RomSearchMode searchMode) {
     std::vector<std::string> roms;
     std::ifstream inFile;
+
+    mSearchPath = searchPath;
 
     GetRoms(roms);
     FilterRoms(roms, searchMode);
@@ -502,8 +504,10 @@ bool Extractor::Run(RomSearchMode searchMode) {
                 if (rom == roms.back()) {
                     ShowCrcErrorBox();
                 } else {
-                    ShowErrorBox("Rom CRC invalid",
-                                 "Rom CRC did not match the list of known good roms. Trying the next one...");
+                    ShowErrorBox(
+                        "Rom CRC invalid",
+                        "Rom CRC did not match the list of known compatible roms. Trying the next one...\n\n"
+                        "Visit https://2ship.equipment/ to validate your ROM and see a list of compatible versions");
                 }
                 continue;
             }
@@ -526,34 +530,11 @@ bool Extractor::Run(RomSearchMode searchMode) {
 }
 
 bool Extractor::IsMasterQuest() const {
-    switch (GetRomVerCrc()) {
-        case OOT_PAL_MQ:
-        case OOT_PAL_GC_MQ_DBG:
-            return true;
-        case OOT_PAL_10:
-        case OOT_PAL_11:
-        case OOT_PAL_GC:
-        case OOT_PAL_GC_DBG1:
-            return false;
-        default:
-            UNREACHABLE;
-    }
+    return false;
 }
 
 const char* Extractor::GetZapdVerStr() const {
     switch (GetRomVerCrc()) {
-        case OOT_PAL_GC:
-            return "GC_NMQ_PAL_F";
-        case OOT_PAL_MQ:
-            return "GC_MQ_PAL_F";
-        case OOT_PAL_GC_DBG1:
-            return "GC_NMQ_D";
-        case OOT_PAL_GC_MQ_DBG:
-            return "GC_MQ_D";
-        case OOT_PAL_10:
-            return "N64_PAL_10";
-        case OOT_PAL_11:
-            return "N64_PAL_11";
         case MM_US_10:
             return "N64_US";
         case MM_US_GC:

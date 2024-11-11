@@ -8,6 +8,7 @@
 #include "objects/object_mastergolon/object_mastergolon.h"
 #include "objects/object_masterzoora/object_masterzoora.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_10)
 
@@ -456,6 +457,10 @@ void EnSob1_UpdateCursorPos(PlayState* play, EnSob1* this) {
     this->cursorPos.x = x + xOffset;
     this->cursorPos.y = y + yOffset;
     this->cursorPos.z = 1.2f;
+
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0)) {
+        this->cursorPos.x = SCREEN_WIDTH - this->cursorPos.x;
+    }
 }
 
 void EnSob1_EndInteraction(PlayState* play, EnSob1* this) {
@@ -583,6 +588,8 @@ void EnSob1_Idle(EnSob1* this, PlayState* play) {
 void EnSob1_UpdateJoystickInputState(PlayState* play, EnSob1* this) {
     s8 stickX = CONTROLLER1(&play->state)->rel.stick_x;
     s8 stickY = CONTROLLER1(&play->state)->rel.stick_y;
+
+    stickX *= GameInteractor_InvertControl(GI_INVERT_SHOP_X);
 
     if (this->stickAccumX == 0) {
         if ((stickX > 30) || (stickX < -30)) {
@@ -1578,6 +1585,11 @@ void EnSob1_DrawTextRec(PlayState* play, s32 r, s32 g, s32 b, s32 a, f32 x, f32 
 void EnSob1_DrawStickDirectionPrompt(PlayState* play, EnSob1* this) {
     s32 drawStickRightPrompt = this->stickLeftPrompt.isEnabled;
     s32 drawStickLeftPrompt = this->stickRightPrompt.isEnabled;
+
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0) && (drawStickLeftPrompt != drawStickRightPrompt)) {
+        drawStickLeftPrompt = !drawStickLeftPrompt;
+        drawStickRightPrompt = !drawStickRightPrompt;
+    }
 
     (void)"../z_en_soB1.c";
 

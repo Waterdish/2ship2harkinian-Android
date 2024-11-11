@@ -37,7 +37,7 @@ typedef struct EnBomjima {
     /* 0x2C2 */ s16 unk_2C2;
     /* 0x2C4 */ s16 cutsceneTimer;
     /* 0x2C6 */ s16 unk_2C6;
-    /* 0x2C8 */ s16 unk_2C8;
+    /* 0x2C8 */ s16 unk_2C8; //index into arrays of textIDs
     /* 0x2CA */ s16 unk_2CA;
     /* 0x2CC */ f32 animEndFrame;
     /* 0x2D0 */ f32 unk_2D0;

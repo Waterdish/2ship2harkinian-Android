@@ -723,7 +723,9 @@ void Environment_Init(PlayState* play2, EnvironmentContext* envCtx, s32 arg2) {
     if (gSaveContext.retainWeatherMode || (gSaveContext.respawnFlag != 0)) {
         switch ((u32)gWeatherMode) {
             case WEATHER_MODE_2:
-                if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_CLEARED_STONE_TOWER_TEMPLE)) {
+                if (!CHECK_WEEKEVENTREG(WEEKEVENTREG_CLEARED_STONE_TOWER_TEMPLE) &&
+                    (!CVarGetInteger("gFixes.FixIkanaGreatFairyFountainColor", 0) ||
+                     (play->sceneId != SCENE_YOUSEI_IZUMI))) {
                     play->skyboxId = SKYBOX_3;
                     envCtx->lightConfig = 5;
                     envCtx->changeLightNextConfig = 5;
@@ -3326,6 +3328,9 @@ void Environment_DrawSkyboxStarsImpl(PlayState* play, Gfx** gfxP) {
 
             if ((scale >= 1.0f) && (imgX > -adjustedXBounds) && (imgX < adjustedXBounds) && (imgY > -1.0f) &&
                 (imgY < 1.0f)) {
+                if (CVarGetInteger("gModes.MirroredWorld.State", 0)) {
+                    imgX *= -1.0f;
+                }
                 // #endregion
                 imgX = (imgX * (SCREEN_WIDTH / 2)) + (SCREEN_WIDTH / 2);
                 imgY = (imgY * -(SCREEN_HEIGHT / 2)) + (SCREEN_HEIGHT / 2);

@@ -6,7 +6,7 @@
 
 #include "z_elf_msg3.h"
 #include "overlays/actors/ovl_En_Elf/z_en_elf.h"
-#include "2s2h/Enhancements/GameInteractor/GameInteractor.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 #define FLAGS (ACTOR_FLAG_10)
 
@@ -106,7 +106,7 @@ void func_80A2CF7C(ElfMsg3* this, PlayState* play) {
     EnElf* tatl = (EnElf*)player->tatlActor;
 
     if (GameInteractor_Should(
-            GI_VB_TATL_INTERUPT_MSG3,
+            VB_TATL_INTERUPT_MSG3,
             (((((player->tatlActor != NULL) &&
                 (fabsf(player->actor.world.pos.x - this->actor.world.pos.x) < (100.0f * this->actor.scale.x))) &&
                (this->actor.world.pos.y <= player->actor.world.pos.y)) &&

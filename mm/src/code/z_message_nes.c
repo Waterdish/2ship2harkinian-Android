@@ -431,7 +431,10 @@ void Message_DrawTextNES(PlayState* play, Gfx** gfxP, u16 textDrawPos) {
                     msgCtx->textColorR = msgCtx->textColorG = msgCtx->textColorB = 255;
                 }
 
-                if ((i + 1) == msgCtx->textDrawPos) {
+                if ((i + 1) == msgCtx->textDrawPos ||
+                    // 2S2H [Enhancement] To match how PAL and GC fixed character parsing, any code that checks for
+                    // (i + 1) == msgCtx->textDrawPos should also check for (i + 2) == msgCtx->textDrawPos
+                    ((i + 2) == msgCtx->textDrawPos && CVarGetInteger("gEnhancements.Fixes.ControlCharacters", 0))) {
                     msgCtx->textDrawPos++;
                 }
                 break;
@@ -495,7 +498,8 @@ void Message_DrawTextNES(PlayState* play, Gfx** gfxP, u16 textDrawPos) {
                     msgCtx->textColorB = D_801D080C[(s16)((u8)character - 1)].b;
                 }
 
-                if ((i + 1) == msgCtx->textDrawPos) {
+                if ((i + 1) == msgCtx->textDrawPos ||
+                    ((i + 2) == msgCtx->textDrawPos && CVarGetInteger("gEnhancements.Fixes.ControlCharacters", 0))) {
                     msgCtx->textDrawPos++;
                 }
                 break;
@@ -554,7 +558,8 @@ void Message_DrawTextNES(PlayState* play, Gfx** gfxP, u16 textDrawPos) {
                 return;
 
             case 0x17: // MESSAGE_QUICKTEXT_ENABLE
-                if ((i + 1) == msgCtx->textDrawPos) {
+                if ((i + 1) == msgCtx->textDrawPos ||
+                    ((i + 2) == msgCtx->textDrawPos && CVarGetInteger("gEnhancements.Fixes.ControlCharacters", 0))) {
                     if ((msgCtx->msgMode == MSGMODE_TEXT_DISPLAYING) ||
                         ((msgCtx->msgMode >= MSGMODE_OCARINA_STARTING) && (msgCtx->msgMode <= MSGMODE_26))) {
                         j = i;
@@ -621,19 +626,24 @@ void Message_DrawTextNES(PlayState* play, Gfx** gfxP, u16 textDrawPos) {
                 return;
 
             case 0x1E: // MESSAGE_SFX
-                if (((i + 1) == msgCtx->textDrawPos) && (msgCtx->msgMode == MSGMODE_TEXT_DISPLAYING)) {
+                if (((i + 1) == msgCtx->textDrawPos ||
+                     ((i + 2) == msgCtx->textDrawPos && CVarGetInteger("gEnhancements.Fixes.ControlCharacters", 0))) &&
+                    (msgCtx->msgMode == MSGMODE_TEXT_DISPLAYING)) {
                     stateTimerHi = msgCtx->decodedBuffer.schar[i + 1] << 8;
                     stateTimerHi += (uint8_t)msgCtx->decodedBuffer.schar[i + 2];
                     Audio_PlaySfx(stateTimerHi);
                 }
-                if ((i + 1) == msgCtx->textDrawPos) {
+                if ((i + 1) == msgCtx->textDrawPos ||
+                    ((i + 2) == msgCtx->textDrawPos && CVarGetInteger("gEnhancements.Fixes.ControlCharacters", 0))) {
                     msgCtx->textDrawPos += 2;
                 }
                 i += 2;
                 break;
 
             case 0x1F:
-                if (((i + 1) == msgCtx->textDrawPos) && (msgCtx->msgMode == MSGMODE_TEXT_DISPLAYING)) {
+                if (((i + 1) == msgCtx->textDrawPos ||
+                     ((i + 2) == msgCtx->textDrawPos && CVarGetInteger("gEnhancements.Fixes.ControlCharacters", 0))) &&
+                    (msgCtx->msgMode == MSGMODE_TEXT_DISPLAYING)) {
                     msgCtx->msgMode = MSGMODE_9;
                     stateTimerHi = msgCtx->decodedBuffer.schar[i + 1] << 8;
                     stateTimerHi += msgCtx->decodedBuffer.schar[i + 2];
@@ -654,7 +664,9 @@ void Message_DrawTextNES(PlayState* play, Gfx** gfxP, u16 textDrawPos) {
                     case 0x5:
                     case 0x6:
                         msgCtx->textDelay = (u8)character - 0x0;
-                        if ((i + 1) == msgCtx->textDrawPos) {
+                        if ((i + 1) == msgCtx->textDrawPos ||
+                            ((i + 2) == msgCtx->textDrawPos &&
+                             CVarGetInteger("gEnhancements.Fixes.ControlCharacters", 0))) {
                             msgCtx->textDrawPos++;
                         }
                         break;
@@ -851,7 +863,9 @@ void Message_DrawTextNES(PlayState* play, Gfx** gfxP, u16 textDrawPos) {
                     default:
                         break;
                 }
-                if ((msgCtx->msgMode == MSGMODE_TEXT_DISPLAYING) && ((i + 1) == msgCtx->textDrawPos)) {
+                if ((msgCtx->msgMode == MSGMODE_TEXT_DISPLAYING) &&
+                    ((i + 1) == msgCtx->textDrawPos ||
+                     ((i + 2) == msgCtx->textDrawPos && CVarGetInteger("gEnhancements.Fixes.ControlCharacters", 0)))) {
                     Audio_PlaySfx(NA_SE_NONE);
                 }
 

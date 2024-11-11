@@ -192,15 +192,17 @@ jobs:
         key: ${{ runner.os }}-14-macports-${{ hashFiles('.github/workflows/macports-deps.txt') }}
         restore-keys: |
           ${{ runner.os }}-14-macports-
+    # Updated PATH applies to the next step and onwards
     - name: Install MacPorts (if necessary)
       run: |
-        if [ command -v port &>/dev/null ]; then
+        if command -v /opt/local/bin/port 2>&1 >/dev/null; then
           echo "MacPorts already installed"
         else
+          echo "Installing MacPorts"
           wget https://github.com/macports/macports-base/releases/download/v2.9.3/MacPorts-2.9.3-14-Sonoma.pkg
           sudo installer -pkg ./MacPorts-2.9.3-14-Sonoma.pkg -target /
         fi
-        echo "/opt/local/bin:/opt/local/sbin" >> $GITHUB_PATH
+        echo "/opt/local/bin:/opt/local/sbin" >> "$GITHUB_PATH"
     - name: Install dependencies
       run: |
         brew uninstall --ignore-dependencies libpng

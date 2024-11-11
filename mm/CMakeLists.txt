@@ -119,9 +119,13 @@ list(REMOVE_ITEM Header_Files__include ${CMAKE_CURRENT_SOURCE_DIR}/include/ultra
 source_group("include" FILES ${Header_Files__include})
 # }}}
 
-# m (root)
-file(GLOB soh__ RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "2s2h/*.c" "2s2h/*.cpp" "2s2h/*.h" "2s2h/*.hpp")
-source_group("2s2h" FILES ${soh__})
+file(GLOB_RECURSE ship__ RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "2s2h/*.c" "2s2h/*.cpp" "2s2h/*.h" "2s2h/*.hpp")
+# Create source groups that match the real file directory paths
+foreach(source IN LISTS ship__)
+    get_filename_component(source_path "${source}" PATH)
+    string(REPLACE "/" "\\" source_path_adjusted "${source_path}")
+    source_group("${source_path_adjusted}" FILES "${source}")
+endforeach()
 
 file(GLOB_RECURSE libultra_headers RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     "include/PR/*.h"
@@ -131,111 +135,21 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set_source_files_properties(2s2h/BenPort.cpp PROPERTIES COMPILE_FLAGS "/utf-8")
 endif()
 
-# 2s2h/DeveloperTools {{{
-file(GLOB_RECURSE soh__DeveloperTools RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-   "2s2h/DeveloperTools/*.h"
-   "2s2h/DeveloperTools/*.c"
-   "2s2h/DeveloperTools/*.cpp"
-   "2s2h/DeveloperTools/*.hpp"
-)
-# }}}
-
-# soh/config {{{
-#file(GLOB_RECURSE soh__config RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-#    "soh/config/*.h"
-#    "soh/config/*.cpp"
-#)
-# }}}
-
-# soh/enhancements {{{
-file(GLOB_RECURSE soh__Enhancements RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    "2s2h/Enhancements/*.c"
-    "2s2h/Enhancements/*.cpp"
-    "2s2h/Enhancements/*.h"
-    "2s2h/Enhancements/*.hpp"
-    "2s2h/Enhancements/*_extern.inc"
-    "2s2h/Enhancements/*.mm"
-)
-
-file(GLOB_RECURSE soh__BenGui RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    "2s2h/BenGui/*.c"
-    "2s2h/BenGui/*.cpp"
-    "2s2h/BenGui/*.h"
-    "2s2h/BenGui/*.hpp"
-)
-
-file(GLOB_RECURSE soh__SaveManager RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    "2s2h/SaveManager/*.c"
-    "2s2h/SaveManager/*.cpp"
-    "2s2h/SaveManager/*.h"
-    "2s2h/SaveManager/*.hpp"
-)
-
-#list(REMOVE_ITEM soh__Enhancements "soh/Enhancements/gamecommand.h")
-#list(FILTER soh__Enhancements EXCLUDE REGEX "soh/Enhancements/gfx.*")
-
-# handle crowd control removals
-#list(REMOVE_ITEM soh__Enhancements "soh/Enhancements/crowd-control/soh.cs")
-#list(REMOVE_ITEM soh__Enhancements "soh/Enhancements/crowd-control/soh.ccpak")
-#if (!BUILD_CROWD_CONTROL)
-#    list(FILTER soh__Enhancements EXCLUDE REGEX "soh/Enhancements/crowd-control/*")
-#endif()
-
-# handle speechsynthesizer removals
-#if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-#    list(FILTER soh__Enhancements EXCLUDE REGEX "soh/Enhancements/speechsynthesizer/Darwin*")
-#elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-#    list(FILTER soh__Enhancements EXCLUDE REGEX "soh/Enhancements/speechsynthesizer/SAPI*")
-#else()
-#    list(FILTER soh__Enhancements EXCLUDE REGEX "soh/Enhancements/speechsynthesizer/(Darwin|SAPI).*")
-#endif()
-
-#source_group("soh\\Enhancements" REGULAR_EXPRESSION "soh/Enhancements/*")
-#source_group("soh\\Enhancements\\audio" REGULAR_EXPRESSION "soh/Enhancements/audio/*")
-# source_group("2s2h\\Enhancements\\interpolation" REGULAR_EXPRESSION "2s2h/Enhancements/interpolation/*")
-#source_group("soh\\Enhancements\\cosmetics" REGULAR_EXPRESSION "soh/Enhancements/cosmetics/*")
-#source_group("soh\\Enhancements\\crowd-control" REGULAR_EXPRESSION "soh/Enhancements/crowd-control/*")
-#source_group("soh\\Enhancements\\custom-message" REGULAR_EXPRESSION "soh/Enhancements/custom-message/*")
-#source_group("soh\\Enhancements\\debugger" REGULAR_EXPRESSION "soh/Enhancements/debugger/*")
-#source_group("soh\\Enhancements\\game-interactor" REGULAR_EXPRESSION "soh/Enhancements/game-interactor/*")
-#source_group("soh\\Enhancements\\item-tables" REGULAR_EXPRESSION "soh/Enhancements/item-tables/*")
-#source_group("soh\\Enhancements\\randomizer" REGULAR_EXPRESSION "soh/Enhancements/randomizer/*")
-#source_group("soh\\Enhancements\\randomizer\\3drando" REGULAR_EXPRESSION "soh/Enhancements/randomizer/3drando/*")
-#source_group("soh\\Enhancements\\randomizer\\3drando\\hint_list" REGULAR_EXPRESSION "soh/Enhancements/randomizer/3drando/hint_list/*")
-#source_group("soh\\Enhancements\\randomizer\\3drando\\location_access" REGULAR_EXPRESSION "soh/Enhancements/randomizer/3drando/location_access/*")
-#source_group("soh\\Enhancements\\speechsynthesizer" REGULAR_EXPRESSION "soh/Enhancements/speechsynthesizer/*")
-#source_group("soh\\Enhancements\\tts" REGULAR_EXPRESSION "soh/Enhancements/tts/*")
-
-#if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-#    set_source_files_properties(soh/Enhancements/tts/tts.cpp PROPERTIES COMPILE_FLAGS "/utf-8")
-#endif()
-# }}}
+list(FILTER ship__ EXCLUDE REGEX "2s2h/Extractor/*")
 
 if(NOT CMAKE_SYSTEM_NAME MATCHES "NintendoSwitch|CafeOS")
-    # 2s2h/Extractor {{{
-    file(GLOB_RECURSE soh__Extractor RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    file(GLOB_RECURSE ship__Extractor RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         "2s2h/Extractor/*.c"
         "2s2h/Extractor/*.cpp"
         "2s2h/Extractor/*.h"
         "2s2h/Extractor/*.hpp"
     )
-    # }}}
 else()
-    file(GLOB_RECURSE soh__Extractor RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    file(GLOB_RECURSE ship__Extractor RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         "2s2h/Extractor/*.h"
         "2s2h/Extractor/*.hpp"
     )
-# }}}
 endif()
-
-# 2s2h/resource {{{
-file(GLOB_RECURSE soh__Resource RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "2s2h/resource/*.cpp" "2s2h/resource/*.h")
-
-source_group("2s2h\\resource\\type" REGULAR_EXPRESSION "2s2h/resource/type/*")
-source_group("2s2h\\resource\\type\\scenecommand" REGULAR_EXPRESSION "2s2h/resource/type/scenecommand/*")
-source_group("2s2h\\resource\\importer" REGULAR_EXPRESSION "2s2h/resource/importer/*")
-source_group("2s2h\\resource\\importer\\scenecommand" REGULAR_EXPRESSION "2s2h/resource/importer/scenecommand/*")
-# }}}
 
 # src (decomp) {{{
 file(GLOB_RECURSE src__ RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.c" "src/*.h")
@@ -277,15 +191,9 @@ source_group("src\\overlays\\misc" REGULAR_EXPRESSION  "src/overlays/misc/*")
 set(ALL_FILES
     ${Header_Files}
     ${Header_Files__include}
-    ${soh__}
+    ${ship__}
 	${libultra_headers}
-    ${soh__DeveloperTools}
-#    ${soh__config}
-    ${soh__Enhancements}
-    ${soh__BenGui}
-    ${soh__SaveManager}
-    ${soh__Extractor}
-    ${soh__Resource}
+    ${ship__Extractor}
     ${src__}
 )
 
@@ -527,6 +435,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
             $<$<COMPILE_LANGUAGE:C>:
                 #-Werror-implicit-function-declaration
                 -Wno-incompatible-pointer-types
+                -Wno-int-conversion
             >
             $<$<COMPILE_LANGUAGE:CXX>:-fpermissive>
             $<$<COMPILE_LANGUAGE:CXX>:
@@ -642,18 +551,22 @@ endif()
 ################################################################################
 # Pre build events
 ################################################################################
+if (CMAKE_GENERATOR MATCHES "Visual Studio")
+    set(VS_COPY_ASSETS_CMD ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:2ship>/assets ${CMAKE_BINARY_DIR}/mm/assets)
+endif()
 if(NOT CMAKE_SYSTEM_NAME MATCHES "NintendoSwitch|CafeOS|Android")
     add_custom_command(
-		TARGET ${PROJECT_NAME}
-		POST_BUILD
-		COMMENT "Copying asset xmls..."
+        TARGET ${PROJECT_NAME}
+        POST_BUILD
+        COMMENT "Copying asset xmls..."
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/mm/assets/extractor $<TARGET_FILE_DIR:2ship>/assets/extractor
-		COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/mm/assets/xml $<TARGET_FILE_DIR:2ship>/assets/extractor/xmls
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/mm/assets/xml $<TARGET_FILE_DIR:2ship>/assets/extractor/xmls
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/OTRExporter/CFG/filelists $<TARGET_FILE_DIR:2ship>/assets/extractor/filelists
         COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:2ship>/assets/extractor/symbols
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/OTRExporter/CFG/ActorList_MM.txt $<TARGET_FILE_DIR:2ship>/assets/extractor/symbols
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/OTRExporter/CFG/ObjectList_MM.txt $<TARGET_FILE_DIR:2ship>/assets/extractor/symbols
-	    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/OTRExporter/CFG/SymbolMap_MM.txt $<TARGET_FILE_DIR:2ship>/assets/extractor/symbols
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/OTRExporter/CFG/SymbolMap_MM.txt $<TARGET_FILE_DIR:2ship>/assets/extractor/symbols
+        COMMAND ${VS_COPY_ASSETS_CMD}
     )
 endif()
 ################################################################################

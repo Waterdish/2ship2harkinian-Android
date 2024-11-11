@@ -6,7 +6,7 @@
 #include <sstream>
 
 #include "2s2h/BenGui/UIWidgets.hpp"
-#include "2s2h/Enhancements/GameInteractor/GameInteractor.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 extern "C" {
 #include <z64.h>
@@ -259,12 +259,6 @@ void RegisterEventLogHooks() {
 }
 
 void EventLogWindow::DrawElement() {
-    ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-    if (!ImGui::Begin("Event Log", &mIsVisible, ImGuiWindowFlags_NoFocusOnAppearing)) {
-        ImGui::End();
-        return;
-    }
-
     if (UIWidgets::CVarCheckbox("Enable", "gEventLog.Enabled")) {
         RegisterEventLogHooks();
     }
@@ -384,8 +378,6 @@ void EventLogWindow::DrawElement() {
 
         ImGui::EndTable();
     }
-
-    ImGui::End();
 }
 
 void EventLogWindow::InitElement() {

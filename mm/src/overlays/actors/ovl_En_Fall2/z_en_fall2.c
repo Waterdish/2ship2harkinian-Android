@@ -7,6 +7,8 @@
 #include "z_en_fall2.h"
 #include "objects/object_fall2/object_fall2.h"
 
+#include "2s2h/BenPort.h"
+
 #define FLAGS (ACTOR_FLAG_10 | ACTOR_FLAG_20)
 
 #define THIS ((EnFall2*)thisx)
@@ -62,7 +64,7 @@ static u8 sAlphaTableIndices[] = {
 };
 
 void func_80C1B724(f32 arg0) {
-    Vtx* vertex = Lib_SegmentedToVirtual(object_fall2_Vtx_005F10);
+    Vtx* vertex = ResourceMgr_LoadVtxByName(Lib_SegmentedToVirtual(object_fall2_Vtx_005F10));
     u8 perVertexAlphaTable[6];
     s32 i;
 

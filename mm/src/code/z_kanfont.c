@@ -5,7 +5,7 @@
 #include <string.h>
 
 // #region 2S2H [Port] Asset tables we can pull from instead of from ROM
-static const char* fontTbl[] = {
+const char* fontTbl[156] = {
     gMsgChar20SpaceTex,
     gMsgChar21ExclamationMarkTex,
     gMsgChar22QuotationMarkTex,

@@ -1,6 +1,10 @@
 #ifndef GFXPRINT_H
 #define GFXPRINT_H
 
+#ifdef __cplusplus
+#define this thisx
+#endif
+
 #include "color.h"
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
@@ -60,5 +64,9 @@ s32 GfxPrint_Printf(GfxPrint* this, const char* fmt, ...);
     }                                \
     (void)0
 // #endregion
+
+#ifdef __cplusplus
+#undef this
+#endif
 
 #endif

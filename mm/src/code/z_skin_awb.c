@@ -1,6 +1,8 @@
 #include "global.h"
 #include "z64skin.h"
 
+#include "2s2h/BenPort.h"
+
 void Skin_Setup(Skin* skin) {
     skin->skeletonHeader = NULL;
     skin->limbCount = 0;
@@ -48,6 +50,11 @@ void Skin_Init(GameState* gameState, Skin* skin, SkeletonHeader* skeletonHeader,
     s32 limbCount;
     s32 i;
     SkinLimb** skeleton;
+
+    if (ResourceMgr_OTRSigCheck(skeletonHeader)) {
+        skeletonHeader = ResourceMgr_LoadSkeletonByName(skeletonHeader, NULL);
+    }
+
     SkeletonHeader* virtSkelHeader = Lib_SegmentedToVirtual(skeletonHeader);
 
     skin->limbCount = virtSkelHeader->limbCount;

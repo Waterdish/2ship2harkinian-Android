@@ -2935,6 +2935,8 @@ void Boss07_Wrath_DrawShadowTex(u8* shadowTex, Boss07* this, PlayState* play) {
 
     OPEN_DISPS(gfxCtx);
 
+    gSPInvalidateTexCache(POLY_OPA_DISP++, shadowTex);
+
     Gfx_SetupDL25_Opa(play->state.gfxCtx);
     phi_f0 = (400.0f - this->actor.world.pos.y) * 0.0025f;
     phi_f0 = CLAMP_MIN(phi_f0, 0.0f);

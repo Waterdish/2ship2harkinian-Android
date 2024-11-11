@@ -9,6 +9,7 @@
 
 #include "BenPort.h"
 #include "BenGui/HudEditor.h"
+#include "assets/2s2h_assets.h"
 
 void MapDisp_DestroyMapI(PlayState* play);
 void MapDisp_InitMapI(PlayState* play);
@@ -102,67 +103,79 @@ static Color_RGBA8 sMinimapActorCategoryColors[12] = {
 TransitionActorEntry sTransitionActors[ROOM_TRANSITION_MAX];
 PauseDungeonMap sPauseDungeonMap;
 
-static const char* sMapTextures[] = {
-    map_i_static_Blob_000000, map_i_static_Blob_000FF0, map_i_static_Blob_001FE0, map_i_static_Blob_002FD0,
-    map_i_static_Blob_003FC0, map_i_static_Blob_004FB0, map_i_static_Blob_005180, map_i_static_Blob_005330,
-    map_i_static_Blob_005510, map_i_static_Blob_005610, map_i_static_Blob_005670, map_i_static_Blob_005820,
-    map_i_static_Blob_005890, map_i_static_Blob_0059C0, map_i_static_Blob_005B60, map_i_static_Blob_005C60,
-    map_i_static_Blob_005E10, map_i_static_Blob_005F30, map_i_static_Blob_006050, map_i_static_Blob_0062B0,
-    map_i_static_Blob_006400, map_i_static_Blob_006620, map_i_static_Blob_006920, map_i_static_Blob_006A30,
-    map_i_static_Blob_006B40, map_i_static_Blob_006C90, map_i_static_Blob_006DB0, map_i_static_Blob_006E70,
-    map_i_static_Blob_006F40, map_i_static_Blob_007170, map_i_static_Blob_007210, map_i_static_Blob_0073D0,
-    map_i_static_Blob_0074D0, map_i_static_Blob_007650, map_i_static_Blob_0077A0, map_i_static_Blob_007850,
-    map_i_static_Blob_0078A0, map_i_static_Blob_0078E0, map_i_static_Blob_007A50, map_i_static_Blob_007AD0,
-    map_i_static_Blob_007B60, map_i_static_Blob_007C20, map_i_static_Blob_007CA0, map_i_static_Blob_007D90,
-    map_i_static_Blob_007EA0, map_i_static_Blob_007FA0, map_i_static_Blob_007FF0, map_i_static_Blob_008080,
-    map_i_static_Blob_008190, map_i_static_Blob_0081F0, map_i_static_Blob_008300, map_i_static_Blob_008360,
-    map_i_static_Blob_0083F0, map_i_static_Blob_008500, map_i_static_Blob_0085F0, map_i_static_Blob_008680,
-    map_i_static_Blob_008700, map_i_static_Blob_0087F0,
+// 2S2H [Port] Textures maps and extra variables for enhancement features
+static TexturePtr sMapITextures[] = {
+    gMapIStatic00Tex, gMapIStatic01Tex, gMapIStatic02Tex, gMapIStatic03Tex, gMapIStatic04Tex, gMapIStatic05Tex,
+    gMapIStatic06Tex, gMapIStatic07Tex, gMapIStatic08Tex, gMapIStatic09Tex, gMapIStatic0ATex, gMapIStatic0BTex,
+    gMapIStatic0CTex, gMapIStatic0DTex, gMapIStatic0ETex, gMapIStatic0FTex, gMapIStatic10Tex, gMapIStatic11Tex,
+    gMapIStatic12Tex, gMapIStatic13Tex, gMapIStatic14Tex, gMapIStatic15Tex, gMapIStatic16Tex, gMapIStatic17Tex,
+    gMapIStatic18Tex, gMapIStatic19Tex, gMapIStatic1ATex, gMapIStatic1BTex, gMapIStatic1CTex, gMapIStatic1DTex,
+    gMapIStatic1ETex, gMapIStatic1FTex, gMapIStatic20Tex, gMapIStatic21Tex, gMapIStatic22Tex, gMapIStatic23Tex,
+    gMapIStatic24Tex, gMapIStatic25Tex, gMapIStatic26Tex, gMapIStatic27Tex, gMapIStatic28Tex, gMapIStatic29Tex,
+    gMapIStatic2ATex, gMapIStatic2BTex, gMapIStatic2CTex, gMapIStatic2DTex, gMapIStatic2ETex, gMapIStatic2FTex,
+    gMapIStatic30Tex, gMapIStatic31Tex, gMapIStatic32Tex, gMapIStatic33Tex, gMapIStatic34Tex, gMapIStatic35Tex,
+    gMapIStatic36Tex, gMapIStatic37Tex, gMapIStatic38Tex, gMapIStatic39Tex,
 };
 
-static const char* sMapGrandTextures[] = {
-    map_grand_static_Blob_000000, map_grand_static_Blob_000FF0, map_grand_static_Blob_001FE0,
-    map_grand_static_Blob_002FD0, map_grand_static_Blob_003FC0, map_grand_static_Blob_004FB0,
-    map_grand_static_Blob_005AF0, map_grand_static_Blob_006AE0, map_grand_static_Blob_007AD0,
-    map_grand_static_Blob_008AC0, map_grand_static_Blob_009AB0, map_grand_static_Blob_009ED0,
-    map_grand_static_Blob_00AEC0, map_grand_static_Blob_00B310, map_grand_static_Blob_00BAB0,
-    map_grand_static_Blob_00CAA0, map_grand_static_Blob_00DA90, map_grand_static_Blob_00EA80,
-    map_grand_static_Blob_00F200, map_grand_static_Blob_00FA00, map_grand_static_Blob_010250,
-    map_grand_static_Blob_010760, map_grand_static_Blob_010E70, map_grand_static_Blob_011950,
-    map_grand_static_Blob_011FB0, map_grand_static_Blob_012C10, map_grand_static_Blob_013A20,
-    map_grand_static_Blob_013E00, map_grand_static_Blob_0143A0, map_grand_static_Blob_014BC0,
-    map_grand_static_Blob_015000, map_grand_static_Blob_015590, map_grand_static_Blob_015B30,
-    map_grand_static_Blob_0162D0, map_grand_static_Blob_016A70, map_grand_static_Blob_017860,
-    map_grand_static_Blob_0180B0, map_grand_static_Blob_018A70, map_grand_static_Blob_0192F0,
-    map_grand_static_Blob_019950, map_grand_static_Blob_019CB0, map_grand_static_Blob_019F10,
-    map_grand_static_Blob_01A870, map_grand_static_Blob_01ABC0, map_grand_static_Blob_01B570,
-    map_grand_static_Blob_01BEF0, map_grand_static_Blob_01CEE0, map_grand_static_Blob_01DA00,
-    map_grand_static_Blob_01E7A0, map_grand_static_Blob_01EFC0, map_grand_static_Blob_01F3A0,
-    map_grand_static_Blob_01FD20, map_grand_static_Blob_020680, map_grand_static_Blob_020DE0,
-    map_grand_static_Blob_021740, map_grand_static_Blob_021910, map_grand_static_Blob_021F40,
-    map_grand_static_Blob_0225C0, map_grand_static_Blob_022D90, map_grand_static_Blob_023600,
-    map_grand_static_Blob_024460, map_grand_static_Blob_024B70, map_grand_static_Blob_025190,
-    map_grand_static_Blob_0257B0, map_grand_static_Blob_025E30, map_grand_static_Blob_026450,
-    map_grand_static_Blob_026660, map_grand_static_Blob_026B10, map_grand_static_Blob_027190,
-    map_grand_static_Blob_0274E0, map_grand_static_Blob_027B40, map_grand_static_Blob_027E90,
-    map_grand_static_Blob_028390, map_grand_static_Blob_028A30, map_grand_static_Blob_029010,
-    map_grand_static_Blob_029690, map_grand_static_Blob_029B10, map_grand_static_Blob_02A5F0,
-    map_grand_static_Blob_02A8C0, map_grand_static_Blob_02B450, map_grand_static_Blob_02C1F0,
-    map_grand_static_Blob_02CAB0, map_grand_static_Blob_02D4E0, map_grand_static_Blob_02D610,
-    map_grand_static_Blob_02E240, map_grand_static_Blob_02EAE0, map_grand_static_Blob_02FA30,
-    map_grand_static_Blob_0303E0, map_grand_static_Blob_030B90, map_grand_static_Blob_0314F0,
-    map_grand_static_Blob_031C30, map_grand_static_Blob_032630, map_grand_static_Blob_032C70,
-    map_grand_static_Blob_0336A0, map_grand_static_Blob_033A70, map_grand_static_Blob_034770,
-    map_grand_static_Blob_034BB0, map_grand_static_Blob_034F50,
+static TexturePtr sMapGrandTextures[] = {
+    gMapGrandStatic100Tex, gMapGrandStatic101Tex, gMapGrandStatic102Tex, gMapGrandStatic103Tex, gMapGrandStatic104Tex,
+    gMapGrandStatic105Tex, gMapGrandStatic106Tex, gMapGrandStatic107Tex, gMapGrandStatic108Tex, gMapGrandStatic109Tex,
+    gMapGrandStatic10ATex, gMapGrandStatic10BTex, gMapGrandStatic10CTex, gMapGrandStatic10DTex, gMapGrandStatic10ETex,
+    gMapGrandStatic10FTex, gMapGrandStatic110Tex, gMapGrandStatic111Tex, gMapGrandStatic112Tex, gMapGrandStatic113Tex,
+    gMapGrandStatic114Tex, gMapGrandStatic115Tex, gMapGrandStatic116Tex, gMapGrandStatic117Tex, gMapGrandStatic118Tex,
+    gMapGrandStatic119Tex, gMapGrandStatic11ATex, gMapGrandStatic11BTex, gMapGrandStatic11CTex, gMapGrandStatic11DTex,
+    gMapGrandStatic11ETex, gMapGrandStatic11FTex, gMapGrandStatic120Tex, gMapGrandStatic121Tex, gMapGrandStatic122Tex,
+    gMapGrandStatic123Tex, gMapGrandStatic124Tex, gMapGrandStatic125Tex, gMapGrandStatic126Tex, gMapGrandStatic127Tex,
+    gMapGrandStatic128Tex, gMapGrandStatic129Tex, gMapGrandStatic12ATex, gMapGrandStatic12BTex, gMapGrandStatic12CTex,
+    gMapGrandStatic12DTex, gMapGrandStatic12ETex, gMapGrandStatic12FTex, gMapGrandStatic130Tex, gMapGrandStatic131Tex,
+    gMapGrandStatic132Tex, gMapGrandStatic133Tex, gMapGrandStatic134Tex, gMapGrandStatic135Tex, gMapGrandStatic136Tex,
+    gMapGrandStatic137Tex, gMapGrandStatic138Tex, gMapGrandStatic139Tex, gMapGrandStatic13ATex, gMapGrandStatic13BTex,
+    gMapGrandStatic13CTex, gMapGrandStatic13DTex, gMapGrandStatic13ETex, gMapGrandStatic13FTex, gMapGrandStatic140Tex,
+    gMapGrandStatic141Tex, gMapGrandStatic142Tex, gMapGrandStatic143Tex, gMapGrandStatic144Tex, gMapGrandStatic145Tex,
+    gMapGrandStatic146Tex, gMapGrandStatic147Tex, gMapGrandStatic148Tex, gMapGrandStatic149Tex, gMapGrandStatic14ATex,
+    gMapGrandStatic14BTex, gMapGrandStatic14CTex, gMapGrandStatic14DTex, gMapGrandStatic14ETex, gMapGrandStatic14FTex,
+    gMapGrandStatic150Tex, gMapGrandStatic151Tex, gMapGrandStatic152Tex, gMapGrandStatic153Tex, gMapGrandStatic154Tex,
+    gMapGrandStatic155Tex, gMapGrandStatic156Tex, gMapGrandStatic157Tex, gMapGrandStatic158Tex, gMapGrandStatic159Tex,
+    gMapGrandStatic15ATex, gMapGrandStatic15BTex, gMapGrandStatic15CTex, gMapGrandStatic15DTex, gMapGrandStatic15ETex,
+    gMapGrandStatic15FTex, gMapGrandStatic160Tex, gMapGrandStatic161Tex,
 };
 
-// BENTODO, can we just set dest insetead of doing a memcpy?
-void MapDisp_GetMapITexture(void* dst, s32 mapCompactId) {
+static bool sMirrorWorldActive = false;
+static u16 sOriginalMapDataRoomFlags[32] = { 0 };
+
+s32 Ship_MapModifyPosMirrorMode(s32 pos, s32 offset) {
+    if (sMirrorWorldActive) {
+        pos -= offset;
+        pos *= -1;
+        pos += offset;
+    }
+    return pos;
+}
+
+void Ship_MapDispUpdateMirrorMode() {
+    sMirrorWorldActive = CVarGetInteger("gModes.MirroredWorld.State", 0);
+
+    for (s32 i = 0; i < sSceneNumRooms; i++) {
+        sMapDataRooms[i].flags = sOriginalMapDataRoomFlags[i];
+
+        if (sMirrorWorldActive) {
+            // Toggle the bit in case the scene already has this flag set, this way the map is still "flipped" visually
+            sMapDataRooms[i].flags ^= MAP_DATA_ROOM_FLIP_X;
+        }
+    }
+}
+
+// 2S2H [Port] Changed dest to double pointer for assigning texture path string instead of Dma load
+void MapDisp_GetMapITexture(void** dst, s32 mapCompactId) {
     s32 mapSize = MapDisp_GetSizeOfMapITex(mapCompactId);
 
-    if (mapSize != 0) {
-        void* data = ResourceMgr_LoadTexOrDListByName(sMapTextures[mapCompactId]);
-        memcpy(dst, data, mapSize);
+    if (MapDisp_GetSizeOfMapITex(mapCompactId) != 0) {
+        if (mapCompactId < ARRAY_COUNT(sMapITextures)) {
+            *dst = sMapITextures[mapCompactId];
+        } else {
+            *dst = gEmptyTexture;
+        }
+
         // CmpDma_LoadFile(SEGMENT_ROM_START(map_i_static), mapCompactId, dst, MapDisp_GetSizeOfMapITex(mapCompactId));
     }
 }
@@ -414,6 +427,9 @@ void MapDisp_Minimap_DrawActorIcon(PlayState* play, Actor* actor) {
                sMapDisp.minimapCurY - sMapDisp.minimapBaseY + texOffsetY;
     }
 
+    posX = Ship_MapModifyPosMirrorMode(posX, sMapDisp.minimapBaseX + sMapDisp.minimapCurX - sMapDisp.minimapBaseX +
+                                                 texOffsetX);
+
     // 2S2H [Cosmetic] Widescreen support
     if ((posX > OTRGetRectDimensionFromLeftEdge(0)) && (posX < 0x3FF) && (posY > 0) && (posY < 0x3FF)) {
         // #region 2S2H [Cosmetic] Hud Editor override actor values and use them below
@@ -448,6 +464,9 @@ void MapDisp_Minimap_DrawActorIcon(PlayState* play, Actor* actor) {
             compassRot = (s32)(0x7FFF - actor->focus.rot.y) / 1024;
             if (MapDisp_IsDataRotated(play)) {
                 compassRot += 0x7FFF;
+            }
+            if (sMirrorWorldActive) {
+                compassRot *= -1;
             }
             Matrix_RotateYF(compassRot / 10.0f, MTXMODE_APPLY);
             Matrix_Scale(0.4f, 0.4f, 0.4f, MTXMODE_APPLY);
@@ -585,6 +604,9 @@ void MapDisp_Minimap_DrawDoorActor(PlayState* play, Actor* actor) {
                     sMapDisp.minimapBaseY) +
                    texOffsetY;
         }
+
+        posX = Ship_MapModifyPosMirrorMode(posX, sMapDisp.minimapBaseX + sMapDisp.minimapCurX - sMapDisp.minimapBaseX +
+                                                     texOffsetX);
 
         // 2S2H [Cosmetic] Widescreen support
         if ((posX > OTRGetRectDimensionFromLeftEdge(0)) && (posX < 0x3FF) && (posY > 0) && (posY < 0x3FF)) {
@@ -893,6 +915,8 @@ void MapDisp_InitMapData(PlayState* play, void* segmentAddress) {
 
         for (i = 0; i < sSceneNumRooms; i++) {
             sMapDataRooms[i] = *mapDataRooms++;
+            // 2S2H [Enhancement] Track original flags to that we can make modifications mid-scene
+            sOriginalMapDataRoomFlags[i] = sMapDataRooms[i].flags;
         }
 
         sMapDataScene.rooms = sMapDataRooms;
@@ -996,6 +1020,7 @@ void MapDisp_Update(PlayState* play) {
     s16 targetY;
 
     if ((sMapDisp.mapDataScene != NULL) && (sSceneNumRooms != 0)) {
+        Ship_MapDispUpdateMirrorMode();
         // #region 2S2H [Cosmetic] Hud Editor minimap base position
         // This value is used to determine the relative positioning for all the other elements
         MapDataRoom* mapDataRoom = &sMapDisp.mapDataScene->rooms[sMapDisp.curRoom];
@@ -1161,6 +1186,8 @@ void MapDisp_SwapRooms(s16 nextRoom) {
                             (f32)prevOffsetY);
                     }
 
+                    sMapDisp.minimapPrevX = Ship_MapModifyPosMirrorMode(sMapDisp.minimapPrevX, offsetX - prevOffsetX);
+
                     sMapDisp.minimapCurX = minimapBaseX - sMapDisp.minimapPrevX;
                     sMapDisp.minimapCurY = minimapBaseY - sMapDisp.minimapPrevY;
                 }
@@ -1185,8 +1212,15 @@ void MapDisp_SwapRooms(s16 nextRoom) {
                         sMapDisp.minimapCurTex = sMapDisp.texBuff0;
                     }
                     if (MapData_GetSizeOfMapGrandTex(nextMapDataRoom->mapId) != 0) {
-                        sMapDisp.minimapCurTex = ResourceMgr_LoadTexOrDListByName(
-                            sMapGrandTextures[MAPDATA_GET_MAP_GRAND_ID_FROM_MAP_ID(nextMapDataRoom->mapId)]);
+                        // 2S2H [Port] Assign texture path string instead of a Dma load
+                        if (MAPDATA_GET_MAP_GRAND_ID_FROM_MAP_ID(nextMapDataRoom->mapId) <
+                            ARRAY_COUNTU(sMapGrandTextures)) {
+                            sMapDisp.minimapCurTex =
+                                sMapGrandTextures[MAPDATA_GET_MAP_GRAND_ID_FROM_MAP_ID(nextMapDataRoom->mapId)];
+                        } else {
+                            sMapDisp.minimapCurTex = gEmptyTexture;
+                        }
+
                         // CmpDma_LoadFile(SEGMENT_ROM_START(map_grand_static),
                         //                 MAPDATA_GET_MAP_GRAND_ID_FROM_MAP_ID(nextMapDataRoom->mapId),
                         //                 sMapDisp.minimapCurTex,
@@ -1243,6 +1277,9 @@ void MapDisp_Minimap_DrawRedCompassIcon(PlayState* play, s32 x, s32 z, s32 rot) 
                (sMapDisp.minimapCurY - sMapDisp.minimapBaseY) + texOffsetY;
     }
 
+    posX = Ship_MapModifyPosMirrorMode(posX, sMapDisp.minimapBaseX + sMapDisp.minimapCurX - sMapDisp.minimapBaseX +
+                                                 texOffsetX);
+
     // 2S2H [Cosmetic] Widescreen support
     if ((posX > OTRGetRectDimensionFromLeftEdge(0)) && (posX < 0x3FF) && (posY > 0) && (posY < 0x3FF)) {
         // 2S2H [Cosmetic] Hud Editor red compass position
@@ -1263,6 +1300,9 @@ void MapDisp_Minimap_DrawRedCompassIcon(PlayState* play, s32 x, s32 z, s32 rot) 
         Matrix_RotateXFApply(-1.6f);
         if (MapDisp_IsDataRotated(play)) {
             rot += 0x7FFF;
+        }
+        if (sMirrorWorldActive) {
+            rot *= -1;
         }
         Matrix_RotateYF(rot / 10.0f, MTXMODE_APPLY);
         Matrix_Scale(0.4f, 0.4f, 0.4f, MTXMODE_APPLY);
@@ -1436,8 +1476,8 @@ void* MapDisp_AllocDungeonMap(PlayState* play, void* heap) {
     for (dungeonMapRoomIter = 0; dungeonMapRoomIter < sPauseDungeonMap.textureCount; dungeonMapRoomIter++) {
         s32 mapCompactId = sPauseDungeonMap.mapI_mapCompactId[dungeonMapRoomIter];
 
-        // 2S2H [Port] directly set the pointer to the texture instead of using memcpy
-        MapDisp_GetMapITexture(sPauseDungeonMap.mapI_roomTextures[dungeonMapRoomIter], mapCompactId);
+        // 2S2H [Port] Pass the pointer of the array element to directly set texture
+        MapDisp_GetMapITexture(&sPauseDungeonMap.mapI_roomTextures[dungeonMapRoomIter], mapCompactId);
         if (dungeonMapRoomIter + 1 < sPauseDungeonMap.textureCount) {
             sPauseDungeonMap.mapI_roomTextures[dungeonMapRoomIter + 1] =
                 ALIGN16((intptr_t)sPauseDungeonMap.mapI_roomTextures[dungeonMapRoomIter] +
@@ -1642,7 +1682,10 @@ void MapDisp_DrawRooms(PlayState* play, s32 viewX, s32 viewY, s32 viewWidth, s32
 
         if (mapDataRoom->flags & MAP_DATA_ROOM_FLIP_X) {
             offsetX = ((texWidth / 2) - offsetX) + (texWidth / 2);
-            s = (texWidth - 1) << 5;
+            // 2S2H [Port] The width originally was subtracted by 1, but this caused the flipped texture to overflow on
+            // the edge. There are no vanilla scenes that leverage this, so its possibly an authentic bug.
+            // Removing it will allow the texture to display correctly for things like Mirror Mode.
+            s = (texWidth - 0) << 5;
             dsdx = 0xFC00;
         } else {
             s = 0;
@@ -1664,6 +1707,8 @@ void MapDisp_DrawRooms(PlayState* play, s32 viewX, s32 viewY, s32 viewWidth, s32
             ((mapDataRoom->centerX - (f32)sMapDisp.sceneMidX) * scaleFrac - offsetX) + ((viewWidth / two) + viewX);
         texPosY =
             ((mapDataRoom->centerZ - (f32)sMapDisp.sceneMidZ) * scaleFrac - offsetY) + ((viewHeight / two) + viewY);
+
+        texPosX = Ship_MapModifyPosMirrorMode(texPosX, -offsetX + ((viewWidth / two) + viewX));
 
         if (i == play->roomCtx.curRoom.num) {
             if (Map_IsInBossScene(play)) {
@@ -1781,6 +1826,8 @@ void MapDisp_DrawChests(PlayState* play, s32 viewX, s32 viewY, s32 viewWidth, s3
         texPosY = (s32)((((mapDataChests[i].z - (f32)sMapDisp.sceneMidZ) * scaleFrac) - offsetZ) +
                         ((viewHeight / 2) + viewY));
 
+        texPosX = Ship_MapModifyPosMirrorMode(texPosX, -offsetX + ((viewWidth / 2) + viewX));
+
         gSPTextureRectangle(POLY_OPA_DISP++, texPosX << 2, texPosY << 2, (texPosX + 8) << 2, (texPosY + 8) << 2,
                             G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
     }
@@ -1833,6 +1880,9 @@ void MapDisp_DrawRoomExits(PlayState* play, s32 viewX, s32 viewY, s32 viewWidth,
                                   ((viewWidth / 2) + viewX);
                         texPosY = ((f32)sTransitionActors[i].pos.z - sMapDisp.sceneMidZ) * scaleFrac +
                                   ((viewHeight / 2) + viewY);
+
+                        texPosX = Ship_MapModifyPosMirrorMode(texPosX, ((viewWidth / 2) + viewX));
+
                         gSPTextureRectangle(POLY_OPA_DISP++, ((texPosX - 1) << 2), ((texPosY - 1) << 2),
                                             ((texPosX + 1) << 2), ((texPosY + 1) << 2), G_TX_RENDERTILE, 0, 0, 1 << 10,
                                             1 << 10);
@@ -1894,6 +1944,9 @@ void MapDisp_DrawBossIcon(PlayState* play, s32 viewX, s32 viewY, s32 viewWidth, 
                       ((viewWidth / 2) + viewX);
             texPosY = ((((f32)sTransitionActors[i].pos.z - sMapDisp.sceneMidZ) * scaleFrac) - offsetZ) +
                       ((viewHeight / 2) + viewY);
+
+            texPosX = Ship_MapModifyPosMirrorMode(texPosX, -offsetX + ((viewWidth / 2) + viewX));
+
             gSPTextureRectangle(POLY_OPA_DISP++, texPosX << 2, texPosY << 2, (texPosX + 8) << 2, (texPosY + 8) << 2,
                                 G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
         }

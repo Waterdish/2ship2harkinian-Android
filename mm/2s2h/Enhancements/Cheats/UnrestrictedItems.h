@@ -1,6 +1,0 @@
-#ifndef CHEATS_UNRESTRICTED_ITEMS_H
-#define CHEATS_UNRESTRICTED_ITEMS_H
-
-void RegisterUnrestrictedItems();
-
-#endif // CHEATS_UNRESTRICTED_ITEMS_H

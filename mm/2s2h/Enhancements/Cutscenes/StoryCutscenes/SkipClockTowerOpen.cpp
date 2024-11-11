@@ -1,5 +1,5 @@
 #include <libultraship/bridge.h>
-#include "Enhancements/GameInteractor/GameInteractor.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 extern "C" {
 #include "z64.h"
@@ -10,14 +10,14 @@ extern PlayState* gPlayState;
 
 void RegisterSkipClockTowerOpen() {
     // This will handle skipping if you are around the Clock Town area, but not directly in south clock town
-    REGISTER_VB_SHOULD(GI_VB_CLOCK_TOWER_OPENING_CONSIDER_THIS_FIRST_CYCLE, {
+    REGISTER_VB_SHOULD(VB_CLOCK_TOWER_OPENING_CONSIDER_THIS_FIRST_CYCLE, {
         if (CVarGetInteger("gEnhancements.Cutscenes.SkipStoryCutscenes", 0)) {
             *should = false;
         }
     });
 
     // This will handle skipping if you are directly in South Clock Town
-    REGISTER_VB_SHOULD(GI_VB_PLAY_TRANSITION_CS, {
+    REGISTER_VB_SHOULD(VB_PLAY_TRANSITION_CS, {
         if ((gSaveContext.save.entrance == ENTRANCE(SOUTH_CLOCK_TOWN, 0) ||
              gSaveContext.save.entrance == ENTRANCE(TERMINA_FIELD, 0)) &&
             gSaveContext.save.cutsceneIndex == 0xFFF1 &&

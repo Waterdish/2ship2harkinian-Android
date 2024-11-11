@@ -12,10 +12,12 @@
 extern "C" {
 #include "src/overlays/gamestates/ovl_file_choose/z_file_select.h"
 extern FileSelectState* gFileSelectState;
+
+u16 Sram_CalcChecksum(void* data, size_t count);
 }
 
 // This entire thing is temporary until we have a more robust save system that
-// supports backwards compatability, migrations, threaded saving, save sections, etc.
+// supports backwards compatibility, migrations, threaded saving, save sections, etc.
 typedef enum FlashSlotFile {
     /* -1 */ FLASH_SLOT_FILE_UNAVAILABLE = -1,
     /*  0 */ FLASH_SLOT_FILE_1_NEW_CYCLE,
@@ -66,20 +68,20 @@ const std::unordered_map<uint32_t, std::function<void(nlohmann::json&)>> migrati
 };
 
 int SaveManager_MigrateSave(nlohmann::json& j) {
-    int version = j.value("version", 0);
-
-    if (version > CURRENT_SAVE_VERSION) {
-        SPDLOG_ERROR("Save version is greater than current version");
-        return -1;
-    }
-
-    if (version >= 4 && !j.contains("newCycleSave") && !j.contains("owlSave")) {
-        SPDLOG_ERROR("Save file is missing newCycleSave and owlSave");
-        return -1;
-    }
-
     try {
-        while (version < CURRENT_SAVE_VERSION) {
+        int version = j.value("version", 0);
+
+        if (version > (int)CURRENT_SAVE_VERSION) {
+            SPDLOG_ERROR("Save version is greater than current version");
+            return -1;
+        }
+
+        if (version >= 4 && !j.contains("newCycleSave") && !j.contains("owlSave")) {
+            SPDLOG_ERROR("Save file is missing newCycleSave and owlSave");
+            return -1;
+        }
+
+        while (version < (int)CURRENT_SAVE_VERSION) {
             if (migrations.contains(version)) {
                 auto migration = migrations.at(version);
                 if (version < 4) {
@@ -98,6 +100,9 @@ int SaveManager_MigrateSave(nlohmann::json& j) {
             version = j["version"] = version + 1;
         }
         return 0;
+    } catch (std::exception& e) {
+        SPDLOG_ERROR("Failed to migrate save file: {}", e.what());
+        return -1;
     } catch (...) {
         SPDLOG_ERROR("Failed to migrate save file");
         return -1;
@@ -156,6 +161,7 @@ void SaveManager_MoveInvalidSaveFile(std::filesystem::path fileName, std::string
             std::filesystem::rename(filePath, backupFilePath);
         }
 
+        SPDLOG_INFO("{}", message.c_str());
         auto gui = Ship::Context::GetInstance()->GetWindow()->GetGui();
         gui->GetGameOverlay()->TextDrawNotification(30.0f, true, message.c_str());
     } catch (...) { SPDLOG_ERROR("Failed to move invalid save file"); }
@@ -235,7 +241,7 @@ bool SaveManager_HandleFileDropped(std::string filePath) {
         nlohmann::json j;
         try {
             fileStream >> j;
-        } catch (nlohmann::json::parse_error& e) { return false; }
+        } catch (nlohmann::json::exception& e) { return false; }
 
         if (!j.contains("type") || j["type"] != "2S2H_SAVE") {
             return false;
@@ -290,6 +296,14 @@ extern "C" void SaveManager_SysFlashrom_WriteData(u8* saveBuffer, u32 pageNum, u
 
         SaveManager_WriteSaveFile(fileName, saveOptions);
         return;
+    }
+
+    // A new cycle save with the "special" page count means that both the regular slot and the backup slot should be
+    // saved together. We replicate that here by running the save again on the matching backup slot
+    if ((flashSlotFile == FLASH_SLOT_FILE_1_NEW_CYCLE || flashSlotFile == FLASH_SLOT_FILE_2_NEW_CYCLE) &&
+        pageCount == (u32)gFlashSpecialSaveNumPages[flashSlotFile]) {
+        SaveManager_SysFlashrom_WriteData(saveBuffer, gFlashSaveStartPages[flashSlotFile + 1],
+                                          gFlashSaveNumPages[flashSlotFile + 1]);
     }
 
     switch (flashSlotFile) {
@@ -402,10 +416,17 @@ extern "C" s32 SaveManager_SysFlashrom_ReadData(void* saveBuffer, u32 pageNum, u
             return result;
         }
 
-        SaveOptions saveOptions = j;
+        try {
+            SaveOptions saveOptions = j;
 
-        memcpy(saveBuffer, &saveOptions, sizeof(SaveOptions));
-        return 0;
+            memcpy(saveBuffer, &saveOptions, sizeof(SaveOptions));
+            return 0;
+        } catch (nlohmann::json::exception& je) {
+            SPDLOG_ERROR("Failed to parse global settings json: {}", je.what());
+            SaveManager_MoveInvalidSaveFile(
+                fileName, "Failed to parse global settings json, the original file has been backed up.");
+            return -1;
+        }
     }
 
     bool isOwlSave =
@@ -434,18 +455,41 @@ extern "C" s32 SaveManager_SysFlashrom_ReadData(void* saveBuffer, u32 pageNum, u
             return -1;
         }
 
-        SaveContext saveContext = j["owlSave"];
+        try {
+            SaveContext saveContext = j["owlSave"];
 
-        memcpy(saveBuffer, &saveContext, offsetof(SaveContext, fileNum));
-        return 0;
+            // Recompute the checksum in case the save was edited externally or a migration changed it
+            // By doing this we sacrifice "real" checksum verification of the save,
+            saveContext.save.saveInfo.checksum = 0;
+            saveContext.save.saveInfo.checksum = Sram_CalcChecksum(&saveContext, offsetof(SaveContext, fileNum));
+
+            memcpy(saveBuffer, &saveContext, offsetof(SaveContext, fileNum));
+            return 0;
+        } catch (nlohmann::json::exception& je) {
+            SPDLOG_ERROR("Failed to parse owl save json: {}", je.what());
+            SaveManager_MoveInvalidSaveFile(fileName,
+                                            "Failed to parse save json, the original file has been backed up.");
+            return -1;
+        }
     } else {
         if (!j.contains("newCycleSave")) {
             return -1;
         }
 
-        Save save = j["newCycleSave"]["save"];
+        try {
+            Save save = j["newCycleSave"]["save"];
 
-        memcpy(saveBuffer, &save, sizeof(Save));
-        return 0;
+            // Recompute the checksum, see message above
+            save.saveInfo.checksum = 0;
+            save.saveInfo.checksum = Sram_CalcChecksum(&save, sizeof(Save));
+
+            memcpy(saveBuffer, &save, sizeof(Save));
+            return 0;
+        } catch (nlohmann::json::exception& je) {
+            SPDLOG_ERROR("Failed to parse new cycle save json: {}", je.what());
+            SaveManager_MoveInvalidSaveFile(fileName,
+                                            "Failed to parse save json, the original file has been backed up.");
+            return -1;
+        }
     }
 }

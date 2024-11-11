@@ -587,6 +587,9 @@ void EnSyatekiMan_Town_StartIntroTextbox(EnSyatekiMan* this, PlayState* play) {
             }
             break;
 
+        // 2SH2 [FD Enhancement]  Don't allow playing town archery with FD becuase Swamp prevents FD archery by default.
+        // Get Goron's "quite the build" text
+        case PLAYER_FORM_FIERCE_DEITY:
         case PLAYER_FORM_GORON:
             if (CURRENT_DAY != 3) {
                 if (!(this->talkFlags & TALK_FLAG_TOWN_HAS_SPOKEN_WITH_GORON)) {

@@ -92,8 +92,6 @@ u64 rspbootTextEnd[1];
 u64 njpgdspMainTextStart[1];
 u64 njpgdspMainDataStart[1];
 
-Mtx gMtxClear;
-
 u8 gPictoPhotoI8[PICTO_PHOTO_SIZE];
 u8 D_80784600[0x56200];
 

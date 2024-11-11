@@ -3,6 +3,8 @@
 #include "2s2h/resource/type/Scene.h"
 #include <utils/StringHelper.h>
 #include <Vertex.h>
+#include "2s2h/GameInteractor/GameInteractor.h"
+
 extern "C" {
 #include "global.h"
 extern uintptr_t gSegments[NUM_SEGMENTS];
@@ -71,6 +73,8 @@ extern "C" s32 OTRfunc_800973FC(PlayState* play, RoomContext* roomCtx) {
             if (Environment_GetStormState(play) == STORM_STATE_OFF) {
                 Environment_StopStormNatureAmbience(play);
             }
+            // Insert hook
+            GameInteractor_ExecuteAfterRoomSceneCommands(play->sceneId, roomCtx->curRoom.num);
             return 1;
         }
 

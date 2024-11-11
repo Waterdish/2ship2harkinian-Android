@@ -7,6 +7,7 @@
 #include "DeveloperTools/ActorViewer.h"
 #include "DeveloperTools/CollisionViewer.h"
 #include "DeveloperTools/EventLog.h"
+#include "BenInputEditorWindow.h"
 
 namespace BenGui {
 class BenMenuBar : public Ship::GuiMenuBar {

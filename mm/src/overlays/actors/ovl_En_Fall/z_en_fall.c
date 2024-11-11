@@ -22,6 +22,8 @@
 #include "objects/object_lodmoon/object_lodmoon.h"
 #include "objects/object_moonston/object_moonston.h"
 
+#include "2s2h/BenPort.h"
+
 #define FLAGS (ACTOR_FLAG_10 | ACTOR_FLAG_20)
 
 #define THIS ((EnFall*)thisx)
@@ -581,7 +583,7 @@ static u8 sAlphaTableIndices[] = {
 void EnFall_Fireball_SetPerVertexAlpha(f32 fireballAlpha) {
     s32 pad;
     u8 perVertexAlphaTable[5];
-    Vtx* vertices = Lib_SegmentedToVirtual(gMoonFireballVtx);
+    Vtx* vertices = ResourceMgr_LoadVtxByName(Lib_SegmentedToVirtual(gMoonFireballVtx));
     s32 i;
 
     if (fireballAlpha > 1.0f) {

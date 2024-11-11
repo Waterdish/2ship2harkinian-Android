@@ -1,5 +1,24 @@
 #include "global.h"
 
+#include "2s2h/BenPort.h"
+#include "align_asset_macro.h"
+
+// #region 2S2H [HD Textures]
+#define drGfxPrintFontData "__OTR__textures/font/sGfxPrintFontData"
+static const ALIGN_ASSET(2) char rGfxPrintFontData[] = drGfxPrintFontData;
+
+#define drGfxPrintFontDataAlt "__OTR__alt/textures/font/sGfxPrintFontData"
+static const ALIGN_ASSET(2) char rGfxPrintFontDataAlt[] = drGfxPrintFontDataAlt;
+
+bool sHasArchiveTexture = false;
+
+// Checks if we have a gfx font as a resource in an archive, which needs to be rendered differently
+bool GfxPrint_HasArchiveTexture() {
+    return ResourceMgr_FileExists(rGfxPrintFontData) ||
+           (ResourceMgr_IsAltAssetsEnabled() && ResourceMgr_FileExists(rGfxPrintFontDataAlt));
+}
+// #endregion
+
 #define GFXP_FLAG_HIRAGANA (1 << 0)
 #define GFXP_FLAG_RAINBOW (1 << 1)
 #define GFXP_FLAG_SHADOW (1 << 2)
@@ -144,8 +163,18 @@ void GfxPrint_Setup(GfxPrint* this) {
                         G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE,
                     G_AC_NONE | G_ZS_PRIM | G_RM_XLU_SURF | G_RM_XLU_SURF2);
     gDPSetCombineMode(this->dList++, G_CC_DECALRGBA, G_CC_DECALRGBA);
-    gDPLoadTextureBlock_4b(this->dList++, sGfxPrintFontData, G_IM_FMT_CI, width, height, 0, G_TX_NOMIRROR | G_TX_WRAP,
-                           G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+
+    // 2S2H [HD Textures] Font data from an archive has 4 times the width as the letter columns are side by side
+    if (sHasArchiveTexture) {
+        gDPLoadTextureBlock_4b(this->dList++, rGfxPrintFontData, G_IM_FMT_CI, width * 4, height, 0,
+                               G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
+                               G_TX_NOLOD, G_TX_NOLOD);
+    } else {
+        gDPLoadTextureBlock_4b(this->dList++, sGfxPrintFontData, G_IM_FMT_CI, width, height, 0,
+                               G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
+                               G_TX_NOLOD, G_TX_NOLOD);
+    }
+
     gDPLoadTLUT(this->dList++, 64, 256, sGfxPrintFontTLUT);
 
     for (i = 1; i < 4; i++) {
@@ -156,17 +185,18 @@ void GfxPrint_Setup(GfxPrint* this) {
 
     gDPSetColor(this->dList++, G_SETPRIMCOLOR, this->color.rgba);
 
-    // BENTODO: CRASH
+    // #region 2S2H [Port] Rainbow disabled until LUS supports multiple palettes and tiles
     // gDPLoadMultiTile_4b(this->dList++, sGfxPrintRainbowData, 0, 1, G_IM_FMT_CI, 2, 8, 0, 0, 1, 7, 4,
     //                     G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 1, 3, G_TX_NOLOD, G_TX_NOLOD);
 
     // gDPLoadTLUT(this->dList++, 16, 320, sGfxPrintRainbowTLUT);
 
-    for (i = 1; i < 4; i++) {
-        gDPSetTile(this->dList++, G_IM_FMT_CI, G_IM_SIZ_4b, 1, 0, i * 2 + 1, 4, G_TX_NOMIRROR | G_TX_WRAP, 3,
-                   G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, 1, G_TX_NOLOD);
-        gDPSetTileSize(this->dList++, i * 2 + 1, 0, 0, 4, 28);
-    }
+    // for (i = 1; i < 4; i++) {
+    //     gDPSetTile(this->dList++, G_IM_FMT_CI, G_IM_SIZ_4b, 1, 0, i * 2 + 1, 4, G_TX_NOMIRROR | G_TX_WRAP, 3,
+    //                G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, 1, G_TX_NOLOD);
+    //     gDPSetTileSize(this->dList++, i * 2 + 1, 0, 0, 4, 28);
+    // }
+    // #endregion
 }
 
 void GfxPrint_SetColor(GfxPrint* this, u32 r, u32 g, u32 b, u32 a) {
@@ -201,7 +231,7 @@ void GfxPrint_PrintCharImpl(GfxPrint* this, u8 c) {
         this->flags &= ~GFXP_FLAG_UPDATE;
 
         gDPPipeSync(this->dList++);
-        // BENTODO: CRASH HERE
+        // 2S2H [Port] Rainbow disabled until LUS supports multiple palettes and tiles
         if (this->flags & GFXP_FLAG_RAINBOW && false) {
             gDPSetTextureLUT(this->dList++, G_TT_RGBA16);
             gDPSetCycleType(this->dList++, G_CYC_2CYCLE);
@@ -215,17 +245,27 @@ void GfxPrint_PrintCharImpl(GfxPrint* this, u8 c) {
         }
     }
 
+    // 2S2H [HD Textures] The font data is normally 4 sets of 2 columns overlayed on top of each other with
+    // different CI palette values. Custom font data from archives instead are all 4 sets laid out side by side.
+    // This means we have to compute an additional offset value that represents which of the 4 sets a letter is from.
+    u16 assetOffsetX = 0;
+    if (sHasArchiveTexture) {
+        // Multiplied by the offset of 2 columns before added with the original value below
+        assetOffsetX = (c & 0x3) * (256 * 2);
+        tile = 0;
+    }
+
     if (this->flags & GFXP_FLAG_SHADOW) {
         gDPSetColor(this->dList++, G_SETPRIMCOLOR, 0);
 
         gSPTextureRectangle(this->dList++, this->posX + 4, this->posY + 4, this->posX + 4 + 32, this->posY + 4 + 32,
-                            tile, s << 6, t << 8, 1 << 10, 1 << 10);
+                            tile, assetOffsetX + (s << 6), t << 8, 1 << 10, 1 << 10);
 
         gDPSetColor(this->dList++, G_SETPRIMCOLOR, this->color.rgba);
     }
 
-    gSPTextureRectangle(this->dList++, this->posX, this->posY, this->posX + 32, this->posY + 32, tile, s << 6, t << 8,
-                        1 << 10, 1 << 10);
+    gSPTextureRectangle(this->dList++, this->posX, this->posY, this->posX + 32, this->posY + 32, tile,
+                        assetOffsetX + (s << 6), t << 8, 1 << 10, 1 << 10);
 
     this->posX += 32;
 }
@@ -265,14 +305,12 @@ void GfxPrint_PrintChar(GfxPrint* this, u8 c) {
                 this->flags &= ~GFXP_FLAG_HIRAGANA;
                 break;
             case GFXP_RAINBOW_ON_CHAR:
-                // BENTODO: CRASH
-                // this->flags |= GFXP_FLAG_RAINBOW;
-                // this->flags |= GFXP_FLAG_UPDATE;
+                this->flags |= GFXP_FLAG_RAINBOW;
+                this->flags |= GFXP_FLAG_UPDATE;
                 break;
             case GFXP_RAINBOW_OFF_CHAR:
-                // BENTODO: CRASH
-                // this->flags &= ~GFXP_FLAG_RAINBOW;
-                // this->flags |= GFXP_FLAG_UPDATE;
+                this->flags &= ~GFXP_FLAG_RAINBOW;
+                this->flags |= GFXP_FLAG_UPDATE;
                 break;
             case GFXP_UNUSED_CHAR:
             default:
@@ -320,6 +358,9 @@ void GfxPrint_Init(GfxPrint* this) {
     this->flags &= ~GFXP_FLAG_RAINBOW;
     this->flags |= GFXP_FLAG_SHADOW;
     this->flags |= GFXP_FLAG_UPDATE;
+
+    // 2S2H [HD Textures] Track whether we have a archive font for the life of this printer
+    sHasArchiveTexture = GfxPrint_HasArchiveTexture();
 }
 
 void GfxPrint_Destroy(GfxPrint* this) {

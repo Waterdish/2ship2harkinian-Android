@@ -6,6 +6,8 @@
 #include "overlays/kaleido_scope/ovl_kaleido_scope/z_kaleido_scope.h"
 #include <stdio.h>
 
+#include "2s2h/BenPort.h"
+
 #define DYNA_RAYCAST_FLOORS 1
 #define DYNA_RAYCAST_WALLS 2
 #define DYNA_RAYCAST_CEILINGS 4
@@ -3965,6 +3967,10 @@ s32 BgCheck_SphVsFirstDynaPoly(CollisionContext* colCtx, u16 xpFlags, CollisionP
  * SEGMENTED_TO_K0 CollisionHeader members
  */
 void CollisionHeader_SegmentedToVirtual(CollisionHeader* colHeader) {
+    if (ResourceMgr_OTRSigCheck(colHeader)) {
+        colHeader = ResourceMgr_LoadColByName(colHeader);
+    }
+
     colHeader->vtxList = Lib_SegmentedToVirtual(colHeader->vtxList);
     colHeader->polyList = Lib_SegmentedToVirtual(colHeader->polyList);
     if (colHeader->surfaceTypeList) {
@@ -3982,6 +3988,10 @@ void CollisionHeader_SegmentedToVirtual(CollisionHeader* colHeader) {
  * Convert CollisionHeader Segmented to Virtual addressing
  */
 void CollisionHeader_GetVirtual(CollisionHeader* colHeader, CollisionHeader** dest) {
+    if (ResourceMgr_OTRSigCheck(colHeader)) {
+        colHeader = ResourceMgr_LoadColByName(colHeader);
+    }
+
     *dest = Lib_SegmentedToVirtual(colHeader);
     CollisionHeader_SegmentedToVirtual(*dest);
 }

@@ -6,6 +6,7 @@
 
 #include "z_en_ossan.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_10)
 
@@ -298,6 +299,10 @@ void EnOssan_UpdateCursorPos(PlayState* play, EnOssan* this) {
     Actor_GetScreenPos(play, &this->items[this->cursorIndex]->actor, &x, &y);
     this->cursorPos.x = x;
     this->cursorPos.y = y;
+
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0)) {
+        this->cursorPos.x = SCREEN_WIDTH - this->cursorPos.x;
+    }
 }
 
 void EnOssan_EndInteraction(PlayState* play, EnOssan* this) {
@@ -464,6 +469,8 @@ void EnOssan_BeginInteraction(EnOssan* this, PlayState* play) {
 void EnOssan_UpdateJoystickInputState(PlayState* play, EnOssan* this) {
     s8 stickX = CONTROLLER1(&play->state)->rel.stick_x;
     s8 stickY = CONTROLLER1(&play->state)->rel.stick_y;
+
+    stickX *= GameInteractor_InvertControl(GI_INVERT_SHOP_X);
 
     this->moveHorizontal = this->moveVertical = false;
 
@@ -1679,6 +1686,11 @@ void EnOssan_DrawTextRec(PlayState* play, s32 r, s32 g, s32 b, s32 a, f32 x, f32
 void EnOssan_DrawStickDirectionPrompts(PlayState* play, EnOssan* this) {
     s32 drawStickRightPrompt = this->stickLeftPrompt.isEnabled;
     s32 drawStickLeftPrompt = this->stickRightPrompt.isEnabled;
+
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0) && (drawStickLeftPrompt != drawStickRightPrompt)) {
+        drawStickLeftPrompt = !drawStickLeftPrompt;
+        drawStickRightPrompt = !drawStickRightPrompt;
+    }
 
     (void)"../z_en_oB1.c";
 

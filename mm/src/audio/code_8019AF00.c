@@ -1,6 +1,6 @@
 #include "global.h"
 
-#include "Enhancements/GameInteractor/GameInteractor.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 typedef struct {
     /* 0x0 */ s8 x;
@@ -2555,7 +2555,7 @@ void AudioOcarina_CheckSongsWithoutMusicStaff(void) {
         for (songIndex = sFirstOcarinaSongIndex; songIndex < sLastOcarinaSongIndex; songIndex++) {
             // Checks to see if the song is available to be played
             bool vanillaCondition = (u32)sOcarinaAvailableSongFlags & (1 << songIndex);
-            if (GameInteractor_Should(GI_VB_SONG_AVAILABLE_TO_PLAY, vanillaCondition, &songIndex)) {
+            if (GameInteractor_Should(VB_SONG_AVAILABLE_TO_PLAY, vanillaCondition, &songIndex)) {
                 // Loops through all possible starting indices?
                 // Loops through the notes of the song?
                 for (j = 0, k = 0; (j < gOcarinaSongButtons[songIndex].numButtons) && (k == 0) &&

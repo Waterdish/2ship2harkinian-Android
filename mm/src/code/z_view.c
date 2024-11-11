@@ -2,6 +2,7 @@
 #include "z64shrink_window.h"
 #include "z64view.h"
 #include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 s32 View_ApplyPerspective(View* view);
 s32 View_ApplyOrtho(View* view);
@@ -158,6 +159,10 @@ void View_ApplyLetterbox(View* view) {
     s32 uly;
     s32 lrx;
     s32 lry;
+
+    if (GameInteractor_Should(VB_DISABLE_LETTERBOX, false)) {
+        return;
+    }
 
     OPEN_DISPS(view->gfxCtx);
 
@@ -320,6 +325,7 @@ s32 View_ApplyPerspective(View* view) {
     s32 height;
     Vp* vp;
     Mtx* projection;
+    Mtx* projectionFlipped;
     Mtx* viewing;
     GraphicsContext* gfxCtx = view->gfxCtx;
 
@@ -337,13 +343,26 @@ s32 View_ApplyPerspective(View* view) {
 
     // Perspective projection
     projection = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
+    projectionFlipped = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
     view->projectionPtr = projection;
+    view->shipMirrorProjectionPtr = projectionFlipped;
 
     width = view->viewport.rightX - view->viewport.leftX;
     height = view->viewport.bottomY - view->viewport.topY;
     aspect = (f32)width / (f32)height;
 
     guPerspective(projection, &view->perspNorm, view->fovy, aspect, view->zNear, view->zFar, view->scale);
+
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0)) {
+        MtxF flipF;
+        SkinMatrix_Clear(&flipF);
+        flipF.xx = -1.0;
+        MtxF projectionF;
+        Matrix_MtxToMtxF(projection, &projectionF);
+        SkinMatrix_MtxFMtxFMult(&projectionF, &flipF, &projectionF);
+        Matrix_MtxFToMtx(&projectionF, projectionFlipped);
+    }
+
     view->projection = *projection;
 
     View_StepDistortion(view, projection);
@@ -445,6 +464,7 @@ s32 View_ApplyPerspective(View* view) {
 s32 View_ApplyOrtho(View* view) {
     Vp* vp;
     Mtx* projection;
+    Mtx* projectionFlipped;
     GraphicsContext* gfxCtx = view->gfxCtx;
 
     OPEN_DISPS(gfxCtx);
@@ -460,10 +480,22 @@ s32 View_ApplyOrtho(View* view) {
     gSPViewport(OVERLAY_DISP++, vp);
 
     projection = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
+    projectionFlipped = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
     view->projectionPtr = projection;
+    view->shipMirrorProjectionPtr = projectionFlipped;
 
     guOrtho(projection, gScreenWidth * -0.5f, gScreenWidth * 0.5f, gScreenHeight * -0.5f, gScreenHeight * 0.5f,
             view->zNear, view->zFar, view->scale);
+
+    // if (CVarGetInteger("gModes.MirroredWorld.State", 0)) {
+    //     MtxF flipF;
+    //     SkinMatrix_Clear(&flipF);
+    //     flipF.xx = -1.0;
+    //     MtxF projectionF;
+    //     Matrix_MtxToMtxF(projection, &projectionF);
+    //     SkinMatrix_MtxFMtxFMult(&projectionF, &flipF, &projectionF);
+    //     Matrix_MtxFToMtx(&projectionF, projectionFlipped);
+    // }
 
     view->projection = *projection;
 
@@ -481,6 +513,7 @@ s32 View_ApplyOrtho(View* view) {
 s32 View_ApplyOrthoToOverlay(View* view) {
     Vp* vp;
     Mtx* projection;
+    Mtx* projectionFlipped;
     GraphicsContext* gfxCtx;
 
     gfxCtx = view->gfxCtx;
@@ -504,10 +537,23 @@ s32 View_ApplyOrthoToOverlay(View* view) {
 
     gSPViewport(OVERLAY_DISP++, vp);
     projection = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
+    projectionFlipped = GRAPH_ALLOC(gfxCtx, sizeof(Mtx));
     view->projectionPtr = projection;
+    view->shipMirrorProjectionPtr = projectionFlipped;
 
     guOrtho(projection, gScreenWidth * -0.5f, gScreenWidth * 0.5f, gScreenHeight * -0.5f, gScreenHeight * 0.5f,
             view->zNear, view->zFar, view->scale);
+
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0)) {
+        MtxF flipF;
+        SkinMatrix_Clear(&flipF);
+        flipF.xx = -1.0;
+        MtxF projectionF;
+        Matrix_MtxToMtxF(projection, &projectionF);
+        SkinMatrix_MtxFMtxFMult(&projectionF, &flipF, &projectionF);
+        Matrix_MtxFToMtx(&projectionF, projectionFlipped);
+    }
+
     view->projection = *projection;
 
     gSPMatrix(OVERLAY_DISP++, projection, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);

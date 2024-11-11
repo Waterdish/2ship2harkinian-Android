@@ -2,7 +2,6 @@
 #define Z64_H
 #ifdef __cplusplus
 extern "C" {
-#define this thisx
 #endif
 #include "libc/math.h"
 #include "libc/stdarg.h"
@@ -308,6 +307,5 @@ typedef enum {
 //
 #ifdef __cplusplus
 }
-#undef this
 #endif
 #endif

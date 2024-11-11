@@ -1765,6 +1765,7 @@ extern u16 D_0F000000[];
 
 // #region 2S2H [General]
 extern PlayState* gPlayState;
+extern GameState* gGameState;
 // #endregion
 
 #ifdef __cplusplus

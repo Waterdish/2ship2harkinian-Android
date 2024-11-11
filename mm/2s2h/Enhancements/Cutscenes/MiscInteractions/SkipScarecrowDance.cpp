@@ -1,5 +1,5 @@
 #include <libultraship/bridge.h>
-#include "Enhancements/GameInteractor/GameInteractor.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 extern "C" {
 #include "z64.h"

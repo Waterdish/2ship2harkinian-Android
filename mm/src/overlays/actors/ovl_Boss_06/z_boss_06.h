@@ -48,6 +48,8 @@ typedef struct Boss06 {
     /* 0xA1C */ Vec3f unk_A1C;
     /* 0xA28 */ f32 unk_A28;
     /* 0xA2C */ f32 unk_A2C;
+    // 2S2H [Port]
+    /*       */ u8 curtainTexMask[64 * 64]; // [HD Textures] Mask for CPU modified texture
 } Boss06; // size = 0xA30
 
 #endif // Z_BOSS_06_H

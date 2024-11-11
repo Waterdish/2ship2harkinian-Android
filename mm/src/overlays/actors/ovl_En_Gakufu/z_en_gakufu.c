@@ -267,6 +267,11 @@ void EnGakufu_Draw(Actor* thisx, PlayState* play) {
     gDPPipeSync(POLY_XLU_DISP++);
     gSPSegment(POLY_XLU_DISP++, 0x02, play->interfaceCtx.parameterSegment);
 
+    // Invert the whole music staff, so the notes appear correctly in mirrored world
+    if (CVarGetInteger("gModes.MirroredWorld.State", 0)) {
+        Matrix_Scale(-1.0f, 1.0f, 1.0f, MTXMODE_APPLY);
+    }
+
     for (i = 0; (i < ARRAY_COUNT(this->buttonIndex)) && (this->buttonIndex[i] != OCARINA_BTN_INVALID); i++) {
         Matrix_Push();
         Matrix_Translate(30 * i - 105, sOcarinaBtnWallYOffsets[this->buttonIndex[i]] * 7.5f, 1.0f, MTXMODE_APPLY);

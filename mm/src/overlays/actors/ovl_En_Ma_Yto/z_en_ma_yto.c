@@ -7,6 +7,8 @@
 #include "z_en_ma_yto.h"
 #include "overlays/actors/ovl_En_Ma_Yts/z_en_ma_yts.h"
 
+#include "2s2h/GameInteractor/GameInteractor.h"
+
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_100000 | ACTOR_FLAG_2000000)
 
 #define THIS ((EnMaYto*)thisx)
@@ -308,7 +310,8 @@ void EnMaYto_ChooseAction(EnMaYto* this, PlayState* play) {
         case MA_YTO_TYPE_AFTERMILKRUN:
             this->unk310 = 0;
             if ((INV_CONTENT(ITEM_MASK_ROMANI) == ITEM_MASK_ROMANI) &&
-                CHECK_WEEKEVENTREG(WEEKEVENTREG_ESCORTED_CREMIA) && (Rand_Next() & 0x80)) {
+                CHECK_WEEKEVENTREG(WEEKEVENTREG_ESCORTED_CREMIA) &&
+                (GameInteractor_Should(VB_PLAY_CREMIA_HUG_CUTSCENE, Rand_Next() & 0x80))) {
                 EnMaYto_SetupBeginWarmFuzzyFeelingCs(this);
             } else {
                 EnMaYto_SetupAfterMilkRunInit(this);

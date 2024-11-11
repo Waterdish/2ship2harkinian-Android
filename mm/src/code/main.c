@@ -1,6 +1,7 @@
 #ifdef _WIN32
 #include <Windows.h>
 #include <stdio.h>
+#include <locale.h>
 #endif
 
 #include "audiomgr.h"
@@ -70,6 +71,8 @@ void SDL_main(int argc, char** argv /* void* arg*/) {
 #ifndef _DEBUG
     ShowWindow(GetConsoleWindow(), SW_HIDE);
 #endif
+    // Allow non-ascii characters for Windows
+    setlocale(LC_ALL, ".UTF8");
 #endif // _WIN32
 
     InitOTR();

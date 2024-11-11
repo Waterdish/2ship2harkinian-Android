@@ -84,19 +84,19 @@ static ColliderCylinderInit sCylinderInit = {
     { 10, 30, 0, { 0, 0, 0 } },
 };
 
-u16 D_80C00A44[] = { 0x719, 0x71A, 0x71B, 0x708 };
+u16 D_80C00A44[] = { 0x719, 0x71A, 0x71B, 0x708 }; // text IDs before popping balloon
 
-u16 D_80C00A4C[] = { 0x739, 0x73A, 0x73B, 0x000 };
+u16 D_80C00A4C[] = { 0x739, 0x73A, 0x73B, 0x000 }; // text IDs after popping balloon
 
 u16 D_80C00A54[] = {
     0x739, 0x73A, 0x73B, 0x714, 0x709, 0x70A, 0x70B, 0x70C, 0x70D, 0x70E, 0x70F, 0x712, 0x713,
-};
+}; // text IDs for Deku after popping balloon
 
 u16 D_80C00A70[] = {
     0x739, 0x73A, 0x73B, 0x759, 0x753, 0x754, 0x755, 0x756, 0x70D, 0x757, 0x758, 0x712, 0x713,
-};
+}; // text IDs for Human after popping balloon
 
-u16 D_80C00A8C[] = { 0x736, 0x737, 0x738, 0x74E };
+u16 D_80C00A8C[] = { 0x736, 0x737, 0x738, 0x74E }; // text IDs after hide and seek
 
 typedef enum {
     /*   -1 */ ENBOMJIMA_ANIM_NONE = -1,
@@ -225,9 +225,11 @@ void func_80BFE32C(EnBomjima* this, PlayState* play, s32 arg2) {
     if (player->transformation == PLAYER_FORM_GORON) {
         this->unk_2C8 = 1;
     }
-    if (player->transformation == PLAYER_FORM_ZORA) {
+    // #region 2S2H - Enhancements. Fierce Deity gets same dialog as Zora
+    if (player->transformation == PLAYER_FORM_ZORA || player->transformation == PLAYER_FORM_FIERCE_DEITY) {
         this->unk_2C8 = 2;
     }
+    // #endregion
 
     switch (this->unk_2CA) {
         case 0:

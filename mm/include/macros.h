@@ -25,8 +25,8 @@
 
 #define RDRAM_CACHED KSEG0
 
-#define PHYSICAL_TO_VIRTUAL(addr) (addr) //((uintptr_t)(addr) + RDRAM_CACHED)
-#define SEGMENTED_TO_K0(addr) (addr) //(void*)((gSegments[SEGMENT_NUMBER(addr)] + K0BASE) + SEGMENT_OFFSET(addr))
+#define PHYSICAL_TO_VIRTUAL(addr) (addr) // ((uintptr_t)(addr) + RDRAM_CACHED)
+#define SEGMENTED_TO_K0(addr) (addr) // (void*)((gSegments[SEGMENT_NUMBER(addr)] + K0BASE) + SEGMENT_OFFSET(addr))
 
 #define GET_ACTIVE_CAM(play) ((play)->cameraPtrs[(play)->activeCamId])
 

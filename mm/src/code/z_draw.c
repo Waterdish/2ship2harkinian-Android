@@ -90,6 +90,8 @@
 #include "assets/objects/object_bsmask/object_bsmask.h"
 #include "assets/objects/object_st/object_st.h"
 
+#include "2s2h/BenPort.h"
+
 void GetItem_DrawBombchu(PlayState* play, s16 drawId);
 void GetItem_DrawPoes(PlayState* play, s16 drawId);
 void GetItem_DrawFairyBottle(PlayState* play, s16 drawId);
@@ -669,7 +671,7 @@ void GetItem_DrawSeahorse(PlayState* play, s16 drawId) {
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, sDrawItemTable[drawId].drawResources[1]);
 
-    Matrix_MtxToMtxF(Lib_SegmentedToVirtual(sDrawItemTable[drawId].drawResources[3]), &mtx);
+    Matrix_MtxToMtxF(ResourceMgr_LoadMtxByName(Lib_SegmentedToVirtual(sDrawItemTable[drawId].drawResources[3])), &mtx);
     Matrix_Mult(&mtx, MTXMODE_APPLY);
     Matrix_ReplaceRotation(&play->billboardMtxF);
 
@@ -695,7 +697,7 @@ void GetItem_DrawFairyContainer(PlayState* play, s16 drawId) {
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, sDrawItemTable[drawId].drawResources[1]);
 
-    Matrix_MtxToMtxF(Lib_SegmentedToVirtual(sDrawItemTable[drawId].drawResources[3]), &mtx);
+    Matrix_MtxToMtxF(ResourceMgr_LoadMtxByName(Lib_SegmentedToVirtual(sDrawItemTable[drawId].drawResources[3])), &mtx);
     Matrix_Mult(&mtx, MTXMODE_APPLY);
     Matrix_ReplaceRotation(&play->billboardMtxF);
 

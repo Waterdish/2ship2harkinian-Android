@@ -3,177 +3,177 @@
 
 #include "align_asset_macro.h"
 
-#define dmap_i_static_Blob_000000 "__OTR__map_i_static/map_i_static_Blob_000000"
-static const ALIGN_ASSET(2) char map_i_static_Blob_000000[] = dmap_i_static_Blob_000000;
+#define dgMapIStatic00Tex "__OTR__map_i_static/gMapIStatic00Tex"
+static const ALIGN_ASSET(2) char gMapIStatic00Tex[] = dgMapIStatic00Tex;
 
-#define dmap_i_static_Blob_000FF0 "__OTR__map_i_static/map_i_static_Blob_000FF0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_000FF0[] = dmap_i_static_Blob_000FF0;
+#define dgMapIStatic01Tex "__OTR__map_i_static/gMapIStatic01Tex"
+static const ALIGN_ASSET(2) char gMapIStatic01Tex[] = dgMapIStatic01Tex;
 
-#define dmap_i_static_Blob_001FE0 "__OTR__map_i_static/map_i_static_Blob_001FE0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_001FE0[] = dmap_i_static_Blob_001FE0;
+#define dgMapIStatic02Tex "__OTR__map_i_static/gMapIStatic02Tex"
+static const ALIGN_ASSET(2) char gMapIStatic02Tex[] = dgMapIStatic02Tex;
 
-#define dmap_i_static_Blob_002FD0 "__OTR__map_i_static/map_i_static_Blob_002FD0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_002FD0[] = dmap_i_static_Blob_002FD0;
+#define dgMapIStatic03Tex "__OTR__map_i_static/gMapIStatic03Tex"
+static const ALIGN_ASSET(2) char gMapIStatic03Tex[] = dgMapIStatic03Tex;
 
-#define dmap_i_static_Blob_003FC0 "__OTR__map_i_static/map_i_static_Blob_003FC0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_003FC0[] = dmap_i_static_Blob_003FC0;
+#define dgMapIStatic04Tex "__OTR__map_i_static/gMapIStatic04Tex"
+static const ALIGN_ASSET(2) char gMapIStatic04Tex[] = dgMapIStatic04Tex;
 
-#define dmap_i_static_Blob_004FB0 "__OTR__map_i_static/map_i_static_Blob_004FB0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_004FB0[] = dmap_i_static_Blob_004FB0;
+#define dgMapIStatic05Tex "__OTR__map_i_static/gMapIStatic05Tex"
+static const ALIGN_ASSET(2) char gMapIStatic05Tex[] = dgMapIStatic05Tex;
 
-#define dmap_i_static_Blob_005180 "__OTR__map_i_static/map_i_static_Blob_005180"
-static const ALIGN_ASSET(2) char map_i_static_Blob_005180[] = dmap_i_static_Blob_005180;
+#define dgMapIStatic06Tex "__OTR__map_i_static/gMapIStatic06Tex"
+static const ALIGN_ASSET(2) char gMapIStatic06Tex[] = dgMapIStatic06Tex;
 
-#define dmap_i_static_Blob_005330 "__OTR__map_i_static/map_i_static_Blob_005330"
-static const ALIGN_ASSET(2) char map_i_static_Blob_005330[] = dmap_i_static_Blob_005330;
+#define dgMapIStatic07Tex "__OTR__map_i_static/gMapIStatic07Tex"
+static const ALIGN_ASSET(2) char gMapIStatic07Tex[] = dgMapIStatic07Tex;
 
-#define dmap_i_static_Blob_005510 "__OTR__map_i_static/map_i_static_Blob_005510"
-static const ALIGN_ASSET(2) char map_i_static_Blob_005510[] = dmap_i_static_Blob_005510;
+#define dgMapIStatic08Tex "__OTR__map_i_static/gMapIStatic08Tex"
+static const ALIGN_ASSET(2) char gMapIStatic08Tex[] = dgMapIStatic08Tex;
 
-#define dmap_i_static_Blob_005610 "__OTR__map_i_static/map_i_static_Blob_005610"
-static const ALIGN_ASSET(2) char map_i_static_Blob_005610[] = dmap_i_static_Blob_005610;
+#define dgMapIStatic09Tex "__OTR__map_i_static/gMapIStatic09Tex"
+static const ALIGN_ASSET(2) char gMapIStatic09Tex[] = dgMapIStatic09Tex;
 
-#define dmap_i_static_Blob_005670 "__OTR__map_i_static/map_i_static_Blob_005670"
-static const ALIGN_ASSET(2) char map_i_static_Blob_005670[] = dmap_i_static_Blob_005670;
+#define dgMapIStatic0ATex "__OTR__map_i_static/gMapIStatic0ATex"
+static const ALIGN_ASSET(2) char gMapIStatic0ATex[] = dgMapIStatic0ATex;
 
-#define dmap_i_static_Blob_005820 "__OTR__map_i_static/map_i_static_Blob_005820"
-static const ALIGN_ASSET(2) char map_i_static_Blob_005820[] = dmap_i_static_Blob_005820;
+#define dgMapIStatic0BTex "__OTR__map_i_static/gMapIStatic0BTex"
+static const ALIGN_ASSET(2) char gMapIStatic0BTex[] = dgMapIStatic0BTex;
 
-#define dmap_i_static_Blob_005890 "__OTR__map_i_static/map_i_static_Blob_005890"
-static const ALIGN_ASSET(2) char map_i_static_Blob_005890[] = dmap_i_static_Blob_005890;
+#define dgMapIStatic0CTex "__OTR__map_i_static/gMapIStatic0CTex"
+static const ALIGN_ASSET(2) char gMapIStatic0CTex[] = dgMapIStatic0CTex;
 
-#define dmap_i_static_Blob_0059C0 "__OTR__map_i_static/map_i_static_Blob_0059C0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_0059C0[] = dmap_i_static_Blob_0059C0;
+#define dgMapIStatic0DTex "__OTR__map_i_static/gMapIStatic0DTex"
+static const ALIGN_ASSET(2) char gMapIStatic0DTex[] = dgMapIStatic0DTex;
 
-#define dmap_i_static_Blob_005B60 "__OTR__map_i_static/map_i_static_Blob_005B60"
-static const ALIGN_ASSET(2) char map_i_static_Blob_005B60[] = dmap_i_static_Blob_005B60;
+#define dgMapIStatic0ETex "__OTR__map_i_static/gMapIStatic0ETex"
+static const ALIGN_ASSET(2) char gMapIStatic0ETex[] = dgMapIStatic0ETex;
 
-#define dmap_i_static_Blob_005C60 "__OTR__map_i_static/map_i_static_Blob_005C60"
-static const ALIGN_ASSET(2) char map_i_static_Blob_005C60[] = dmap_i_static_Blob_005C60;
+#define dgMapIStatic0FTex "__OTR__map_i_static/gMapIStatic0FTex"
+static const ALIGN_ASSET(2) char gMapIStatic0FTex[] = dgMapIStatic0FTex;
 
-#define dmap_i_static_Blob_005E10 "__OTR__map_i_static/map_i_static_Blob_005E10"
-static const ALIGN_ASSET(2) char map_i_static_Blob_005E10[] = dmap_i_static_Blob_005E10;
+#define dgMapIStatic10Tex "__OTR__map_i_static/gMapIStatic10Tex"
+static const ALIGN_ASSET(2) char gMapIStatic10Tex[] = dgMapIStatic10Tex;
 
-#define dmap_i_static_Blob_005F30 "__OTR__map_i_static/map_i_static_Blob_005F30"
-static const ALIGN_ASSET(2) char map_i_static_Blob_005F30[] = dmap_i_static_Blob_005F30;
+#define dgMapIStatic11Tex "__OTR__map_i_static/gMapIStatic11Tex"
+static const ALIGN_ASSET(2) char gMapIStatic11Tex[] = dgMapIStatic11Tex;
 
-#define dmap_i_static_Blob_006050 "__OTR__map_i_static/map_i_static_Blob_006050"
-static const ALIGN_ASSET(2) char map_i_static_Blob_006050[] = dmap_i_static_Blob_006050;
+#define dgMapIStatic12Tex "__OTR__map_i_static/gMapIStatic12Tex"
+static const ALIGN_ASSET(2) char gMapIStatic12Tex[] = dgMapIStatic12Tex;
 
-#define dmap_i_static_Blob_0062B0 "__OTR__map_i_static/map_i_static_Blob_0062B0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_0062B0[] = dmap_i_static_Blob_0062B0;
+#define dgMapIStatic13Tex "__OTR__map_i_static/gMapIStatic13Tex"
+static const ALIGN_ASSET(2) char gMapIStatic13Tex[] = dgMapIStatic13Tex;
 
-#define dmap_i_static_Blob_006400 "__OTR__map_i_static/map_i_static_Blob_006400"
-static const ALIGN_ASSET(2) char map_i_static_Blob_006400[] = dmap_i_static_Blob_006400;
+#define dgMapIStatic14Tex "__OTR__map_i_static/gMapIStatic14Tex"
+static const ALIGN_ASSET(2) char gMapIStatic14Tex[] = dgMapIStatic14Tex;
 
-#define dmap_i_static_Blob_006620 "__OTR__map_i_static/map_i_static_Blob_006620"
-static const ALIGN_ASSET(2) char map_i_static_Blob_006620[] = dmap_i_static_Blob_006620;
+#define dgMapIStatic15Tex "__OTR__map_i_static/gMapIStatic15Tex"
+static const ALIGN_ASSET(2) char gMapIStatic15Tex[] = dgMapIStatic15Tex;
 
-#define dmap_i_static_Blob_006920 "__OTR__map_i_static/map_i_static_Blob_006920"
-static const ALIGN_ASSET(2) char map_i_static_Blob_006920[] = dmap_i_static_Blob_006920;
+#define dgMapIStatic16Tex "__OTR__map_i_static/gMapIStatic16Tex"
+static const ALIGN_ASSET(2) char gMapIStatic16Tex[] = dgMapIStatic16Tex;
 
-#define dmap_i_static_Blob_006A30 "__OTR__map_i_static/map_i_static_Blob_006A30"
-static const ALIGN_ASSET(2) char map_i_static_Blob_006A30[] = dmap_i_static_Blob_006A30;
+#define dgMapIStatic17Tex "__OTR__map_i_static/gMapIStatic17Tex"
+static const ALIGN_ASSET(2) char gMapIStatic17Tex[] = dgMapIStatic17Tex;
 
-#define dmap_i_static_Blob_006B40 "__OTR__map_i_static/map_i_static_Blob_006B40"
-static const ALIGN_ASSET(2) char map_i_static_Blob_006B40[] = dmap_i_static_Blob_006B40;
+#define dgMapIStatic18Tex "__OTR__map_i_static/gMapIStatic18Tex"
+static const ALIGN_ASSET(2) char gMapIStatic18Tex[] = dgMapIStatic18Tex;
 
-#define dmap_i_static_Blob_006C90 "__OTR__map_i_static/map_i_static_Blob_006C90"
-static const ALIGN_ASSET(2) char map_i_static_Blob_006C90[] = dmap_i_static_Blob_006C90;
+#define dgMapIStatic19Tex "__OTR__map_i_static/gMapIStatic19Tex"
+static const ALIGN_ASSET(2) char gMapIStatic19Tex[] = dgMapIStatic19Tex;
 
-#define dmap_i_static_Blob_006DB0 "__OTR__map_i_static/map_i_static_Blob_006DB0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_006DB0[] = dmap_i_static_Blob_006DB0;
+#define dgMapIStatic1ATex "__OTR__map_i_static/gMapIStatic1ATex"
+static const ALIGN_ASSET(2) char gMapIStatic1ATex[] = dgMapIStatic1ATex;
 
-#define dmap_i_static_Blob_006E70 "__OTR__map_i_static/map_i_static_Blob_006E70"
-static const ALIGN_ASSET(2) char map_i_static_Blob_006E70[] = dmap_i_static_Blob_006E70;
+#define dgMapIStatic1BTex "__OTR__map_i_static/gMapIStatic1BTex"
+static const ALIGN_ASSET(2) char gMapIStatic1BTex[] = dgMapIStatic1BTex;
 
-#define dmap_i_static_Blob_006F40 "__OTR__map_i_static/map_i_static_Blob_006F40"
-static const ALIGN_ASSET(2) char map_i_static_Blob_006F40[] = dmap_i_static_Blob_006F40;
+#define dgMapIStatic1CTex "__OTR__map_i_static/gMapIStatic1CTex"
+static const ALIGN_ASSET(2) char gMapIStatic1CTex[] = dgMapIStatic1CTex;
 
-#define dmap_i_static_Blob_007170 "__OTR__map_i_static/map_i_static_Blob_007170"
-static const ALIGN_ASSET(2) char map_i_static_Blob_007170[] = dmap_i_static_Blob_007170;
+#define dgMapIStatic1DTex "__OTR__map_i_static/gMapIStatic1DTex"
+static const ALIGN_ASSET(2) char gMapIStatic1DTex[] = dgMapIStatic1DTex;
 
-#define dmap_i_static_Blob_007210 "__OTR__map_i_static/map_i_static_Blob_007210"
-static const ALIGN_ASSET(2) char map_i_static_Blob_007210[] = dmap_i_static_Blob_007210;
+#define dgMapIStatic1ETex "__OTR__map_i_static/gMapIStatic1ETex"
+static const ALIGN_ASSET(2) char gMapIStatic1ETex[] = dgMapIStatic1ETex;
 
-#define dmap_i_static_Blob_0073D0 "__OTR__map_i_static/map_i_static_Blob_0073D0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_0073D0[] = dmap_i_static_Blob_0073D0;
+#define dgMapIStatic1FTex "__OTR__map_i_static/gMapIStatic1FTex"
+static const ALIGN_ASSET(2) char gMapIStatic1FTex[] = dgMapIStatic1FTex;
 
-#define dmap_i_static_Blob_0074D0 "__OTR__map_i_static/map_i_static_Blob_0074D0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_0074D0[] = dmap_i_static_Blob_0074D0;
+#define dgMapIStatic20Tex "__OTR__map_i_static/gMapIStatic20Tex"
+static const ALIGN_ASSET(2) char gMapIStatic20Tex[] = dgMapIStatic20Tex;
 
-#define dmap_i_static_Blob_007650 "__OTR__map_i_static/map_i_static_Blob_007650"
-static const ALIGN_ASSET(2) char map_i_static_Blob_007650[] = dmap_i_static_Blob_007650;
+#define dgMapIStatic21Tex "__OTR__map_i_static/gMapIStatic21Tex"
+static const ALIGN_ASSET(2) char gMapIStatic21Tex[] = dgMapIStatic21Tex;
 
-#define dmap_i_static_Blob_0077A0 "__OTR__map_i_static/map_i_static_Blob_0077A0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_0077A0[] = dmap_i_static_Blob_0077A0;
+#define dgMapIStatic22Tex "__OTR__map_i_static/gMapIStatic22Tex"
+static const ALIGN_ASSET(2) char gMapIStatic22Tex[] = dgMapIStatic22Tex;
 
-#define dmap_i_static_Blob_007850 "__OTR__map_i_static/map_i_static_Blob_007850"
-static const ALIGN_ASSET(2) char map_i_static_Blob_007850[] = dmap_i_static_Blob_007850;
+#define dgMapIStatic23Tex "__OTR__map_i_static/gMapIStatic23Tex"
+static const ALIGN_ASSET(2) char gMapIStatic23Tex[] = dgMapIStatic23Tex;
 
-#define dmap_i_static_Blob_0078A0 "__OTR__map_i_static/map_i_static_Blob_0078A0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_0078A0[] = dmap_i_static_Blob_0078A0;
+#define dgMapIStatic24Tex "__OTR__map_i_static/gMapIStatic24Tex"
+static const ALIGN_ASSET(2) char gMapIStatic24Tex[] = dgMapIStatic24Tex;
 
-#define dmap_i_static_Blob_0078E0 "__OTR__map_i_static/map_i_static_Blob_0078E0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_0078E0[] = dmap_i_static_Blob_0078E0;
+#define dgMapIStatic25Tex "__OTR__map_i_static/gMapIStatic25Tex"
+static const ALIGN_ASSET(2) char gMapIStatic25Tex[] = dgMapIStatic25Tex;
 
-#define dmap_i_static_Blob_007A50 "__OTR__map_i_static/map_i_static_Blob_007A50"
-static const ALIGN_ASSET(2) char map_i_static_Blob_007A50[] = dmap_i_static_Blob_007A50;
+#define dgMapIStatic26Tex "__OTR__map_i_static/gMapIStatic26Tex"
+static const ALIGN_ASSET(2) char gMapIStatic26Tex[] = dgMapIStatic26Tex;
 
-#define dmap_i_static_Blob_007AD0 "__OTR__map_i_static/map_i_static_Blob_007AD0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_007AD0[] = dmap_i_static_Blob_007AD0;
+#define dgMapIStatic27Tex "__OTR__map_i_static/gMapIStatic27Tex"
+static const ALIGN_ASSET(2) char gMapIStatic27Tex[] = dgMapIStatic27Tex;
 
-#define dmap_i_static_Blob_007B60 "__OTR__map_i_static/map_i_static_Blob_007B60"
-static const ALIGN_ASSET(2) char map_i_static_Blob_007B60[] = dmap_i_static_Blob_007B60;
+#define dgMapIStatic28Tex "__OTR__map_i_static/gMapIStatic28Tex"
+static const ALIGN_ASSET(2) char gMapIStatic28Tex[] = dgMapIStatic28Tex;
 
-#define dmap_i_static_Blob_007C20 "__OTR__map_i_static/map_i_static_Blob_007C20"
-static const ALIGN_ASSET(2) char map_i_static_Blob_007C20[] = dmap_i_static_Blob_007C20;
+#define dgMapIStatic29Tex "__OTR__map_i_static/gMapIStatic29Tex"
+static const ALIGN_ASSET(2) char gMapIStatic29Tex[] = dgMapIStatic29Tex;
 
-#define dmap_i_static_Blob_007CA0 "__OTR__map_i_static/map_i_static_Blob_007CA0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_007CA0[] = dmap_i_static_Blob_007CA0;
+#define dgMapIStatic2ATex "__OTR__map_i_static/gMapIStatic2ATex"
+static const ALIGN_ASSET(2) char gMapIStatic2ATex[] = dgMapIStatic2ATex;
 
-#define dmap_i_static_Blob_007D90 "__OTR__map_i_static/map_i_static_Blob_007D90"
-static const ALIGN_ASSET(2) char map_i_static_Blob_007D90[] = dmap_i_static_Blob_007D90;
+#define dgMapIStatic2BTex "__OTR__map_i_static/gMapIStatic2BTex"
+static const ALIGN_ASSET(2) char gMapIStatic2BTex[] = dgMapIStatic2BTex;
 
-#define dmap_i_static_Blob_007EA0 "__OTR__map_i_static/map_i_static_Blob_007EA0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_007EA0[] = dmap_i_static_Blob_007EA0;
+#define dgMapIStatic2CTex "__OTR__map_i_static/gMapIStatic2CTex"
+static const ALIGN_ASSET(2) char gMapIStatic2CTex[] = dgMapIStatic2CTex;
 
-#define dmap_i_static_Blob_007FA0 "__OTR__map_i_static/map_i_static_Blob_007FA0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_007FA0[] = dmap_i_static_Blob_007FA0;
+#define dgMapIStatic2DTex "__OTR__map_i_static/gMapIStatic2DTex"
+static const ALIGN_ASSET(2) char gMapIStatic2DTex[] = dgMapIStatic2DTex;
 
-#define dmap_i_static_Blob_007FF0 "__OTR__map_i_static/map_i_static_Blob_007FF0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_007FF0[] = dmap_i_static_Blob_007FF0;
+#define dgMapIStatic2ETex "__OTR__map_i_static/gMapIStatic2ETex"
+static const ALIGN_ASSET(2) char gMapIStatic2ETex[] = dgMapIStatic2ETex;
 
-#define dmap_i_static_Blob_008080 "__OTR__map_i_static/map_i_static_Blob_008080"
-static const ALIGN_ASSET(2) char map_i_static_Blob_008080[] = dmap_i_static_Blob_008080;
+#define dgMapIStatic2FTex "__OTR__map_i_static/gMapIStatic2FTex"
+static const ALIGN_ASSET(2) char gMapIStatic2FTex[] = dgMapIStatic2FTex;
 
-#define dmap_i_static_Blob_008190 "__OTR__map_i_static/map_i_static_Blob_008190"
-static const ALIGN_ASSET(2) char map_i_static_Blob_008190[] = dmap_i_static_Blob_008190;
+#define dgMapIStatic30Tex "__OTR__map_i_static/gMapIStatic30Tex"
+static const ALIGN_ASSET(2) char gMapIStatic30Tex[] = dgMapIStatic30Tex;
 
-#define dmap_i_static_Blob_0081F0 "__OTR__map_i_static/map_i_static_Blob_0081F0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_0081F0[] = dmap_i_static_Blob_0081F0;
+#define dgMapIStatic31Tex "__OTR__map_i_static/gMapIStatic31Tex"
+static const ALIGN_ASSET(2) char gMapIStatic31Tex[] = dgMapIStatic31Tex;
 
-#define dmap_i_static_Blob_008300 "__OTR__map_i_static/map_i_static_Blob_008300"
-static const ALIGN_ASSET(2) char map_i_static_Blob_008300[] = dmap_i_static_Blob_008300;
+#define dgMapIStatic32Tex "__OTR__map_i_static/gMapIStatic32Tex"
+static const ALIGN_ASSET(2) char gMapIStatic32Tex[] = dgMapIStatic32Tex;
 
-#define dmap_i_static_Blob_008360 "__OTR__map_i_static/map_i_static_Blob_008360"
-static const ALIGN_ASSET(2) char map_i_static_Blob_008360[] = dmap_i_static_Blob_008360;
+#define dgMapIStatic33Tex "__OTR__map_i_static/gMapIStatic33Tex"
+static const ALIGN_ASSET(2) char gMapIStatic33Tex[] = dgMapIStatic33Tex;
 
-#define dmap_i_static_Blob_0083F0 "__OTR__map_i_static/map_i_static_Blob_0083F0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_0083F0[] = dmap_i_static_Blob_0083F0;
+#define dgMapIStatic34Tex "__OTR__map_i_static/gMapIStatic34Tex"
+static const ALIGN_ASSET(2) char gMapIStatic34Tex[] = dgMapIStatic34Tex;
 
-#define dmap_i_static_Blob_008500 "__OTR__map_i_static/map_i_static_Blob_008500"
-static const ALIGN_ASSET(2) char map_i_static_Blob_008500[] = dmap_i_static_Blob_008500;
+#define dgMapIStatic35Tex "__OTR__map_i_static/gMapIStatic35Tex"
+static const ALIGN_ASSET(2) char gMapIStatic35Tex[] = dgMapIStatic35Tex;
 
-#define dmap_i_static_Blob_0085F0 "__OTR__map_i_static/map_i_static_Blob_0085F0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_0085F0[] = dmap_i_static_Blob_0085F0;
+#define dgMapIStatic36Tex "__OTR__map_i_static/gMapIStatic36Tex"
+static const ALIGN_ASSET(2) char gMapIStatic36Tex[] = dgMapIStatic36Tex;
 
-#define dmap_i_static_Blob_008680 "__OTR__map_i_static/map_i_static_Blob_008680"
-static const ALIGN_ASSET(2) char map_i_static_Blob_008680[] = dmap_i_static_Blob_008680;
+#define dgMapIStatic37Tex "__OTR__map_i_static/gMapIStatic37Tex"
+static const ALIGN_ASSET(2) char gMapIStatic37Tex[] = dgMapIStatic37Tex;
 
-#define dmap_i_static_Blob_008700 "__OTR__map_i_static/map_i_static_Blob_008700"
-static const ALIGN_ASSET(2) char map_i_static_Blob_008700[] = dmap_i_static_Blob_008700;
+#define dgMapIStatic38Tex "__OTR__map_i_static/gMapIStatic38Tex"
+static const ALIGN_ASSET(2) char gMapIStatic38Tex[] = dgMapIStatic38Tex;
 
-#define dmap_i_static_Blob_0087F0 "__OTR__map_i_static/map_i_static_Blob_0087F0"
-static const ALIGN_ASSET(2) char map_i_static_Blob_0087F0[] = dmap_i_static_Blob_0087F0;
+#define dgMapIStatic39Tex "__OTR__map_i_static/gMapIStatic39Tex"
+static const ALIGN_ASSET(2) char gMapIStatic39Tex[] = dgMapIStatic39Tex;
 #endif // ARCHIVES_MAP_I_STATIC_H

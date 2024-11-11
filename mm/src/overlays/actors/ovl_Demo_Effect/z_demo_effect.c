@@ -8,6 +8,8 @@
 #include "objects/gameplay_keep/gameplay_keep.h"
 #include "objects/object_efc_tw/object_efc_tw.h"
 
+#include "2s2h/BenPort.h"
+
 #define FLAGS (ACTOR_FLAG_10 | ACTOR_FLAG_20)
 
 #define THIS ((DemoEffect*)thisx)
@@ -164,7 +166,7 @@ void DemoEffect_SetupTimewarp(DemoEffect* this, PlayState* play) {
 
 void DemoEffect_SetPerVertexAlpha(f32 alphaScale) {
     static u8 sAlphaTypes[] = { 1, 1, 2, 0, 1, 1, 2, 0, 1, 2, 0, 2, 1, 0, 1, 0, 2, 0, 2, 2, 0 };
-    Vtx* vtx = Lib_SegmentedToVirtual(gTimewarpVtx);
+    Vtx* vtx = ResourceMgr_LoadVtxByName(Lib_SegmentedToVirtual(gTimewarpVtx));
     s32 i;
     u8 alphas[3];
 

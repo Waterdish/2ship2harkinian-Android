@@ -7,6 +7,7 @@
 #include "prevent_bss_reordering.h"
 #include "z_en_kakasi.h"
 #include "objects/object_ka/object_ka.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_10 | ACTOR_FLAG_2000000)
 
@@ -1053,8 +1054,11 @@ void EnKakasi_SetupIdleUnderground(EnKakasi* this) {
 }
 
 void EnKakasi_IdleUnderground(EnKakasi* this, PlayState* play) {
-    if (CHECK_WEEKEVENTREG(WEEKEVENTREG_79_08) && (this->picto.actor.xzDistToPlayer < this->songSummonDist) &&
-        ((BREG(1) != 0) || (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_SCARECROW_SPAWN))) {
+    if (GameInteractor_Should(VB_NEED_SCARECROW_SONG,
+                              CHECK_WEEKEVENTREG(WEEKEVENTREG_79_08) &&
+                                  (this->picto.actor.xzDistToPlayer < this->songSummonDist) &&
+                                  ((BREG(1) != 0) || (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_SCARECROW_SPAWN)),
+                              this)) {
         this->picto.actor.flags &= ~ACTOR_FLAG_CANT_LOCK_ON;
         play->msgCtx.ocarinaMode = OCARINA_MODE_END;
         this->actionFunc = EnKakasi_SetupRiseOutOfGround;

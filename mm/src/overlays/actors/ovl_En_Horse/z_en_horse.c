@@ -12,6 +12,7 @@
 #include "overlays/actors/ovl_Obj_Um/z_obj_um.h"
 #include "overlays/actors/ovl_En_Horse_Game_Check/z_en_horse_game_check.h"
 #include "objects/object_horse_link_child/object_horse_link_child.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 #define FLAGS (ACTOR_FLAG_10)
 
@@ -3691,6 +3692,8 @@ void EnHorse_UpdateStick(EnHorse* this, PlayState* play) {
     this->lastStick = this->curStick;
     this->curStick.x = input->rel.stick_x;
     this->curStick.z = input->rel.stick_y;
+
+    this->curStick.x *= GameInteractor_InvertControl(GI_INVERT_HORSE_X);
 }
 
 void EnHorse_ResolveCollision(EnHorse* this, PlayState* play, CollisionPoly* colPoly) {

@@ -1,6 +1,0 @@
-#ifndef CHEATS_UNBREAKABLE_RAZOR_SWORD_H
-#define CHEATS_UNBREAKABLE_RAZOR_SWORD_H
-
-void RegisterUnbreakableRazorSword();
-
-#endif // CHEATS_UNBREAKABLE_RAZOR_SWORD_H

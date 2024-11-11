@@ -324,6 +324,8 @@ void func_80947668(u8* shadowTexture, Player* player, PlayState* play) {
 
     OPEN_DISPS(gfxCtx);
 
+    gSPInvalidateTexCache(POLY_XLU_DISP++, shadowTexture);
+
     Gfx_SetupDL44_Xlu(play->state.gfxCtx);
 
     gDPSetPrimColor(POLY_XLU_DISP++, 0x00, 0x00, 0, 0, 0, (BREG(52) + 50));

@@ -1,6 +1,7 @@
 #include "global.h"
 #include <libultraship/bridge.h>
 #include "BenPort.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 f32 Math_CosS(s16 angle) {
     return coss(angle) * SHT_MINV;
@@ -224,12 +225,14 @@ void Lib_GetControlStickData(f32* outMagnitude, s16* outAngle, Input* input) {
     f32 y = input->rel.stick_y;
     f32 magnitude;
 
+    x *= GameInteractor_InvertControl(GI_INVERT_MOVEMENT_X);
     magnitude = sqrtf(SQ(x) + SQ(y));
     *outMagnitude = (60.0f < magnitude) ? 60.0f : magnitude;
 
     if (magnitude > 0.0f) {
         x = input->cur.stick_x;
         y = input->cur.stick_y;
+        x *= GameInteractor_InvertControl(GI_INVERT_MOVEMENT_X);
         *outAngle = Math_Atan2S_XY(y, -x);
     } else {
         *outAngle = 0;
@@ -677,11 +680,12 @@ f32 Math_Vec3f_StepTo(Vec3f* start, Vec3f* target, f32 speed) {
 void Lib_Nop801004FC(void) {
 }
 
+// 2S2H [Port] For the port, resources aren't loaded into memory addresses like on console.
+// Instead we deal with resource strings and leave systems to deal with pointers later (renderer, etc).
+// We've modified the macros used below and similar ones to just return what its given (noop).
+
 void* Lib_SegmentedToVirtual(void* ptr) {
-    if (ResourceMgr_OTRSigCheck(ptr)) {
-        return ResourceGetDataByName(ptr); // SEGMENTED_TO_VIRTUAL(ptr);
-    }
-    return ptr;
+    return SEGMENTED_TO_K0(ptr);
 }
 
 void* Lib_SegmentedToVirtualNull(void* ptr) {

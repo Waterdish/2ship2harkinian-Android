@@ -1,6 +1,0 @@
-#ifndef MASKS_FAST_TRANSFORMATION_H
-#define MASKS_FAST_TRANSFORMATION_H
-
-void RegisterFastTransformation();
-
-#endif // MASKS_FAST_TRANSFORMATION_H

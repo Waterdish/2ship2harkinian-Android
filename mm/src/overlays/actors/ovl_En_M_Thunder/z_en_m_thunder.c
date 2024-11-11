@@ -8,6 +8,7 @@
 #include "z64rumble.h"
 #include "overlays/actors/ovl_Eff_Dust/z_eff_dust.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 #define FLAGS (ACTOR_FLAG_10)
 
@@ -543,14 +544,16 @@ void EnMThunder_Draw(Actor* thisx, PlayState* play2) {
 
     Matrix_Mult(&player->leftHandMf, MTXMODE_NEW);
 
-    if (this->type == ENMTHUNDER_TYPE_GILDED_SWORD) {
-        Matrix_Translate(0.0f, 220.0f, 0.0f, MTXMODE_APPLY);
-        Matrix_Scale(-1.2f, -0.8f, -0.6f, MTXMODE_APPLY);
-        Matrix_RotateXS(0x4000, MTXMODE_APPLY);
-    } else {
-        Matrix_Translate(0.0f, 220.0f, 0.0f, MTXMODE_APPLY);
-        Matrix_Scale(-0.7f, -0.6f, -0.4f, MTXMODE_APPLY);
-        Matrix_RotateXS(0x4000, MTXMODE_APPLY);
+    if (GameInteractor_Should(VB_TRANSFORM_THUNDER_MATRIX, true, this)) {
+        if (this->type == ENMTHUNDER_TYPE_GILDED_SWORD) {
+            Matrix_Translate(0.0f, 220.0f, 0.0f, MTXMODE_APPLY);
+            Matrix_Scale(-1.2f, -0.8f, -0.6f, MTXMODE_APPLY);
+            Matrix_RotateXS(0x4000, MTXMODE_APPLY);
+        } else {
+            Matrix_Translate(0.0f, 220.0f, 0.0f, MTXMODE_APPLY);
+            Matrix_Scale(-0.7f, -0.6f, -0.4f, MTXMODE_APPLY);
+            Matrix_RotateXS(0x4000, MTXMODE_APPLY);
+        }
     }
 
     if (this->unk1B0 >= 0.85f) {

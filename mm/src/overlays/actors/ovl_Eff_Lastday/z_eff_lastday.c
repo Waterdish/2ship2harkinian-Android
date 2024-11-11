@@ -7,6 +7,8 @@
 #include "z_eff_lastday.h"
 #include "objects/object_lastday/object_lastday.h"
 
+#include "2s2h/BenPort.h"
+
 #define FLAGS (ACTOR_FLAG_10 | ACTOR_FLAG_20)
 
 #define THIS ((EffLastday*)thisx)
@@ -224,7 +226,7 @@ void EffLastday_Update(Actor* thisx, PlayState* play) {
 }
 
 void EffLastday_SetVtxAlpha(s16 alpha) {
-    Vtx* vtx = Lib_SegmentedToVirtual(object_lastday_Vtx_000000);
+    Vtx* vtx = ResourceMgr_LoadVtxByName(Lib_SegmentedToVirtual(object_lastday_Vtx_000000));
 
     vtx[0].v.cn[3] = alpha;
     vtx[3].v.cn[3] = alpha;

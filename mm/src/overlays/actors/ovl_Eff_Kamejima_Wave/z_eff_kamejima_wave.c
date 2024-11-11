@@ -7,6 +7,8 @@
 #include "z_eff_kamejima_wave.h"
 #include "objects/object_kamejima/object_kamejima.h"
 
+#include "2s2h/BenPort.h"
+
 #define FLAGS (ACTOR_FLAG_10)
 
 #define THIS ((EffKamejimaWave*)thisx)
@@ -137,7 +139,7 @@ void EffKamejimaWave_Update(Actor* thisx, PlayState* play) {
 }
 
 void EffKamejimaWave_SetVtxAlpha(u8 alpha) {
-    Vtx* vtx = Lib_SegmentedToVirtual(&gTurtleWaveVtx);
+    Vtx* vtx = ResourceMgr_LoadVtxByName(Lib_SegmentedToVirtual(&gTurtleWaveVtx));
 
     vtx[2].v.cn[3] = alpha;
     vtx[6].v.cn[3] = alpha;

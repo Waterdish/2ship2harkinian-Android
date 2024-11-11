@@ -7,6 +7,8 @@
 #include "z_en_dy_extra.h"
 #include "objects/object_dy_obj/object_dy_obj.h"
 
+#include "2s2h/BenPort.h"
+
 #define FLAGS (ACTOR_FLAG_10 | ACTOR_FLAG_20)
 
 #define THIS ((EnDyExtra*)thisx)
@@ -102,7 +104,7 @@ void EnDyExtra_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnDyExtra* this = THIS;
     GraphicsContext* gfxCtx = play->state.gfxCtx;
-    Vtx* vertices = Lib_SegmentedToVirtual(gGreatFairySpiralBeamVtx);
+    Vtx* vertices = ResourceMgr_LoadVtxByName(Lib_SegmentedToVirtual(gGreatFairySpiralBeamVtx));
     s32 i;
     u8 alphas[3];
 

@@ -44,6 +44,9 @@
 // Assets for other actors
 #include "overlays/actors/ovl_En_Arrow/z_en_arrow.h"
 
+#include "2s2h/BenPort.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
+
 void PlayerCall_Init(Actor* thisx, PlayState* play);
 void PlayerCall_Destroy(Actor* thisx, PlayState* play);
 void PlayerCall_Update(Actor* thisx, PlayState* play);
@@ -2121,13 +2124,17 @@ void Player_DrawZoraShield(PlayState* play, Player* player) {
     f32 scale = player->unk_B62 * (10.0f / 51.0f);
     s32 i;
 
+    // 2S2H [Port] Graph allocated buffer to be used with ResourceMgr_LoadArrayByNameAsU8 to avoid
+    // needing to use malloc/free with Scalar based Array resources
+    u8* alphaU8Buffer = GRAPH_ALLOC(play->state.gfxCtx, 80 * sizeof(u8));
+
     OPEN_DISPS(play->state.gfxCtx);
 
     AnimatedMat_DrawXlu(play, Lib_SegmentedToVirtual(&object_link_zora_Matanimheader_012A80));
     Matrix_Scale(scale, scale, scale, MTXMODE_APPLY);
 
     // clang-format off
-    vtx = Lib_SegmentedToVirtual(&object_link_zora_Vtx_011210); phi_a0 = Lib_SegmentedToVirtual(&object_link_zora_U8_011710);
+    vtx = ResourceMgr_LoadVtxByName(Lib_SegmentedToVirtual(&object_link_zora_Vtx_011210)); phi_a0 = ResourceMgr_LoadArrayByNameAsU8(Lib_SegmentedToVirtual(&object_link_zora_U8_011710), alphaU8Buffer);
     // clang-format on
 
     // ARRAY_COUNT(object_link_zora_Vtx_011210)
@@ -4019,6 +4026,8 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList1, G
     } else if (player->actor.scale.y >= 0.0f) {
         Player_SetFeetPos(play, player, limbIndex);
     }
+
+    GameInteractor_ExecuteOnPlayerPostLimbDraw(player, limbIndex);
 
     func_8012536C();
 }

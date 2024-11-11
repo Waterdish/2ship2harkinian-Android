@@ -28,6 +28,8 @@
 #include "global.h"
 #include "z64curve.h"
 
+#include "2s2h/BenPort.h"
+
 void SkelCurve_Clear(SkelCurve* skelCurve) {
     skelCurve->limbCount = 0;
     skelCurve->skeleton = NULL;
@@ -46,6 +48,10 @@ void SkelCurve_Clear(SkelCurve* skelCurve) {
  */
 s32 SkelCurve_Init(PlayState* play, SkelCurve* skelCurve, CurveSkeletonHeader* skeletonHeaderSeg,
                    CurveAnimationHeader* animation) {
+    if (ResourceMgr_OTRSigCheck(skeletonHeaderSeg)) {
+        skeletonHeaderSeg = ResourceMgr_LoadSkeletonByName(skeletonHeaderSeg, NULL);
+    }
+
     SkelCurveLimb** limbs;
     CurveSkeletonHeader* skeletonHeader = Lib_SegmentedToVirtual(skeletonHeaderSeg);
 
@@ -103,6 +109,11 @@ s32 SkelCurve_Update(PlayState* play, SkelCurve* skelCurve) {
     s32 vecType;
 
     animation = Lib_SegmentedToVirtual(skelCurve->animation);
+
+    if (ResourceMgr_OTRSigCheck(animation)) {
+        animation = ResourceMgr_LoadAnimByName(animation);
+    }
+
     knotCounts = Lib_SegmentedToVirtual(animation->knotCounts);
     startKnot = Lib_SegmentedToVirtual(animation->interpolationData);
     constantData = Lib_SegmentedToVirtual(animation->constantData);

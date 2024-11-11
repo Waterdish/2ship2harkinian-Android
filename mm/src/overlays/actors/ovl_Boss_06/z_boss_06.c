@@ -10,7 +10,8 @@
 #include "overlays/actors/ovl_En_Knight/z_en_knight.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
 #include "objects/object_knight/object_knight.h"
-#include "BenPort.h"
+
+#include "2s2h/BenPort.h"
 #include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
 
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_10 | ACTOR_FLAG_20)
@@ -493,6 +494,9 @@ void Boss06_Update(Actor* thisx, PlayState* play) {
                 } else {
                     this->unk_200[idx] &= 0xF;
                 }
+
+                // 2S2H [Port] Map the coordinates to the blended mask
+                this->curtainTexMask[((s32)sp7C.y * 64) + x] = true;
             }
         }
     }
@@ -588,7 +592,19 @@ void Boss06_Draw(Actor* thisx, PlayState* play2) {
     }
 
     if (this->unk_144 & 1) {
-        gSPSegment(POLY_OPA_DISP++, 0x08, Lib_SegmentedToVirtual(&this->unk_200));
+        // 2S2H [Port][HD Textures] To support CPU modified textures for any arbitrary texture size and alt asset
+        // toggling, we need to set the original texture resource as the segment value and register each curtain's mask
+        // as a blended texture. The blended tex opcode is necessary since there are two curtains in the scene, but only
+        // one mask can be registered to a resource at a time.
+        if (true) {
+            gSPRegisterBlendedTex(POLY_OPA_DISP++, object_knight_Tex_019490, this->curtainTexMask, NULL);
+            gSPInvalidateTexCache(POLY_OPA_DISP++, this->curtainTexMask);
+            gSPInvalidateTexCache(POLY_OPA_DISP++, object_knight_Tex_019490);
+            gSPSegment(POLY_OPA_DISP++, 0x08, object_knight_Tex_019490);
+        } else {
+            gSPInvalidateTexCache(POLY_OPA_DISP++, &this->unk_200);
+            gSPSegment(POLY_OPA_DISP++, 0x08, Lib_SegmentedToVirtual(&this->unk_200));
+        }
 
         Matrix_Translate(this->actor.world.pos.x, this->actor.world.pos.y + this->unk_1A8, this->actor.world.pos.z,
                          MTXMODE_NEW);
@@ -664,4 +680,6 @@ void Boss06_Reset(void) {
     D_809F4974 = 0;
     D_809F4978 = 0;
     D_809F497C = 0;
+
+    Gfx_UnregisterBlendedTexture(object_knight_Tex_019490);
 }

@@ -628,6 +628,7 @@ void SkelAnime_DrawTransformFlexOpa(PlayState* play, void** skeleton, Vec3s* joi
 void SkelAnime_GetFrameData(AnimationHeader* animation, s32 frame, s32 limbCount, Vec3s* frameTable) {
     if (ResourceMgr_OTRSigCheck(animation))
         animation = ResourceMgr_LoadAnimByName(animation);
+
     AnimationHeader* animHeader = Lib_SegmentedToVirtual(animation);
     JointIndex* jointIndices = Lib_SegmentedToVirtual(animHeader->jointIndices);
     s16* frameData = Lib_SegmentedToVirtual(animHeader->frameData);
@@ -649,6 +650,7 @@ void SkelAnime_GetFrameData(AnimationHeader* animation, s32 frame, s32 limbCount
 s16 Animation_GetLength(void* animation) {
     if (ResourceMgr_OTRSigCheck(animation))
         animation = ResourceMgr_LoadAnimByName(animation);
+
     AnimationHeaderCommon* common = Lib_SegmentedToVirtual(animation);
 
     return common->frameCount;
@@ -657,6 +659,7 @@ s16 Animation_GetLength(void* animation) {
 s16 Animation_GetLastFrame(void* animation) {
     if (ResourceMgr_OTRSigCheck(animation))
         animation = ResourceMgr_LoadAnimByName(animation);
+
     AnimationHeaderCommon* common = Lib_SegmentedToVirtual(animation);
 
     return (u16)common->frameCount - 1;
@@ -1017,6 +1020,7 @@ void AnimationContext_SetLoadFrame(PlayState* play, PlayerAnimationHeader* anima
     if (entry != NULL) {
         if (ResourceMgr_OTRSigCheck(animation) != 0)
             animation = ResourceMgr_LoadAnimByName(animation);
+
         PlayerAnimationHeader* playerAnimHeader = Lib_SegmentedToVirtual(animation);
         Vec3s* ram = frameTable;
 
@@ -1228,8 +1232,10 @@ void SkelAnime_InitPlayer(PlayState* play, SkelAnime* skelAnime, FlexSkeletonHea
     s32 headerJointCount;
     s32 limbCount;
     size_t allocSize;
+
     if (ResourceMgr_OTRSigCheck(skeletonHeaderSeg) != 0)
         skeletonHeaderSeg = ResourceMgr_LoadSkeletonByName(skeletonHeaderSeg, skelAnime);
+
     skeletonHeader = Lib_SegmentedToVirtual(skeletonHeaderSeg);
     headerJointCount = skeletonHeader->sh.limbCount;
     skelAnime->initFlags = flags;
@@ -1567,10 +1573,11 @@ s32 PlayerAnimation_OnFrame(SkelAnime* skelAnime, f32 frame) {
 void SkelAnime_Init(PlayState* play, SkelAnime* skelAnime, SkeletonHeader* skeletonHeaderSeg,
                     AnimationHeader* animation, Vec3s* jointTable, Vec3s* morphTable, s32 limbCount) {
     SkeletonHeader* skeletonHeader;
+
     if (ResourceMgr_OTRSigCheck(skeletonHeaderSeg))
         skeletonHeaderSeg = ResourceMgr_LoadSkeletonByName(skeletonHeaderSeg, NULL);
 
-    skeletonHeader = skeletonHeaderSeg;
+    skeletonHeader = Lib_SegmentedToVirtual(skeletonHeaderSeg);
     skelAnime->limbCount = skeletonHeader->limbCount + 1;
     skelAnime->skeleton = Lib_SegmentedToVirtual(skeletonHeader->segment);
     if (jointTable == NULL) {
@@ -1591,10 +1598,13 @@ void SkelAnime_Init(PlayState* play, SkelAnime* skelAnime, SkeletonHeader* skele
  */
 void SkelAnime_InitFlex(PlayState* play, SkelAnime* skelAnime, FlexSkeletonHeader* skeletonHeaderSeg,
                         AnimationHeader* animation, Vec3s* jointTable, Vec3s* morphTable, s32 limbCount) {
-    FlexSkeletonHeader* skeletonHeader;
-    if (ResourceMgr_OTRSigCheck(skeletonHeaderSeg))
+    if (ResourceMgr_OTRSigCheck(skeletonHeaderSeg)) {
         skeletonHeaderSeg = ResourceMgr_LoadSkeletonByName(skeletonHeaderSeg, NULL);
-    skeletonHeader = skeletonHeaderSeg;
+    }
+
+    FlexSkeletonHeader* skeletonHeader;
+
+    skeletonHeader = Lib_SegmentedToVirtual(skeletonHeaderSeg);
     skelAnime->limbCount = skeletonHeader->sh.limbCount + 1;
     skelAnime->dListCount = skeletonHeader->dListCount;
     skelAnime->skeleton = Lib_SegmentedToVirtual(skeletonHeader->sh.segment);
@@ -1618,10 +1628,13 @@ void SkelAnime_InitFlex(PlayState* play, SkelAnime* skelAnime, FlexSkeletonHeade
  */
 void SkelAnime_InitSkin(GameState* gameState, SkelAnime* skelAnime, SkeletonHeader* skeletonHeaderSeg,
                         AnimationHeader* animation) {
-    SkeletonHeader* skeletonHeader;
-    if (ResourceMgr_OTRSigCheck(skeletonHeaderSeg))
+    if (ResourceMgr_OTRSigCheck(skeletonHeaderSeg)) {
         skeletonHeaderSeg = ResourceMgr_LoadSkeletonByName(skeletonHeaderSeg, NULL);
-    skeletonHeader = skeletonHeaderSeg;
+    }
+
+    SkeletonHeader* skeletonHeader;
+
+    skeletonHeader = Lib_SegmentedToVirtual(skeletonHeaderSeg);
     skelAnime->limbCount = skeletonHeader->limbCount + 1;
     skelAnime->skeleton = Lib_SegmentedToVirtual(skeletonHeader->segment);
     skelAnime->jointTable = ZeldaArena_Malloc(sizeof(*skelAnime->jointTable) * skelAnime->limbCount);

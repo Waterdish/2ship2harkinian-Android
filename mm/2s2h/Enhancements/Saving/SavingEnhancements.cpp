@@ -1,6 +1,6 @@
 #include <libultraship/libultraship.h>
 #include "BenPort.h"
-#include "Enhancements/GameInteractor/GameInteractor.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 extern "C" {
 #include <variables.h>
@@ -12,8 +12,8 @@ static uint32_t iconTimer = 0;
 static uint64_t currentTimestamp = 0;
 static uint64_t lastSaveTimestamp = GetUnixTimestamp();
 
-static uint32_t autosaveGameStateUpdateHookId = 0;
-static uint32_t autosaveGameStateDrawFinishHookId = 0;
+static HOOK_ID autosaveGameStateUpdateHookId = 0;
+static HOOK_ID autosaveGameStateDrawFinishHookId = 0;
 
 // Used for saving through Autosaves and Pause Menu saves.
 extern "C" int SavingEnhancements_GetSaveEntrance() {
@@ -147,7 +147,7 @@ void HandleAutoSave() {
 }
 
 void RegisterSavingEnhancements() {
-    REGISTER_VB_SHOULD(GI_VB_DELETE_OWL_SAVE, {
+    REGISTER_VB_SHOULD(VB_DELETE_OWL_SAVE, {
         if (CVarGetInteger("gEnhancements.Saving.PersistentOwlSaves", 0) ||
             gSaveContext.save.shipSaveInfo.pauseSaveEntrance != -1) {
             *should = false;

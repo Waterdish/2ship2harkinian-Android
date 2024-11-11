@@ -58,6 +58,8 @@
         <!-- Odd size-->
         <Texture Name="gIronKnuckleAxeTLUT" OutName="iron_knuckle_axe_tlut" Format="rgba16" Width="183" Height="1" Offset="0x11030" />
         <Texture Name="gIronKnuckleFireTex" OutName="iron_knuckle_fire" Format="i4" Width="32" Height="64" Offset="0x111A0" />
+        <!-- 2S2H [Port] Additional entry for authentic overflowed texture usage. This entry has its offset off by "one pixel" due to ZAPD not allowing duplicates -->
+        <Texture Name="gIronKnuckleFireTex_Overflow" OutName="iron_knuckle_fire_overflow" Format="i8" Width="32" Height="64" Offset="0x1119F" />
         <Texture Name="gIronKnuckleRivet2Tex" OutName="iron_knuckle_rivet_2" Format="ia8" Width="32" Height="32" Offset="0x115A0" />
         <Texture Name="gIronKnuckleBlockPatternTex" OutName="iron_knuckle_block_pattern" Format="rgba16" Width="16" Height="16" Offset="0x119A0" />
         <Texture Name="gIronKnuckleChainMailTex" OutName="iron_knuckle_chain_mail" Format="rgba16" Width="16" Height="16" Offset="0x11BA0" />
