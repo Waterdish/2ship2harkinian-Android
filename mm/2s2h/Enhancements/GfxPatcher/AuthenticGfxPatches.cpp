@@ -265,9 +265,58 @@ void PatchMiniGameCrossAndCircleSymbols() {
     }
 }
 
+void PatchKnifeChamberRoomGeometry() {
+    if (CVarGetInteger("gEnhancements.Graphics.DisableSceneGeometryDistanceCheck", 0)) {
+        ResourceMgr_PatchGfxByName("scenes/nonmq/Z2_YADOYA/Z2_YADOYA_room_00DL_012280", "disableDistanceCheck1", 5,
+                                   gsSPNoOp());
+        ResourceMgr_PatchGfxByName("scenes/nonmq/Z2_YADOYA/Z2_YADOYA_room_00DL_012280", "disableDistanceCheck2", 6,
+                                   gsSPNoOp());
+    } else {
+        ResourceMgr_UnpatchGfxByName("scenes/nonmq/Z2_YADOYA/Z2_YADOYA_room_00DL_012280", "disableDistanceCheck1");
+        ResourceMgr_UnpatchGfxByName("scenes/nonmq/Z2_YADOYA/Z2_YADOYA_room_00DL_012280", "disableDistanceCheck2");
+    }
+}
+
+void PatchClockTownBuildingGeometry() {
+    if (CVarGetInteger("gEnhancements.Graphics.DisableSceneGeometryDistanceCheck", 0)) {
+        ResourceMgr_PatchGfxByName("scenes/nonmq/Z2_00KEIKOKU/Z2_00KEIKOKU_room_00DL_00D490", "disableDistanceCheck1",
+                                   5, gsSPNoOp());
+        ResourceMgr_PatchGfxByName("scenes/nonmq/Z2_00KEIKOKU/Z2_00KEIKOKU_room_00DL_00D490", "disableDistanceCheck2",
+                                   6, gsSPNoOp());
+        ResourceMgr_PatchGfxByName("scenes/nonmq/Z2_00KEIKOKU/Z2_00KEIKOKU_room_00DL_00CD70", "disableDistanceCheck1",
+                                   5, gsSPNoOp());
+        ResourceMgr_PatchGfxByName("scenes/nonmq/Z2_00KEIKOKU/Z2_00KEIKOKU_room_00DL_00CD70", "disableDistanceCheck2",
+                                   6, gsSPNoOp());
+        ResourceMgr_PatchGfxByName("scenes/nonmq/Z2_00KEIKOKU/Z2_00KEIKOKU_room_00DL_00D9C8", "disableDistanceCheck1",
+                                   5, gsSPNoOp());
+        ResourceMgr_PatchGfxByName("scenes/nonmq/Z2_00KEIKOKU/Z2_00KEIKOKU_room_00DL_00D9C8", "disableDistanceCheck2",
+                                   6, gsSPNoOp());
+    } else {
+        ResourceMgr_UnpatchGfxByName("scenes/nonmq/Z2_00KEIKOKU/Z2_00KEIKOKU_room_00DL_00D490",
+                                     "disableDistanceCheck1");
+        ResourceMgr_UnpatchGfxByName("scenes/nonmq/Z2_00KEIKOKU/Z2_00KEIKOKU_room_00DL_00D490",
+                                     "disableDistanceCheck2");
+        ResourceMgr_UnpatchGfxByName("scenes/nonmq/Z2_00KEIKOKU/Z2_00KEIKOKU_room_00DL_00CD70",
+                                     "disableDistanceCheck1");
+        ResourceMgr_UnpatchGfxByName("scenes/nonmq/Z2_00KEIKOKU/Z2_00KEIKOKU_room_00DL_00CD70",
+                                     "disableDistanceCheck2");
+        ResourceMgr_UnpatchGfxByName("scenes/nonmq/Z2_00KEIKOKU/Z2_00KEIKOKU_room_00DL_00D9C8",
+                                     "disableDistanceCheck1");
+        ResourceMgr_UnpatchGfxByName("scenes/nonmq/Z2_00KEIKOKU/Z2_00KEIKOKU_room_00DL_00D9C8",
+                                     "disableDistanceCheck2");
+    }
+}
+
+void GfxPatcher_ApplyGeometryIssuePatches() {
+    PatchKnifeChamberRoomGeometry();
+    PatchClockTownBuildingGeometry();
+}
+
 // Applies required patches for authentic bugs to allow the game to play and render properly
 void GfxPatcher_ApplyNecessaryAuthenticPatches() {
     PatchMiniGameCrossAndCircleSymbols();
 
     GfxPatcher_ApplyOverflowTexturePatches();
+
+    GfxPatcher_ApplyGeometryIssuePatches();
 }

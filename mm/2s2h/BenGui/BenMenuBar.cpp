@@ -359,9 +359,8 @@ void DrawEnhancementsMenu() {
         if (UIWidgets::BeginMenu("Camera")) {
             ImGui::SeparatorText("Fixes");
             UIWidgets::CVarCheckbox(
-                "Fix Targetting Camera Snap", "gEnhancements.Camera.FixTargettingCameraSnap",
-                { .tooltip =
-                      "Fixes the camera snap that occurs when you are moving and press the targetting button." });
+                "Fix Targeting Camera Snap", "gEnhancements.Camera.FixTargettingCameraSnap",
+                { .tooltip = "Fixes the camera snap that occurs when you are moving and press the targeting button." });
 
             ImGui::SeparatorText("First Person");
             UIWidgets::CVarCheckbox("Disable Auto-Centering",
@@ -562,8 +561,9 @@ void DrawEnhancementsMenu() {
         if (UIWidgets::BeginMenu("Dialogue")) {
             UIWidgets::CVarCheckbox(
                 "Fast Bank Selection", "gEnhancements.Dialogue.FastBankSelection",
-                { .tooltip = "Pressing the Z or R buttons while the Deposit/Withdrawl Rupees dialogue is open will set "
-                             "the Rupees to Links current Rupees or 0 respectively." });
+                { .tooltip =
+                      "Pressing the Z or R buttons while the Deposit/Withdrawal Rupees dialogue is open will set "
+                      "the Rupees to Links current Rupees or 0 respectively." });
             UIWidgets::CVarCheckbox(
                 "Fast Text", "gEnhancements.Dialogue.FastText",
                 { .tooltip = "Speeds up text rendering, and enables holding of B progress to next message" });
@@ -654,32 +654,20 @@ void DrawEnhancementsMenu() {
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(255, 255, 0, 255));
             ImGui::SeparatorText("Unstable");
             ImGui::PopStyleColor();
-            UIWidgets::CVarCheckbox(
-                "Disable Scene Geometry Distance Check", "gEnhancements.Graphics.DisableSceneGeometryDistanceCheck",
-                { .tooltip =
-                      "Disables the distance check for scene geometry, allowing it to be drawn no matter how far "
-                      "away it is from the player. This may have unintended side effects." });
+            if (UIWidgets::CVarCheckbox(
+                    "Disable Scene Geometry Distance Check", "gEnhancements.Graphics.DisableSceneGeometryDistanceCheck",
+                    { .tooltip =
+                          "Disables the distance check for scene geometry, allowing it to be drawn no matter how far "
+                          "away it is from the player. This may have unintended side effects." })) {
+                GfxPatcher_ApplyGeometryIssuePatches();
+            }
             UIWidgets::CVarCheckbox("Widescreen Actor Culling",
                                     "gEnhancements.Graphics.ActorCullingAccountsForWidescreen",
                                     { .tooltip = "Adjusts the culling planes to account for widescreen resolutions. "
                                                  "This may have unintended side effects." });
-            if (UIWidgets::CVarSliderInt(
-                    "Increase Actor Draw Distance: %dx", "gEnhancements.Graphics.IncreaseActorDrawDistance", 1, 5, 1,
-                    { .tooltip =
-                          "Increase the range in which Actors are drawn. This may have unintended side effects." })) {
-                CVarSetInteger("gEnhancements.Graphics.IncreaseActorUpdateDistance",
-                               MIN(CVarGetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance", 1),
-                                   CVarGetInteger("gEnhancements.Graphics.IncreaseActorUpdateDistance", 1)));
-            }
-            if (UIWidgets::CVarSliderInt(
-                    "Increase Actor Update Distance: %dx", "gEnhancements.Graphics.IncreaseActorUpdateDistance", 1, 5,
-                    1,
-                    { .tooltip =
-                          "Increase the range in which Actors are updated. This may have unintended side effects." })) {
-                CVarSetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance",
-                               MAX(CVarGetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance", 1),
-                                   CVarGetInteger("gEnhancements.Graphics.IncreaseActorUpdateDistance", 1)));
-            }
+            UIWidgets::CVarSliderInt(
+                "Increase Actor Draw Distance: %dx", "gEnhancements.Graphics.IncreaseActorDrawDistance", 1, 5, 1,
+                { .tooltip = "Increase the range in which Actors are drawn. This may have unintended side effects." });
 
             ImGui::EndMenu();
         }
@@ -691,7 +679,7 @@ void DrawEnhancementsMenu() {
                                     { .tooltip = "Allow using Fierce Deity's mask outside of boss rooms." });
             UIWidgets::CVarCheckbox("No Blast Mask Cooldown", "gEnhancements.Masks.NoBlastMaskCooldown", {});
             if (UIWidgets::CVarCheckbox("Persistent Bunny Hood", "gEnhancements.Masks.PersistentBunnyHood.Enabled",
-                                        { .tooltip = "Permanantly toggle a speed boost from the bunny hood by pressing "
+                                        { .tooltip = "Permanently toggle a speed boost from the bunny hood by pressing "
                                                      "'A' on it in the mask menu." })) {
                 UpdatePersistentMasksState();
             }
@@ -905,7 +893,7 @@ void DrawDeveloperToolsMenu() {
                           "Change the behavior of creating saves while debug mode is enabled:\n\n"
                           "- Empty Save: The default 3 heart save file in first cycle\n"
                           "- Vanilla Debug Save: Uses the title screen save info (8 hearts, all items and masks)\n"
-                          "- 100\% Save: All items, equipment, mask, quast status and bombers notebook complete",
+                          "- 100\% Save: All items, equipment, mask, quest status and bombers notebook complete",
                       .defaultIndex = DEBUG_SAVE_INFO_NONE })) {
                 RegisterDebugSaveCreate();
             }

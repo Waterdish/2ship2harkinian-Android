@@ -34,8 +34,8 @@ void RegisterTwoHandedSwordSpinAttack() {
     REGISTER_VB_SHOULD(VB_MAGIC_SPIN_ATTACK_CHECK_FORM, {
         if (CVarGetInteger("gEnhancements.Equipment.TwoHandedSwordSpinAttack", 0)) {
             // Additionally allow the Fierce Deity form to use charged spin attacks
-            PlayerTransformation form = va_arg(args, PlayerTransformation);
-            if (form == PLAYER_FORM_FIERCE_DEITY) {
+            Player* player = GET_PLAYER(gPlayState);
+            if (player->transformation == PLAYER_FORM_FIERCE_DEITY) {
                 *should = true;
             }
         }

@@ -323,16 +323,20 @@ void GfxPrint_PrintStringWithSize(GfxPrint* this, const void* buffer, size_t cha
     const char* str = (const char*)buffer;
     size_t count = charSize * charCount;
 
-    while (count != 0) {
-        GfxPrint_PrintChar(this, *str++);
-        count--;
-    }
+    // 2S2H [Port] Process the string with our wrapper that converts Japanese UTF8 characters for the print system
+    OTRGfxPrint(str, this, GfxPrint_PrintChar);
+    // while (count != 0) {
+    //     GfxPrint_PrintChar(this, *str++);
+    //     count--;
+    // }
 }
 
 void GfxPrint_PrintString(GfxPrint* this, const char* str) {
-    while (*str != '\0') {
-        GfxPrint_PrintChar(this, *str++);
-    }
+    // 2S2H [Port] Process the string with our wrapper that converts Japanese UTF8 characters for the print system
+    OTRGfxPrint(str, this, GfxPrint_PrintChar);
+    // while (*str != '\0') {
+    //     GfxPrint_PrintChar(this, *str++);
+    // }
 }
 
 void* GfxPrint_Callback(void* arg, const char* str, size_t size) {

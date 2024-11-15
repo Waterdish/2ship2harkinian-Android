@@ -1184,16 +1184,17 @@ void Play_DrawMain(PlayState* this) {
     // Track render size when paused and that a copy was performed
     static u32 lastPauseWidth;
     static u32 lastPauseHeight;
-    static u8 hasCapturedPauseBuffer;
+    static bool lastAltAssets;
+    static bool hasCapturedPauseBuffer;
     u8 recapturePauseBuffer = false;
 
-    // If the size has changed or dropped frames leading to the buffer not being copied,
+    // If the size has changed, alt assets toggled or dropped frames leading to the buffer not being copied,
     // set the prerender state back to setup to copy a new frame.
-    // This requires not rendering kaleido during this copy to avoid kaleido being copied
+    // This requires not rendering kaleido during this copy to avoid kaleido itself being copied too.
     if ((R_PAUSE_BG_PRERENDER_STATE == PAUSE_BG_PRERENDER_PROCESS ||
          R_PAUSE_BG_PRERENDER_STATE == PAUSE_BG_PRERENDER_READY) &&
         (lastPauseWidth != OTRGetGameRenderWidth() || lastPauseHeight != OTRGetGameRenderHeight() ||
-         !hasCapturedPauseBuffer || sJustClosedBomberNotebook)) {
+         lastAltAssets != ResourceMgr_IsAltAssetsEnabled() || !hasCapturedPauseBuffer || sJustClosedBomberNotebook)) {
         R_PAUSE_BG_PRERENDER_STATE = PAUSE_BG_PRERENDER_SETUP;
         recapturePauseBuffer = true;
     }
@@ -1487,6 +1488,7 @@ void Play_DrawMain(PlayState* this) {
                     // #region 2S2H [Port] Custom handling for pause prerender background capture
                     lastPauseWidth = OTRGetGameRenderWidth();
                     lastPauseHeight = OTRGetGameRenderHeight();
+                    lastAltAssets = ResourceMgr_IsAltAssetsEnabled();
                     hasCapturedPauseBuffer = false;
 
                     FB_CopyToFramebuffer(&sp74, 0, gPauseFrameBuffer, false, &hasCapturedPauseBuffer);

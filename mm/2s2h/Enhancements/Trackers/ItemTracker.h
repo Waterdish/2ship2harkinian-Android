@@ -10,7 +10,7 @@ typedef enum class TrackerWindowType : uint8_t {
 typedef enum class ItemTrackerDisplayType : int8_t {
     Hidden,
     MainWindow,
-    Seperate,
+    Separate,
 } ItemTrackerDisplayType;
 
 typedef enum {

@@ -12,6 +12,10 @@ extern TexturePtr gQuestIcons[14];
 extern TexturePtr gBombersNotebookPhotos[24];
 }
 
+extern "C" bool Ship_IsCStringEmpty(const char* str) {
+    return str == NULL || str[0] == '\0';
+}
+
 // Build vertex coordinates for a quad command
 // In order of top left, top right, bottom left, then bottom right
 // Supports flipping the texture horizontally

@@ -396,11 +396,11 @@ void ItemTrackerWindow::DrawItemsInRows(int columns) {
         return;
     }
     if (mItemDrawModes[SECTION_INVENTORY] != ItemTrackerDisplayType::Hidden) {
-        if (mItemDrawModes[SECTION_INVENTORY] == ItemTrackerDisplayType::Seperate) {
+        if (mItemDrawModes[SECTION_INVENTORY] == ItemTrackerDisplayType::Separate) {
             BeginFloatingWindows("Items");
         }
         advancedBy = DrawItems(6, mainWindowPos);
-        if (mItemDrawModes[SECTION_INVENTORY] == ItemTrackerDisplayType::Seperate) {
+        if (mItemDrawModes[SECTION_INVENTORY] == ItemTrackerDisplayType::Separate) {
             EndFloatingWindows();
         } else {
             mainWindowPos += advancedBy;
@@ -409,12 +409,12 @@ void ItemTrackerWindow::DrawItemsInRows(int columns) {
 
     if (mItemDrawModes[SECTION_MASKS] != ItemTrackerDisplayType::Hidden) {
         int drawPos = mainWindowPos;
-        if (mItemDrawModes[SECTION_MASKS] == ItemTrackerDisplayType::Seperate) {
+        if (mItemDrawModes[SECTION_MASKS] == ItemTrackerDisplayType::Separate) {
             drawPos = 0;
             BeginFloatingWindows("Masks");
         }
         advancedBy = DrawMasks(6, drawPos);
-        if (mItemDrawModes[SECTION_MASKS] == ItemTrackerDisplayType::Seperate) {
+        if (mItemDrawModes[SECTION_MASKS] == ItemTrackerDisplayType::Separate) {
             EndFloatingWindows();
         } else {
             mainWindowPos += advancedBy;
@@ -423,12 +423,12 @@ void ItemTrackerWindow::DrawItemsInRows(int columns) {
 
     if (mItemDrawModes[SECTION_SONGS] != ItemTrackerDisplayType::Hidden) {
         int drawPos = mainWindowPos;
-        if (mItemDrawModes[SECTION_SONGS] == ItemTrackerDisplayType::Seperate) {
+        if (mItemDrawModes[SECTION_SONGS] == ItemTrackerDisplayType::Separate) {
             drawPos = 0;
             BeginFloatingWindows("Songs");
         }
         advancedBy = DrawSongs(5, drawPos);
-        if (mItemDrawModes[SECTION_SONGS] == ItemTrackerDisplayType::Seperate) {
+        if (mItemDrawModes[SECTION_SONGS] == ItemTrackerDisplayType::Separate) {
             EndFloatingWindows();
         } else {
             mainWindowPos += advancedBy;
@@ -437,12 +437,12 @@ void ItemTrackerWindow::DrawItemsInRows(int columns) {
 
     if (mItemDrawModes[SECTION_DUNGEON] != ItemTrackerDisplayType::Hidden) {
         int drawPos = mainWindowPos;
-        if (mItemDrawModes[SECTION_DUNGEON] == ItemTrackerDisplayType::Seperate) {
+        if (mItemDrawModes[SECTION_DUNGEON] == ItemTrackerDisplayType::Separate) {
             drawPos = 0;
             BeginFloatingWindows("Dungeon Items");
         }
         advancedBy = DrawDungeonItemsVert(6, drawPos);
-        if (mItemDrawModes[SECTION_DUNGEON] == ItemTrackerDisplayType::Seperate) {
+        if (mItemDrawModes[SECTION_DUNGEON] == ItemTrackerDisplayType::Separate) {
             EndFloatingWindows();
         } else {
             mainWindowPos += advancedBy;

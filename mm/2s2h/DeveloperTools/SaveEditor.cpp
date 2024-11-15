@@ -175,7 +175,7 @@ void UpdateGameTime(u16 gameTime) {
 
     // Clear weather from day 2
     gWeatherMode = WEATHER_MODE_CLEAR;
-    gPlayState->envCtx.lightningState = LIGHTNING_LAST;
+    gPlayState->envCtx.lightningState = LIGHTNING_OFF;
 
     // When transitioning over night boundaries, stop the sequences and ask to replay, then respawn actors
     if (newTimeIsNight != prevTimeIsNight) {
@@ -448,7 +448,7 @@ void DrawGeneralTab() {
             func_800FEAF4(&gPlayState->envCtx);
             // Clear weather from day 2
             gWeatherMode = WEATHER_MODE_CLEAR;
-            gPlayState->envCtx.lightningState = LIGHTNING_LAST;
+            gPlayState->envCtx.lightningState = LIGHTNING_OFF;
         }
     }
     // Time speed slider
@@ -559,13 +559,15 @@ void DrawGeneralTab() {
     if (ImGui::SliderInt("##setBank", &bankedRupees, 0, 5000, "Banked Rupees: %d")) {
         HS_SET_BANK_RUPEES(bankedRupees);
     }
-    UIWidgets::Tooltip("To recieve the rewards, set the bank to 199, 999, or 4,999 then deposit a single rupee");
+    UIWidgets::Tooltip("To receive the rewards, set the bank to 199, 999, or 4,999 then deposit a single rupee");
     UIWidgets::PopStyleSlider();
 
     DrawTempleClears();
 
     UIWidgets::Checkbox("Has Tatl", (bool*)&gSaveContext.save.hasTatl, { .color = UIWidgets::Colors::Gray });
     UIWidgets::Checkbox("Is Owl Save", (bool*)&gSaveContext.save.isOwlSave, { .color = UIWidgets::Colors::Gray });
+    UIWidgets::Checkbox("Finished Intro Sequence", (bool*)&gSaveContext.save.isFirstCycle,
+                        { .color = UIWidgets::Colors::Gray });
     ImGui::EndGroup();
 
     ImGui::PopItemWidth();

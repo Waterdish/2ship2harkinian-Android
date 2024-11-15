@@ -49,9 +49,9 @@ void Warp() {
         gSaveContext.fileNum = 0xFF;
         MapSelect_LoadGame((MapSelectState*)gGameState, CVarGetInteger(WARP_POINT_CVAR "Entrance", 0), 0);
     } else {
-        // The else case, and the rest of this function is primarly relevant code copied from Play_SetRespawnData and
+        // The else case, and the rest of this function is primarily relevant code copied from Play_SetRespawnData and
         // func_80169EFC, minus the parts that copy scene flags to scene we are warping to (this is obviously
-        // undesireable)
+        // undesirable)
         gPlayState->nextEntrance = Entrance_Create(entrance >> 9, 0, entrance & 0xF);
         gPlayState->transitionTrigger = TRANS_TRIGGER_START;
         gPlayState->transitionType = TRANS_TYPE_INSTANT;

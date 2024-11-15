@@ -3079,20 +3079,27 @@ s32 func_800BA2FC(PlayState* play, Actor* actor, Vec3f* projectedPos, f32 projec
 
 // #region 2S2H [Enhancements] Allows us to increase the draw and update distance independently, mostly a modified
 // version of the function above
-void Ship_CalcShouldDrawAndUpdate(PlayState* play, Actor* actor, Vec3f* projectedPos, f32 projectedW, bool* shouldDraw,
-                                  bool* shouldUpdate) {
-    s32 updateMulti = CVarGetInteger("gEnhancements.Graphics.IncreaseActorUpdateDistance", 1);
-    s32 drawMulti = CVarGetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance", 1);
-    bool updateCheck =
-        (-(actor->uncullZoneScale * updateMulti) < projectedPos->z) &&
-        (projectedPos->z < ((actor->uncullZoneForward * updateMulti) + (actor->uncullZoneScale * updateMulti)));
-    bool drawCheck =
-        (-(actor->uncullZoneScale * drawMulti) < projectedPos->z) &&
-        (projectedPos->z < ((actor->uncullZoneForward * drawMulti) + (actor->uncullZoneScale * drawMulti)));
+s32 Ship_CalcShouldDrawAndUpdate(PlayState* play, Actor* actor, Vec3f* projectedPos, f32 projectedW, bool* shouldDraw,
+                                 bool* shouldUpdate) {
+    // Check if the actor passes its original/vanilla culling requirements
+    if (func_800BA2FC(play, actor, projectedPos, projectedW)) {
+        *shouldUpdate = true;
+        *shouldDraw = true;
+        return true;
+    }
 
-    if (updateCheck || drawCheck) {
+    s32 multiplier = CVarGetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance", 1);
+    multiplier = MAX(multiplier, 1);
+
+    // Apply distance scale to forward cullzone check
+    bool isWithingForwardCullZone =
+        (-actor->uncullZoneScale < projectedPos->z) &&
+        (projectedPos->z < ((actor->uncullZoneForward * multiplier) + actor->uncullZoneScale));
+
+    if (isWithingForwardCullZone) {
         // Ensure the projected W value is at least 1.0
         f32 clampedProjectedW = CLAMP_MIN(projectedW, 1.0f);
+        f32 ratioAdjusted = 1.0f;
         f32 uncullZoneScaleDiagonal;
         f32 uncullZoneScaleVertical;
         f32 uncullZoneDownwardAdjusted;
@@ -3113,20 +3120,25 @@ void Ship_CalcShouldDrawAndUpdate(PlayState* play, Actor* actor, Vec3f* projecte
         if (CVarGetInteger("gEnhancements.Graphics.ActorCullingAccountsForWidescreen", 0)) {
             float originalAspectRatio = 4.0f / 3.0f;
             float currentAspectRatio = OTRGetAspectRatio();
-            float aspectRatioMultiplier = MAX(currentAspectRatio / originalAspectRatio, 1.0f);
-
-            clampedProjectedW *= aspectRatioMultiplier;
+            ratioAdjusted = MAX(currentAspectRatio / originalAspectRatio, 1.0f);
         }
 
-        bool isWithinHorizontalCullZone = ((fabsf(projectedPos->x) - uncullZoneScaleDiagonal) < clampedProjectedW);
+        // Apply adjsuted aspect ratio to just the horizontal cullzone check
+        bool isWithinHorizontalCullZone =
+            ((fabsf(projectedPos->x) - uncullZoneScaleDiagonal) < (clampedProjectedW * ratioAdjusted));
         bool isAboveBottomOfCullZone = ((-clampedProjectedW < (projectedPos->y + uncullZoneScaleVertical)));
         bool isBelowTopOfCullZone = ((projectedPos->y - uncullZoneDownwardAdjusted) < clampedProjectedW);
 
         if (isWithinHorizontalCullZone && isAboveBottomOfCullZone && isBelowTopOfCullZone) {
-            *shouldDraw = drawCheck;
-            *shouldUpdate = updateCheck;
+            // Add additional overries here for glitch useful actors when those are reported
+
+            *shouldDraw = true;
+            *shouldUpdate = true;
+            return true;
         }
     }
+
+    return false;
 }
 // #endregion
 
@@ -3165,11 +3177,10 @@ void Actor_DrawAll(PlayState* play, ActorContext* actorCtx) {
                 Actor_UpdateFlaggedAudio(actor);
             }
 
-            // #region 2S2H
+            // #region 2S2H [Enhancement] Extended culling updates
             bool shipShouldDraw = false;
             bool shipShouldUpdate = false;
             if (CVarGetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance", 1) > 1 ||
-                CVarGetInteger("gEnhancements.Graphics.IncreaseActorUpdateDistance", 1) > 1 ||
                 CVarGetInteger("gEnhancements.Graphics.ActorCullingAccountsForWidescreen", 0)) {
                 Ship_CalcShouldDrawAndUpdate(play, actor, &actor->projectedPos, actor->projectedW, &shipShouldDraw,
                                              &shipShouldUpdate);
@@ -3187,8 +3198,15 @@ void Actor_DrawAll(PlayState* play, ActorContext* actorCtx) {
                 }
             }
 
+            // Copied flags so we can set the "is active" flag for the draw check below without modifying the actor.
+            // This ensures that overrides for song of soaring or song of time cutscenes still hide actors.
+            s32 shipActorFlagsCopy = actor->flags;
+            if (shipShouldDraw) {
+                shipActorFlagsCopy |= ACTOR_FLAG_40;
+            }
+
             actor->isDrawn = false;
-            if ((actor->init == NULL) && (actor->draw != NULL) && ((actor->flags & actorFlags) || shipShouldDraw)) {
+            if ((actor->init == NULL) && (actor->draw != NULL) && (shipActorFlagsCopy & actorFlags)) {
                 // #endregion
                 if ((actor->flags & ACTOR_FLAG_REACT_TO_LENS) &&
                     ((play->roomCtx.curRoom.lensMode == LENS_MODE_HIDE_ACTORS) ||

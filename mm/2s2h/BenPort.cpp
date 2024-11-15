@@ -1398,7 +1398,7 @@ extern "C" SkeletonHeader* ResourceMgr_LoadSkeletonByName(const char* path, Skel
     }
 
     // This function is only called when a skeleton is initialized.
-    // Therefore we can take this oppurtunity to take note of the Skeleton that is created...
+    // Therefore we can take this opportunity to take note of the Skeleton that is created...
     if (skelAnime != nullptr) {
         auto stringPath = std::string(path);
         // Ship::SkeletonPatcher::RegisterSkeleton(stringPath, skelAnime);
@@ -1535,7 +1535,6 @@ extern "C" void OTRGfxPrint(const char* str, void* printer, void (*printImpl)(vo
     std::wstring wstr = StringToU16(str);
 
     for (const auto& c : wstr) {
-        unsigned char convt = ' ';
         if (c < 0x80) {
             printImpl(printer, c);
         } else if (c >= u'｡' && c <= u'ﾟ') { // katakana

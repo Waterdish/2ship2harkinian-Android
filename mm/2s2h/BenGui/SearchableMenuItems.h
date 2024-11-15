@@ -218,7 +218,7 @@ struct widgetInfo {
 // `evaluation` returns a bool which can be determined by whatever code you want that changes its status
 // `reason` is the text displayed in the disabledTooltip when a widget is disabled by a particular DisableReason
 // `active` is what's referenced when determining disabled status for a widget that uses this This can also be used to
-// hold reasons to hide widgets so taht their evaluations are also only run once per frame
+// hold reasons to hide widgets so that their evaluations are also only run once per frame
 struct disabledInfo {
     DisableInfoFunc evaluation;
     const char* reason;
@@ -451,11 +451,10 @@ void AddSettings() {
                 WIDGET_CVAR_COMBOBOX,
                 { .defaultVariant = COLOR_INDIGO, .comboBoxOptions = menuThemeOptions } },
 #if not defined(__SWITCH__) and not defined(__WIIU__)
-              { "Menubar Controller Navigation", CVAR_IMGUI_CONTROLLER_NAV,
-                "Allows controller navigation of the SOH menu bar (Settings, Enhancements,...)\nCAUTION: "
+              { "Menu Controller Navigation", CVAR_IMGUI_CONTROLLER_NAV,
+                "Allows controller navigation of the 2Ship menu (Settings, Enhancements,...)\nCAUTION: "
                 "This will disable game inputs while the menu is visible.\n\nD-pad to move between "
-                "items, A to select, B to move up in scope. DEV NOTE: SDL is weird currently, pad button only "
-                "works with menubar open.",
+                "items, A to select, B to move up in scope.",
                 WIDGET_CVAR_CHECKBOX },
               { "Cursor Always Visible",
                 "gSettings.CursorVisibility",
@@ -778,9 +777,9 @@ void AddEnhancements() {
           3,
           { {
                 { .widgetName = "Fixes", .widgetType = WIDGET_SEPARATOR_TEXT },
-                { "Fix Targetting Camera Snap",
+                { "Fix Targeting Camera Snap",
                   "gEnhancements.Camera.FixTargettingCameraSnap",
-                  "Fixes the camera snap that occurs when you are moving and press the targetting button.",
+                  "Fixes the camera snap that occurs when you are moving and press the targeting button.",
                   WIDGET_CVAR_CHECKBOX,
                   {} },
                 { .widgetName = "First Person", .widgetType = WIDGET_SEPARATOR_TEXT },
@@ -1053,7 +1052,7 @@ void AddEnhancements() {
               { "Fierce Deity Putaway", "gEnhancements.Player.FierceDeityPutaway",
                 "Allows Fierce Deity Link to put away his sword.", WIDGET_CVAR_CHECKBOX },
               { "Climb speed",
-                "gEnhancements.PlayerMovement.ClimbSpeed",
+                "gEnhancements.Player.ClimbSpeed",
                 "Increases the speed at which Link climbs vines and ladders.",
                 WIDGET_CVAR_SLIDER_INT,
                 { 1, 5, 1 } },
@@ -1167,7 +1166,8 @@ void AddEnhancements() {
     enhancementsSidebar.push_back(
         { "Graphics",
           3,
-          { { { .widgetName = "Clock", .widgetType = WIDGET_SEPARATOR_TEXT },
+          { {
+              { .widgetName = "Clock", .widgetType = WIDGET_SEPARATOR_TEXT },
               { "Clock Type",
                 "gEnhancements.Graphics.ClockType",
                 "Swaps between Graphical and Text only Clock types.",
@@ -1244,34 +1244,25 @@ void AddEnhancements() {
               { .widgetName = "Unstable",
                 .widgetType = WIDGET_SEPARATOR_TEXT,
                 .widgetOptions = { .color = UIWidgets::Colors::Yellow } },
-              { "Disable Scene Geometry Distance Check", "gEnhancements.Graphics.DisableSceneGeometryDistanceCheck",
+              { "Disable Scene Geometry Distance Check",
+                "gEnhancements.Graphics.DisableSceneGeometryDistanceCheck",
                 "Disables the distance check for scene geometry, allowing it to be drawn no matter how far "
                 "away it is from the player. This may have unintended side effects.",
-                WIDGET_CVAR_CHECKBOX },
+                WIDGET_CVAR_CHECKBOX,
+                {},
+                [](widgetInfo& info) { GfxPatcher_ApplyGeometryIssuePatches(); } },
               { "Widescreen Actor Culling", "gEnhancements.Graphics.ActorCullingAccountsForWidescreen",
                 "Adjusts the culling planes to account for widescreen resolutions. "
                 "This may have unintended side effects.",
                 WIDGET_CVAR_CHECKBOX },
-              { "Increase Actor Draw Distance: %dx",
-                "gEnhancements.Graphics.IncreaseActorDrawDistance",
-                "Increase the range in which Actors are drawn. This may have unintended side effects.",
-                WIDGET_CVAR_SLIDER_INT,
-                { 1, 5, 1 },
-                [](widgetInfo& info) {
-                    CVarSetInteger("gEnhancements.Graphics.IncreaseActorUpdateDistance",
-                                   MIN(CVarGetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance", 1),
-                                       CVarGetInteger("gEnhancements.Graphics.IncreaseActorUpdateDistance", 1)));
-                } },
-              { "Increase Actor Update Distance: %dx",
-                "gEnhancements.Graphics.IncreaseActorUpdateDistance",
-                "Increase the range in which Actors are updated. This may have unintended side effects.",
-                WIDGET_CVAR_SLIDER_INT,
-                { 1, 5, 1 },
-                [](widgetInfo& info) {
-                    CVarSetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance",
-                                   MAX(CVarGetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance", 1),
-                                       CVarGetInteger("gEnhancements.Graphics.IncreaseActorUpdateDistance", 1)));
-                } } } } });
+              {
+                  "Increase Actor Draw Distance: %dx",
+                  "gEnhancements.Graphics.IncreaseActorDrawDistance",
+                  "Increase the range in which Actors are drawn. This may have unintended side effects.",
+                  WIDGET_CVAR_SLIDER_INT,
+                  { 1, 5, 1 },
+              },
+          } } });
     enhancementsSidebar.push_back(
         { "Items/Songs",
           3,
@@ -1280,12 +1271,12 @@ void AddEnhancements() {
               { "Blast Mask has Powder Keg Force", "gEnhancements.Masks.BlastMaskKeg",
                 "Blast Mask can also destroy objects only the Powder Keg can.", WIDGET_CVAR_CHECKBOX },
               { "Fast Transformation", "gEnhancements.Masks.FastTransformation",
-                "Removes the delay when using transormation masks.", WIDGET_CVAR_CHECKBOX },
+                "Removes the delay when using transformation masks.", WIDGET_CVAR_CHECKBOX },
               { "Fierce Deity's Mask Anywhere", "gEnhancements.Masks.FierceDeitysAnywhere",
                 "Allow using Fierce Deity's mask outside of boss rooms.", WIDGET_CVAR_CHECKBOX },
               { "Persistent Bunny Hood",
                 "gEnhancements.Masks.PersistentBunnyHood.Enabled",
-                "Permanantly toggle a speed boost from the bunny hood by pressing "
+                "Permanently toggle a speed boost from the bunny hood by pressing "
                 "'A' on it in the mask menu.",
                 WIDGET_CVAR_CHECKBOX,
                 {},
@@ -1352,7 +1343,7 @@ void AddEnhancements() {
             // Dialogue Enhancements
             { { .widgetName = "Dialogue", .widgetType = WIDGET_SEPARATOR_TEXT },
               { "Fast Bank Selection", "gEnhancements.Dialogue.FastBankSelection",
-                "Pressing the Z or R buttons while the Deposit/Withdrawl Rupees dialogue is open will set "
+                "Pressing the Z or R buttons while the Deposit/Withdrawal Rupees dialogue is open will set "
                 "the Rupees to Links current Rupees or 0 respectively.",
                 WIDGET_CVAR_CHECKBOX },
               { "Fast Text", "gEnhancements.Dialogue.FastText",
@@ -1535,7 +1526,7 @@ void AddDevTools() {
                 "Change the behavior of creating saves while debug mode is enabled:\n\n"
                 "- Empty Save: The default 3 heart save file in first cycle\n"
                 "- Vanilla Debug Save: Uses the title screen save info (8 hearts, all items and masks)\n"
-                "- 100\% Save: All items, equipment, mask, quast status and bombers notebook complete",
+                "- 100\% Save: All items, equipment, mask, quest status and bombers notebook complete",
                 WIDGET_CVAR_COMBOBOX,
                 { 0, 0, 0, debugSaveOptions },
                 [](widgetInfo& info) { RegisterDebugSaveCreate(); },
@@ -1956,7 +1947,9 @@ void SearchMenuGetItem(widgetInfo& widget) {
                                     info.widgetType == WIDGET_SEPARATOR_TEXT || info.isHidden) {
                                     continue;
                                 }
-                                std::string widgetStr = std::string(info.widgetName) + std::string(info.widgetTooltip);
+                                std::string widgetStr =
+                                    std::string(info.widgetName) +
+                                    std::string(info.widgetTooltip != NULL ? info.widgetTooltip : "");
                                 std::transform(menuSearchText.begin(), menuSearchText.end(), menuSearchText.begin(),
                                                ::tolower);
                                 menuSearchText.erase(std::remove(menuSearchText.begin(), menuSearchText.end(), ' '),

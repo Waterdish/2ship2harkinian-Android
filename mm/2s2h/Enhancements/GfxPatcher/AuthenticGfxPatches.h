@@ -3,5 +3,6 @@
 
 void GfxPatcher_ApplyNecessaryAuthenticPatches();
 void GfxPatcher_ApplyOverflowTexturePatches();
+void GfxPatcher_ApplyGeometryIssuePatches();
 
 #endif // AUTHENTIC_GFX_PATCHES_H

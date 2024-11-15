@@ -16,7 +16,7 @@ void CheckScene(s16 sceneId) {
 
     onItemDeleteID = REGISTER_VB_SHOULD(VB_MSG_SCRIPT_DEL_ITEM, {
         Actor* actor = va_arg(args, Actor*);
-        ItemId itemId = va_arg(args, ItemId);
+        ItemId itemId = (ItemId)va_arg(args, int);
 
         // Keep the express mail only on the first trade for the cycle
         // Postman checking for Madame Aroma trade cycle flag
