@@ -200,6 +200,7 @@ public class MainActivity extends SDLActivity{
 
 
     public native void attachController();
+    public native void detachController();
     // Native method for setting button state
     public native void setButton(int button, boolean value);
     public native void setCameraState(int axis, float value);
@@ -290,14 +291,19 @@ public class MainActivity extends SDLActivity{
     private void setupToggleButton(Button button, ViewGroup uiGroup){
         boolean isHidden = preferences.getBoolean("controlsVisible", false); // Default to 'false' (visible)
         uiGroup.setVisibility(isHidden ? View.INVISIBLE : View.VISIBLE); // Set the initial visibility based on the saved state
+        /*if(isHidden){
+            detachController();
+        }*/
         button.setOnClickListener(new View.OnClickListener() {
             boolean isHidden = false;
             @Override
             public void onClick(View v) {
                 if (isHidden) {
                     uiGroup.setVisibility(View.VISIBLE); // Show UI elements
+                    //attachController();
                 } else {
                     uiGroup.setVisibility(View.INVISIBLE); // Hide UI elements
+                    //detachController();
                 }
                 preferences.edit().putBoolean("controlsVisible", !isHidden).apply();
                 isHidden = !isHidden; // Toggle state

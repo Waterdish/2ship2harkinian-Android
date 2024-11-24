@@ -101,8 +101,8 @@ bool Camera_FreeLook(Camera* camera) {
 
 #ifdef __ANDROID__
     if(Ship::Mobile::IsUsingTouchscreenControls()) {
-        yawDiff = -Ship::Mobile::GetCameraYaw()*10.0f;
-        pitchDiff = Ship::Mobile::GetCameraPitch()*10.0f;
+        yawDiff += -Ship::Mobile::GetCameraYaw()*10.0f;
+        pitchDiff += Ship::Mobile::GetCameraPitch()*10.0f;
     }
 #endif
 
