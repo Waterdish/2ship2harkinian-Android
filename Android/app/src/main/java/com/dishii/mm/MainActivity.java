@@ -149,25 +149,6 @@ public class MainActivity extends SDLActivity{
             }
         }
 
-        File configFile = new File(getExternalFilesDir(null), "2ship2harkinian.json");
-        if (!configFile.exists()) {
-            try {
-                InputStream in = getAssets().open("2ship2harkinian.json");
-                OutputStream out = new FileOutputStream(configFile);
-
-                byte[] buffer = new byte[1024];
-                int read;
-                while ((read = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, read);
-                }
-
-                in.close();
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
     private native void nativeHandleSelectedFile(String filePath);
@@ -284,10 +265,10 @@ public class MainActivity extends SDLActivity{
         addTouchListener(buttonX, ControllerButtons.BUTTON_X); // SDL Button 2 (X)
         addTouchListener(buttonY, ControllerButtons.BUTTON_Y); // SDL Button 3 (Y)
 
-        addTouchListener(buttonDpadUp, ControllerButtons.BUTTON_DPAD_UP); // SDL Button 10 (D-Pad Up)
-        addTouchListener(buttonDpadDown, ControllerButtons.BUTTON_DPAD_DOWN); // SDL Button 11 (D-Pad Down)
-        addTouchListener(buttonDpadLeft, ControllerButtons.BUTTON_DPAD_LEFT); // SDL Button 12 (D-Pad Left)
-        addTouchListener(buttonDpadRight, ControllerButtons.BUTTON_DPAD_RIGHT); // SDL Button 13 (D-Pad Right)
+        setupCButtons(buttonDpadUp, ControllerButtons.AXIS_RY, 1); // SDL Button 10 (D-Pad Up)
+        setupCButtons(buttonDpadDown, ControllerButtons.AXIS_RY , -1); // SDL Button 11 (D-Pad Down)
+        setupCButtons(buttonDpadLeft, ControllerButtons.AXIS_RX, 1); // SDL Button 12 (D-Pad Left)
+        setupCButtons(buttonDpadRight, ControllerButtons.AXIS_RX, -1); // SDL Button 13 (D-Pad Right)
 
         addTouchListener(buttonLB, ControllerButtons.BUTTON_LB); // SDL Button 4 (LB)
         addTouchListener(buttonRB, ControllerButtons.BUTTON_RB); // SDL Button 5 (RB)
@@ -340,6 +321,28 @@ public class MainActivity extends SDLActivity{
                         return true;
                     case MotionEvent.ACTION_CANCEL:
                         setButton(buttonNum, false);
+                        return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void setupCButtons(Button button, int buttonNum, int direction) {
+        button.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        setAxis(buttonNum, direction<0 ? Short.MAX_VALUE : Short.MIN_VALUE);
+                        button.setPressed(true);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        setAxis(buttonNum, (short) 0);
+                        button.setPressed(false);
+                        return true;
+                    case MotionEvent.ACTION_CANCEL:
+                        setAxis(buttonNum, (short) 0);
                         return true;
                 }
                 return false;
