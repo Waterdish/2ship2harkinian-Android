@@ -142,7 +142,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/ic_trigger_button_left"
-        android:text="LB"
+        android:text="L"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textColor="#25FFFFFF"/>
@@ -154,7 +154,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/ic_trigger_button_right"
-        android:text="RB"
+        android:text="R"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textColor="#25FFFFFF"/>

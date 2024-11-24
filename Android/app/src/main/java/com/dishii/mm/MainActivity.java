@@ -149,6 +149,25 @@ public class MainActivity extends SDLActivity{
             }
         }
 
+        File configFile = new File(getExternalFilesDir(null), "2ship2harkinian.json");
+        if (!configFile.exists()) {
+            try {
+                InputStream in = getAssets().open("2ship2harkinian.json");
+                OutputStream out = new FileOutputStream(configFile);
+
+                byte[] buffer = new byte[1024];
+                int read;
+                while ((read = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, read);
+                }
+
+                in.close();
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     private native void nativeHandleSelectedFile(String filePath);
