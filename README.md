@@ -4,8 +4,6 @@ A port of 2 Ship 2 Harkinian to Android. <br>
 Original Repository: https://github.com/HarbourMasters/2ship2harkinian <br>
 <br>
 
-NOTE: Controller only. No touch controls yet except for in the enhancements menu. <br>
-
 Supported (probably): Android 7+ (OpenGL ES 3.0+ required) <br>
 Tested On: Android 14 <br>
 
