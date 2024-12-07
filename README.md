@@ -30,7 +30,7 @@ Q: The GUI scaling is too big/too small. <br>
   A: There is no GUI scaling option implemented yet. This will come in a future update. <br><br>
 
 Q: Gyro Aim? <br>
-  A: It will come once it works in the base 2 Ship 2 Harkinian. <br> <br>
+  A: It works. You just need to press any controller button when it asks for input. It will default to your phone's gyro if the controller doesn't support it. <br> <br>
 
 Q: My controller is not doing anything. <br>
   A: Close the Enhancements Menu. If the Enhancements Menu is not open, open it with the Android back button and check if it is detected in Settings->Controller->Controller Mapping. If it is, press refresh. <br><br>
