@@ -79,7 +79,7 @@ enum class ButtonId : int {
 
 #ifdef __ANDROID__
 
-const char* javaRomPath = NULL;
+static char javaRomPath[4096] = { 0 };
 bool fileDialogOpen = false;
 
 //function to be called from C
@@ -92,7 +92,7 @@ void openFilePickerFromC(JNIEnv* env, jobject javaObject) {
 // Define the native method to handle the selected file path
 extern "C" void JNICALL Java_com_dishii_mm_MainActivity_nativeHandleSelectedFile(JNIEnv* env, jobject obj, jstring filePath) {
     const char* filePathStr = env->GetStringUTFChars(filePath, 0);
-    javaRomPath = strdup(filePathStr); // save filepath to string
+    snprintf(javaRomPath, sizeof(javaRomPath), "%s", filePathStr);
     fileDialogOpen = false;
     env->ReleaseStringUTFChars(filePath, filePathStr);
 }
@@ -322,7 +322,7 @@ bool Extractor::GetRomPathFromBox() {
         //Do nothing until it's chosen
         SDL_Delay(250);
     }
-    SDL_Log("%s",javaRomPath);
+    SDL_Log("javaRomPath: %s", javaRomPath);
     selection.push_back(javaRomPath);
 #endif
     if (selection.empty()) {
@@ -332,12 +332,6 @@ bool Extractor::GetRomPathFromBox() {
     mCurrentRomPath = selection[0];
 #endif
     mCurRomSize = GetCurRomSize();
-#ifdef __ANDROID__
-    if (javaRomPath) {
-        free((void*)javaRomPath);
-        javaRomPath = NULL;
-    }
-#endif
     return true;
 }
 
