@@ -1,7 +1,8 @@
 name: generate-builds
 on:
-  push:
-  pull_request:
+  # push:
+  # pull_request:
+  workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -380,3 +381,29 @@ jobs:
       with:
         name: 2ship-windows
         path: 2ship-windows
+
+  build-android:
+    needs: generate-2ship-otr
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: Install dependencies
+      run: sudo apt-get install -y ninja-build
+    - name: Download 2ship.o2r
+      uses: actions/download-artifact@v4
+      with:
+        name: 2ship.o2r
+        path: Android/app/src/main/assets
+    - name: Build 2Ship
+      run: |
+        cd Android/
+        ./gradlew assembleDebug
+        mv app/build/outputs/apk/debug/app-debug.apk ../2ship.apk
+    - name: Create release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ github.ref }}
+        file: 2ship.apk

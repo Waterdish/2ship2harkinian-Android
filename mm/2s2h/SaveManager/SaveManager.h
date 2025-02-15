@@ -15,4 +15,15 @@ void SaveManager_SysFlashrom_WriteData(u8* addr, u32 pageNum, u32 pageCount);
 s32 SaveManager_SysFlashrom_ReadData(void* addr, u32 pageNum, u32 pageCount);
 #endif
 
+#if defined(__ANDROID__)
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+void SaveManager_Init();
+#ifdef __cplusplus
+}
+#endif
+#endif
+
 #endif // SAVE_MANAGER_H

@@ -37,7 +37,21 @@ typedef enum FlashSlotFile {
     ((GET_NEWF(save, 0) == 'Z') && (GET_NEWF(save, 1) == 'E') && (GET_NEWF(save, 2) == 'L') && \
      (GET_NEWF(save, 3) == 'D') && (GET_NEWF(save, 4) == 'A') && (GET_NEWF(save, 5) == '3'))
 
+#if !defined(__ANDROID__)
 const std::filesystem::path savesFolderPath(Ship::Context::GetPathRelativeToAppDirectory("saves", appShortName));
+#else
+// in Android, when targeting SurfaceFlinger (ANativeWindow, ART, calling JNI), to avoid problems, one should usually
+// try to avoid using C++ features that run port-sensitive code in early initialization BEFORE main() (SDL_main())
+// actually runs, like __attribute__((constructor)) and method-initialized global variables,
+// because it is necessary to wait until after the Java Activity initializes JNI before calling certain methods.
+// the Java Activity will call SDL_main() when it is ready to execute native code, and does not expect native application
+// code to be running before that point.
+std::filesystem::path savesFolderPath;
+// call this function early in main() before any other functions that use savesFolderPath are called.
+void SaveManager_Init(void) {
+    savesFolderPath = Ship::Context::GetPathRelativeToAppDirectory("saves", appShortName);
+}
+#endif
 
 // Migrations
 // The idea here is that we can read in any version of the save as generic JSON, then apply migrations
