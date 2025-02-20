@@ -15,6 +15,10 @@
 #include "stackcheck.h"
 #include "BenPort.h"
 
+#if defined(__ANDROID__)
+#include "SaveManager/SaveManager.h"
+#endif
+
 // Variables are put before most headers as a hacky way to bypass bss reordering
 OSMesgQueue sSerialEventQueue;
 OSMesg sSerialMsgBuf[1];
@@ -74,6 +78,10 @@ void SDL_main(int argc, char** argv /* void* arg*/) {
     // Allow non-ascii characters for Windows
     setlocale(LC_ALL, ".UTF8");
 #endif // _WIN32
+
+#if defined(__ANDROID__)
+    SaveManager_Init();
+#endif
 
     InitOTR();
     Heaps_Alloc();

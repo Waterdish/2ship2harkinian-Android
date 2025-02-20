@@ -148,6 +148,8 @@ file(COPY "${CMAKE_SOURCE_DIR}/OTRExporter/CFG/filelists/" DESTINATION "${CMAKE_
 file(COPY "${CMAKE_SOURCE_DIR}/OTRExporter/CFG/ActorList_MM.txt" DESTINATION "${CMAKE_SOURCE_DIR}/Android/app/src/main/assets/assets/extractor/symbols")
 file(COPY "${CMAKE_SOURCE_DIR}/OTRExporter/CFG/ObjectList_MM.txt" DESTINATION "${CMAKE_SOURCE_DIR}/Android/app/src/main/assets/assets/extractor/symbols")
 file(COPY "${CMAKE_SOURCE_DIR}/OTRExporter/CFG/SymbolMap_MM.txt" DESTINATION "${CMAKE_SOURCE_DIR}/Android/app/src/main/assets/assets/extractor/symbols")
+file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/Android/app/src/main/assets/mods")
+file(TOUCH "${CMAKE_SOURCE_DIR}/Android/app/src/main/assets/mods/custom_mod_files_go_here.txt")
 endif()
 
 
