@@ -245,6 +245,7 @@ void func_808DC454(ObjectKankyo* this, PlayState* play) {
                     this->unk_14C[i].unk_18 = (Rand_ZeroOne() * 3.0f) + 8.0f;
                 }
                 this->unk_14C[i].unk_1C++;
+                this->unk_14C[i].epoch++;
                 break;
 
             case 1:
@@ -280,10 +281,13 @@ void func_808DC454(ObjectKankyo* this, PlayState* play) {
 
                 if (((this->unk_14C[i].unk_00 + this->unk_14C[i].unk_0C) - temp_f24) > temp_120) {
                     this->unk_14C[i].unk_00 = temp_f24 - temp_120;
+                    // 2S2H [Interpolation] Here and below, skip particle interp on next frame when position moves
+                    this->unk_14C[i].epoch++;
                 }
 
                 if (((this->unk_14C[i].unk_00 + this->unk_14C[i].unk_0C) - temp_f24) < -temp_120) {
                     this->unk_14C[i].unk_00 = temp_f24 + temp_120;
+                    this->unk_14C[i].epoch++;
                 }
 
                 sp88.x = this->unk_14C[i].unk_00 + this->unk_14C[i].unk_0C;
@@ -296,18 +300,22 @@ void func_808DC454(ObjectKankyo* this, PlayState* play) {
 
                 if (temp_f0_4 < (this->unk_14C[i].unk_04 + (this->unk_14C[i].unk_10) - temp_f28)) {
                     this->unk_14C[i].unk_04 = temp_f28 - temp_f0_4;
+                    this->unk_14C[i].epoch++;
                 }
 
                 if (((this->unk_14C[i].unk_04 + this->unk_14C[i].unk_10) - temp_f28) < -temp_f0_4) {
                     this->unk_14C[i].unk_04 = temp_f28 + temp_f0_4;
+                    this->unk_14C[i].epoch++;
                 }
 
                 if (((this->unk_14C[i].unk_08 + this->unk_14C[i].unk_14) - temp_f30) > temp_120) {
                     this->unk_14C[i].unk_08 = temp_f30 - temp_120;
+                    this->unk_14C[i].epoch++;
                 }
 
                 if (((this->unk_14C[i].unk_08 + this->unk_14C[i].unk_14) - temp_f30) < -temp_120) {
                     this->unk_14C[i].unk_08 = temp_f30 + temp_120;
+                    this->unk_14C[i].epoch++;
                 }
 
                 if ((this->unk_14C[i].unk_04 + this->unk_14C[i].unk_10) < ((play->view.eye.y - temp_f22) - 40.0f)) {
@@ -406,6 +414,7 @@ void func_808DCDB4(ObjectKankyo* this, PlayState* play) {
                 this->unk_14C[i].unk_14 = (Rand_ZeroOne() - 0.5f) * (temp_120 * 2.0f);
                 this->unk_14C[i].unk_18 = Rand_ZeroOne() + 0.2f;
                 this->unk_14C[i].unk_1C++;
+                this->unk_14C[i].epoch++;
                 break;
 
             case 1:
@@ -447,26 +456,33 @@ void func_808DCDB4(ObjectKankyo* this, PlayState* play) {
 
                 if (((this->unk_14C[i].unk_00 + this->unk_14C[i].unk_0C) - temp_f26) > temp_80) {
                     this->unk_14C[i].unk_00 = temp_f26 - temp_80;
+                    // 2S2H [Interpolation] Here and below, skip particle interp on next frame when position moves
+                    this->unk_14C[i].epoch++;
                 }
 
                 if (((this->unk_14C[i].unk_00 + this->unk_14C[i].unk_0C) - temp_f26) < -temp_80) {
                     this->unk_14C[i].unk_00 = temp_f26 + temp_80;
+                    this->unk_14C[i].epoch++;
                 }
 
                 if (((this->unk_14C[i].unk_04 + this->unk_14C[i].unk_10) - temp_f28) > temp_80) {
                     this->unk_14C[i].unk_04 = temp_f28 - temp_80;
+                    this->unk_14C[i].epoch++;
                 }
 
                 if (((this->unk_14C[i].unk_04 + this->unk_14C[i].unk_10) - temp_f28) < -temp_80) {
                     this->unk_14C[i].unk_04 = temp_f28 + temp_80;
+                    this->unk_14C[i].epoch++;
                 }
 
                 if (((this->unk_14C[i].unk_08 + this->unk_14C[i].unk_14) - temp_f18) > temp_80) {
                     this->unk_14C[i].unk_08 = temp_f18 - temp_80;
+                    this->unk_14C[i].epoch++;
                 }
 
                 if (((this->unk_14C[i].unk_08 + this->unk_14C[i].unk_14) - temp_f18) < -temp_80) {
                     this->unk_14C[i].unk_08 = temp_f18 + temp_80;
+                    this->unk_14C[i].epoch++;
                 }
                 break;
         }
@@ -541,7 +557,7 @@ void func_808DD3C8(Actor* thisx, PlayState* play2) {
         worldPos.x = this->unk_14C[i].unk_00 + this->unk_14C[i].unk_0C;
         worldPos.y = this->unk_14C[i].unk_04 + this->unk_14C[i].unk_10;
         worldPos.z = this->unk_14C[i].unk_08 + this->unk_14C[i].unk_14;
-        FrameInterpolation_RecordOpenChild(this, i);
+
         Play_GetScreenPos(play, &worldPos, &screenPos);
 
         // #region 2S2H [Cosmetic] Increase snow render area for widescreen
@@ -551,9 +567,10 @@ void func_808DD3C8(Actor* thisx, PlayState* play2) {
             xMin = OTRGetDimensionFromLeftEdge(xMin);
             xMax = OTRGetDimensionFromRightEdge(xMax);
         }
-        // #pragma endregion
+        // #endregion
 
         if ((screenPos.x >= xMin) && (screenPos.x < xMax) && (screenPos.y >= 0.0f) && (screenPos.y < SCREEN_HEIGHT)) {
+            FrameInterpolation_RecordOpenChild(&this->unk_14C[i], this->unk_14C[i].epoch);
             if (!spB4) {
                 spB4 = true;
 
@@ -581,8 +598,8 @@ void func_808DD3C8(Actor* thisx, PlayState* play2) {
 
             gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(POLY_XLU_DISP++, gEffDustDL);
+            FrameInterpolation_RecordCloseChild();
         }
-        FrameInterpolation_RecordCloseChild();
     }
 
     CLOSE_DISPS(play->state.gfxCtx);
@@ -624,7 +641,7 @@ void func_808DD970(Actor* thisx, PlayState* play2) {
         worldPos.x = this->unk_14C[i].unk_00 + this->unk_14C[i].unk_0C;
         worldPos.y = this->unk_14C[i].unk_04 + this->unk_14C[i].unk_10;
         worldPos.z = this->unk_14C[i].unk_08 + this->unk_14C[i].unk_14;
-        FrameInterpolation_RecordOpenChild(this, i);
+
         Play_GetScreenPos(play, &worldPos, &screenPos);
 
         // #region 2S2H [Cosmetic] Increase deep underwater dust render area for widescreen
@@ -634,9 +651,10 @@ void func_808DD970(Actor* thisx, PlayState* play2) {
             xMin = OTRGetDimensionFromLeftEdge(xMin);
             xMax = OTRGetDimensionFromRightEdge(xMax);
         }
-        // #pragma endregion
+        // #endregion
 
         if ((screenPos.x >= xMin) && (screenPos.x < xMax) && (screenPos.y >= 0.0f) && (screenPos.y < SCREEN_HEIGHT)) {
+            FrameInterpolation_RecordOpenChild(&this->unk_14C[i], this->unk_14C[i].epoch);
             Matrix_Translate(worldPos.x, worldPos.y, worldPos.z, MTXMODE_NEW);
             Matrix_Scale(0.03f, 0.03f, 0.03f, MTXMODE_APPLY);
             temp_f0 = Math_Vec3f_DistXYZ(&worldPos, &play->view.eye);
@@ -657,8 +675,8 @@ void func_808DD970(Actor* thisx, PlayState* play2) {
             gDPSetRenderMode(POLY_XLU_DISP++, G_RM_FOG_SHADE_A, G_RM_ZB_CLD_SURF2);
             gSPSetGeometryMode(POLY_XLU_DISP++, G_FOG);
             gSPDisplayList(POLY_XLU_DISP++, gEffDustDL);
+            FrameInterpolation_RecordCloseChild();
         }
-        FrameInterpolation_RecordCloseChild();
     }
 
     CLOSE_DISPS(play->state.gfxCtx);
@@ -693,8 +711,8 @@ void func_808DDE9C(Actor* thisx, PlayState* play2) {
         temp_f22 = this->unk_14C[0].unk_04 + ((Rand_ZeroOne() - 0.7f) * this->unk_144);
         temp_f2 = this->unk_14C[0].unk_08 + ((Rand_ZeroOne() - 0.7f) * this->unk_144);
 
-        FrameInterpolation_RecordOpenChild(this, i);
         if (!((temp_f20 < -252.0f) && (temp_f20 > -500.0f) && (temp_f2 > 3820.0f) && (temp_f2 < 4150.0f))) {
+            FrameInterpolation_RecordOpenChild(this, i);
             Matrix_Translate(temp_f20, temp_f22, temp_f2, MTXMODE_NEW);
 
             gSPMatrix(POLY_XLU_DISP++, D_01000000_TO_SEGMENTED, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_MODELVIEW);
@@ -710,14 +728,13 @@ void func_808DDE9C(Actor* thisx, PlayState* play2) {
 
             gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(POLY_XLU_DISP++, gFallingRainDropDL);
+            FrameInterpolation_RecordCloseChild();
         }
-        FrameInterpolation_RecordCloseChild();
     }
 
     phi_s5 = false;
     if (player->actor.floorHeight < play->view.eye.y) {
         for (i = 0; i < end; i++) {
-            FrameInterpolation_RecordOpenChild(this, i + end);
             if (!phi_s5) {
                 Gfx_SetupDL25_Xlu(play->state.gfxCtx);
 
@@ -731,6 +748,7 @@ void func_808DDE9C(Actor* thisx, PlayState* play2) {
             temp_f2 = this->unk_14C[1].unk_08 + (func_808DDE74() * 220.0f);
 
             if (!((temp_f20 < -252.0f) && (temp_f20 > -500.0f) && (temp_f2 > 3820.0f) && (temp_f2 < 4150.0f))) {
+                FrameInterpolation_RecordOpenChild(this, i + end);
                 Matrix_Translate(temp_f20, temp_f22, temp_f2, MTXMODE_NEW);
                 temp_f12 = (Rand_ZeroOne() * 0.05f) + 0.05f;
                 Matrix_Scale(temp_f12, temp_f12, temp_f12, MTXMODE_APPLY);
@@ -738,8 +756,8 @@ void func_808DDE9C(Actor* thisx, PlayState* play2) {
                 gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx),
                           G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 gSPDisplayList(POLY_XLU_DISP++, gEffShockwaveDL);
+                FrameInterpolation_RecordCloseChild();
             }
-            FrameInterpolation_RecordCloseChild();
         }
     }
 

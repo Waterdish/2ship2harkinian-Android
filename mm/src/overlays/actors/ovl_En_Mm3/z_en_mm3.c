@@ -6,7 +6,9 @@
 
 #include "z_en_mm3.h"
 #include "objects/object_mm/object_mm.h"
-#include "BenPort.h"
+
+#include "2s2h/BenPort.h"
+#include "2s2h/GameInteractor/GameInteractor.h"
 
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_10)
 
@@ -206,7 +208,8 @@ void func_80A6F5E4(EnMm3* this, PlayState* play) {
                     this->unk_2B4 = 0x279D;
                 } else {
                     func_80A70084(this, play);
-                    if (Player_GetMask(play) == PLAYER_MASK_BUNNY) {
+                    if (GameInteractor_Should(VB_CONSIDER_BUNNY_HOOD_EQUIPPED,
+                                              Player_GetMask(play) == PLAYER_MASK_BUNNY)) {
                         Message_StartTextbox(play, 0x27A0, &this->actor);
                         this->unk_2B4 = 0x27A0;
                     } else {
@@ -343,7 +346,8 @@ void func_80A6F9DC(EnMm3* this, PlayState* play) {
                     Player* player = GET_PLAYER(play);
 
                     player->stateFlags1 |= PLAYER_STATE1_20;
-                    if (Player_GetMask(play) == PLAYER_MASK_BUNNY) {
+                    if (GameInteractor_Should(VB_CONSIDER_BUNNY_HOOD_EQUIPPED,
+                                              Player_GetMask(play) == PLAYER_MASK_BUNNY)) {
                         Interface_StartPostmanTimer(0, POSTMAN_MINIGAME_BUNNY_HOOD_ON);
                     } else {
                         Interface_StartPostmanTimer(0, POSTMAN_MINIGAME_BUNNY_HOOD_OFF);
@@ -412,7 +416,7 @@ void func_80A6FBFC(EnMm3* this, PlayState* play) {
     } else {
         Actor_OfferTalk(&this->actor, play, this->actor.xzDistToPlayer + 10.0f);
         func_80123E90(play, &this->actor);
-        if (Player_GetMask(play) == PLAYER_MASK_BUNNY) {
+        if (GameInteractor_Should(VB_CONSIDER_BUNNY_HOOD_EQUIPPED, Player_GetMask(play) == PLAYER_MASK_BUNNY)) {
             Audio_PlaySfx(NA_SE_SY_STOPWATCH_TIMER_INF - SFX_FLAG);
         } else {
             Audio_PlaySfx(NA_SE_SY_STOPWATCH_TIMER_3 - SFX_FLAG);
@@ -461,7 +465,7 @@ void func_80A6FEEC(EnMm3* this, PlayState* play) {
 s32 func_80A6FFAC(EnMm3* this, PlayState* play) {
     switch (GET_PLAYER_FORM) {
         case PLAYER_FORM_HUMAN:
-            if (Player_GetMask(play) == PLAYER_MASK_BUNNY) {
+            if (GameInteractor_Should(VB_CONSIDER_BUNNY_HOOD_EQUIPPED, Player_GetMask(play) == PLAYER_MASK_BUNNY)) {
                 if (this->unk_2B2 & 0x10) {
                     return true;
                 }
@@ -498,7 +502,7 @@ s32 func_80A6FFAC(EnMm3* this, PlayState* play) {
 void func_80A70084(EnMm3* this, PlayState* play) {
     switch (GET_PLAYER_FORM) {
         case PLAYER_FORM_HUMAN:
-            if (Player_GetMask(play) == PLAYER_MASK_BUNNY) {
+            if (GameInteractor_Should(VB_CONSIDER_BUNNY_HOOD_EQUIPPED, Player_GetMask(play) == PLAYER_MASK_BUNNY)) {
                 this->unk_2B2 |= 0x10;
                 this->unk_2B2 |= 1;
             } else {

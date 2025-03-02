@@ -3172,6 +3172,64 @@ void Environment_DrawSkyboxStar(Gfx** gfxp, f32 x, f32 y, s32 width, s32 height)
     *gfxp = gfx;
 }
 
+// 2S2H [Enhancement] Renders a star as a quad against the projection matrix by rotating it with the billboard matrix
+void Ship_DrawSkyboxStarInterpolated(Gfx** gfxP, PlayState* play, Vec3f pos, u32 width, u32 height, s32 starNum) {
+    static MtxF origBillboardMtxF;
+    static Vtx starVtxData[] = {
+        VTX(-1, -1, 0, 0, 0, 0, 0, 0, 255),
+        VTX(1, -1, 0, 0, 0, 0, 0, 0, 255),
+        VTX(-1, 1, 0, 0, 0, 0, 0, 0, 255),
+        VTX(1, 1, 0, 0, 0, 0, 0, 0, 255),
+    };
+
+    Gfx* gfx = *gfxP;
+
+    // One time logic before drawing the first star
+    if (starNum == 0) {
+        // play->billboardMtxF is overwitten by the skybox stars draw earlier,
+        // so we need to derive the MtxF from the original Mtx
+        Matrix_MtxToMtxF(play->billboardMtx, &origBillboardMtxF);
+
+        gSPLoadGeometryMode(gfx++, G_CULL_BACK);
+    }
+
+    if (width >= 2) {
+        // The following math is used to compute new position values for each star such that they are
+        // each 5500 units from the view eye. This is necessary as some stars are further way than the zFar
+        // of the loaded view projection, which caused those stars to be clipped away.
+        // 5500 was choosen as this is roughly the largest distance that the sun is ever from the view eye.
+        f32 eyeDist = Math3D_Vec3f_DistXYZ(&pos, &play->view.eye);
+        f32 distRatio = 5500.0f / eyeDist;
+
+        f32 x = play->view.eye.x + (pos.x - play->view.eye.x) * distRatio;
+        f32 y = play->view.eye.y + (pos.y - play->view.eye.y) * distRatio;
+        f32 z = play->view.eye.z + (pos.z - play->view.eye.z) * distRatio;
+
+        // This scale mulitplier is set to draw the stars at a matching size as the texture rectangle
+        // and made to cancel out field of view changes so that the stars always have the same
+        // apparent size, preventing stars from appearing larger in first person mode or when looking through the
+        // telescope.
+        f32 scaleMultiplier = 3.0f / (60.0f / play->view.fovy);
+
+        Matrix_Push();
+
+        // Set the matrix so the star renders billboarded and scale to "stretch" it so that it matches
+        // roughly how the texture rectangle would have looked
+        Matrix_Translate(x, y, z, MTXMODE_NEW);
+        Matrix_Scale(width * scaleMultiplier, height * scaleMultiplier, 1.0f, MTXMODE_APPLY);
+        Matrix_ReplaceRotation(&origBillboardMtxF);
+
+        gSPMatrix(gfx++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+
+        gSPVertex(gfx++, starVtxData, ARRAY_COUNT(starVtxData), 0);
+        gSP2Triangles(gfx++, 0, 1, 2, 0, 1, 3, 2, 0);
+
+        Matrix_Pop();
+    }
+
+    *gfxP = gfx;
+}
+
 void Environment_DrawSkyboxStarsImpl(PlayState* play, Gfx** gfxP) {
     static const Vec3s D_801DD880[] = {
         { 0x0384, 0x2328, 0xD508 }, { 0x09C4, 0x2328, 0xDA1C }, { 0x0E74, 0x22D8, 0xDA1C }, { 0x1450, 0x2468, 0xD8F0 },
@@ -3229,6 +3287,10 @@ void Environment_DrawSkyboxStarsImpl(PlayState* play, Gfx** gfxP) {
                     G_AD_DISABLE | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE |
                         G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE,
                     G_AC_NONE | G_ZS_PRIM | G_RM_AA_XLU_LINE | G_RM_AA_XLU_LINE2);
+
+    // 2S2H [Port] We need to set the render mode to XLU_SURF for alpha logic to be used in Fast3D
+    // If Fast3D changes how it decides alpha in the future, we may be able to remove this line
+    gDPSetRenderMode(gfx++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
 
     randInt = ((u32)gSaveContext.save.saveInfo.playerData.playerName[0] << 0x18) ^
               ((u32)gSaveContext.save.saveInfo.playerData.playerName[1] << 0x14) ^
@@ -3300,6 +3362,13 @@ void Environment_DrawSkyboxStarsImpl(PlayState* play, Gfx** gfxP) {
         imgXPtr = &imgX;
         imgYPtr = &imgY;
         viewProjectionMtxF = play->viewProjectionMtxF.mf;
+
+        // 2S2H [Enhancement] The stars are originally drawn as texture rectangles which cannot be interpolated,
+        // so if interpolation is enabled we branch and render the stars through the projection matrix instead.
+        if (Ship_GetInterpolationFPS() != 20) {
+            Ship_DrawSkyboxStarInterpolated(&gfx, play, pos, imgWidth, 4, i);
+            continue;
+        }
 
         if (imgWidth >= 2) {
             // w component

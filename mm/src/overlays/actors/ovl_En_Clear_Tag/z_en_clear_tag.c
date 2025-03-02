@@ -6,6 +6,7 @@
 
 #include "z_en_clear_tag.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
+
 #include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
 
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_10 | ACTOR_FLAG_20)
@@ -815,7 +816,7 @@ void EnClearTag_DrawEffects(Actor* thisx, PlayState* play) {
     // Draw all Debris effects.
     for (i = 0; i < ARRAY_COUNT(this->effect); i++, effect++) {
         if (effect->type == CLEAR_TAG_EFFECT_DEBRIS) {
-            FrameInterpolation_RecordOpenChild(effect, i);
+            FrameInterpolation_RecordOpenChild(effect, effect->type);
             // Apply the debris effect material if it has not already been applied.
             if (!isMaterialApplied) {
                 isMaterialApplied++;
@@ -838,7 +839,7 @@ void EnClearTag_DrawEffects(Actor* thisx, PlayState* play) {
     if (this->actor.floorPoly != NULL) {
         for (i = 0; i < ARRAY_COUNT(this->effect); i++, effect++) {
             if (effect->type == CLEAR_TAG_EFFECT_SHOCKWAVE) {
-                FrameInterpolation_RecordOpenChild(effect, i);
+                FrameInterpolation_RecordOpenChild(effect, effect->type);
                 // Draw the shockwave effect.
                 gDPPipeSync(POLY_XLU_DISP++);
                 gDPSetEnvColor(POLY_XLU_DISP++, 255, 255, 255, (s8)effect->primColor.a);
@@ -859,7 +860,7 @@ void EnClearTag_DrawEffects(Actor* thisx, PlayState* play) {
     if (this->actor.floorPoly != NULL) {
         for (i = 0; i < ARRAY_COUNT(this->effect); i++, effect++) {
             if (effect->type == CLEAR_TAG_EFFECT_FLASH) {
-                FrameInterpolation_RecordOpenChild(effect, i);
+                FrameInterpolation_RecordOpenChild(effect, effect->type);
                 // Apply the flash ground effect material if it has not already been applied.
                 if (!isMaterialApplied) {
                     gDPPipeSync(POLY_XLU_DISP++);
@@ -884,7 +885,7 @@ void EnClearTag_DrawEffects(Actor* thisx, PlayState* play) {
     isMaterialApplied = false;
     for (i = 0; i < ARRAY_COUNT(this->effect); i++, effect++) {
         if ((effect->type == CLEAR_TAG_EFFECT_SMOKE) || (effect->type == CLEAR_TAG_EFFECT_ISOLATED_SMOKE)) {
-            FrameInterpolation_RecordOpenChild(effect, i);
+            FrameInterpolation_RecordOpenChild(effect, effect->type);
             // Apply the smoke effect material if it has not already been applied.
             if (!isMaterialApplied) {
                 gSPDisplayList(POLY_XLU_DISP++, gClearTagFireEffectMaterialDL);
@@ -914,7 +915,7 @@ void EnClearTag_DrawEffects(Actor* thisx, PlayState* play) {
     isMaterialApplied = false;
     for (i = 0; i < ARRAY_COUNT(this->effect); i++, effect++) {
         if (effect->type == CLEAR_TAG_EFFECT_FIRE) {
-            FrameInterpolation_RecordOpenChild(effect, i);
+            FrameInterpolation_RecordOpenChild(effect, effect->type);
             // Apply the fire effect material if it has not already been applied.
             if (!isMaterialApplied) {
                 gSPDisplayList(POLY_XLU_DISP++, gClearTagFireEffectMaterialDL);
@@ -940,7 +941,7 @@ void EnClearTag_DrawEffects(Actor* thisx, PlayState* play) {
     isMaterialApplied = false;
     for (i = 0; i < ARRAY_COUNT(this->effect); i++, effect++) {
         if (effect->type == CLEAR_TAG_EFFECT_FLASH) {
-            FrameInterpolation_RecordOpenChild(effect, i);
+            FrameInterpolation_RecordOpenChild(effect, effect->type);
             // Apply the flash billboard effect material if it has not already been applied.
             if (!isMaterialApplied) {
                 gDPPipeSync(POLY_XLU_DISP++);
@@ -964,7 +965,7 @@ void EnClearTag_DrawEffects(Actor* thisx, PlayState* play) {
     isMaterialApplied = false;
     for (i = 0; i < ARRAY_COUNT(this->effect); i++, effect++) {
         if (effect->type == CLEAR_TAG_EFFECT_LIGHT_RAYS) {
-            FrameInterpolation_RecordOpenChild(effect, i);
+            FrameInterpolation_RecordOpenChild(effect, effect->type);
             // Apply the light ray effect material if it has not already been applied.
             if (!isMaterialApplied) {
                 gDPPipeSync(POLY_XLU_DISP++);
@@ -993,7 +994,6 @@ void EnClearTag_DrawEffects(Actor* thisx, PlayState* play) {
     effect = firstEffect;
     for (i = 0; i < ARRAY_COUNT(this->effect); i++, effect++) {
         if (effect->type == CLEAR_TAG_EFFECT_SPLASH) {
-            FrameInterpolation_RecordOpenChild(effect, i);
             gDPPipeSync(POLY_XLU_DISP++);
             gDPSetEnvColor(POLY_XLU_DISP++, 255, 255, 255, 200);
             gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 255, 200);
@@ -1004,8 +1004,8 @@ void EnClearTag_DrawEffects(Actor* thisx, PlayState* play) {
 
             // Apply material 16 times along a circle to give the appearance of a splash
             for (j = 0; j < 16; j++) {
-                // BENTODO not sure if I did the math right.
-                FrameInterpolation_RecordOpenChild(effect, (i + ARRAY_COUNT(this->effect) + j));
+                // Bit math to combine index with effect type
+                FrameInterpolation_RecordOpenChild(effect, effect->type + (j << 4));
                 Matrix_RotateYF(2.0f * (j * M_PI) * (1.0f / 16.0f), MTXMODE_NEW);
                 Matrix_MultVecZ(effect->maxScale, &vec);
                 /**
@@ -1028,7 +1028,6 @@ void EnClearTag_DrawEffects(Actor* thisx, PlayState* play) {
                 }
                 FrameInterpolation_RecordCloseChild();
             }
-            FrameInterpolation_RecordCloseChild();
         }
     }
 

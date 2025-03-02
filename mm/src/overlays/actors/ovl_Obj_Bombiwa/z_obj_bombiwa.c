@@ -7,6 +7,8 @@
 #include "z_obj_bombiwa.h"
 #include "objects/object_bombiwa/object_bombiwa.h"
 
+#include "2s2h/ShipUtils.h"
+
 #define FLAGS 0x00000000
 
 #define THIS ((ObjBombiwa*)thisx)
@@ -453,6 +455,8 @@ void func_8093A418(Actor* thisx, PlayState* play) {
     ObjBombiwa* this = THIS;
     f32 sp28;
 
+    Ship_ExtendedCullingActorAdjustProjectedZ(&this->actor);
+
     if ((this->actor.projectedPos.z <= 2200.0f) || ((this->unk_203 & 1) && (this->actor.projectedPos.z < 2300.0f))) {
         this->actor.shape.shadowAlpha = 160;
         Gfx_DrawDListOpa(play, object_bombiwa_DL_0009E0);
@@ -475,6 +479,8 @@ void func_8093A418(Actor* thisx, PlayState* play) {
     } else {
         this->actor.shape.shadowAlpha = 0;
     }
+
+    Ship_ExtendedCullingActorRestoreProjectedPos(play, &this->actor);
 }
 
 void func_8093A608(Actor* thisx, PlayState* play) {
@@ -485,6 +491,8 @@ void func_8093A608(Actor* thisx, PlayState* play) {
     ObjBombiwaStruct* ptr;
 
     OPEN_DISPS(play->state.gfxCtx);
+
+    Ship_ExtendedCullingActorAdjustProjectedZ(&this->actor);
 
     if (this->actionFunc == func_80939EF4) {
         if ((this->actor.projectedPos.z <= 2200.0f) ||
@@ -525,6 +533,8 @@ void func_8093A608(Actor* thisx, PlayState* play) {
             }
         }
     }
+
+    Ship_ExtendedCullingActorRestoreProjectedPos(play, &this->actor);
 
     CLOSE_DISPS(play->state.gfxCtx);
 }

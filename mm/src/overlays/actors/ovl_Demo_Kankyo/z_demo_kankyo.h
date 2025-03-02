@@ -23,6 +23,8 @@ typedef struct {
   /* 0x4A */ u16 LostWoodsSkyFishPosOffsetMax; // The x-z range the lost woods skyfish oscillates around player. random value between 15-65
   /* 0x4C */ f32 LostWoodsSkyFishSpeedY; // the y speed (angular velocity) the lost woods skyfish oscillates around player.
   /* 0x50 */ u16 pad50; // unused, always assigned to 0, nothing else in this actor uses it
+  // 2S2H [Port]
+  /*      */ s16 epoch; // Tracks when an effect is reset for use with interpolation skipping
 } DemoKankyoEffect; // size = 0x54
 
 #define DEMOKANKYO_EFFECT_COUNT 64

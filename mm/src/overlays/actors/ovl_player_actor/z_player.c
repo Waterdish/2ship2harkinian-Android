@@ -12210,7 +12210,7 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
 
         this->actor.shape.face = ((play->gameplayFrames & 0x20) ? 0 : 3) + this->blinkInfo.eyeTexIndex;
 
-        if (GameInteractor_Should(VB_CONSIDER_BUNNY_HOOD_EQUIPPED, this->currentMask == PLAYER_MASK_BUNNY, this)) {
+        if (GameInteractor_Should(VB_CONSIDER_BUNNY_HOOD_EQUIPPED, this->currentMask == PLAYER_MASK_BUNNY)) {
             Player_UpdateBunnyEars(this);
         }
 
@@ -13088,10 +13088,14 @@ s32 Ship_HandleFirstPersonAiming(PlayState* play, Player* this, s32 arg2) {
         this->actor.focus.rot.y = CLAMP(var_s0 + gyroX, -0x4AAA, 0x4AAA) + this->actor.shape.rot.y;
     }
 
-    if (CVarGetInteger("gEnhancements.Camera.FirstPerson.MoveInFirstPerson", 0) &&
+    bool playerMovementLocked = (this->actionFunc == Player_Action_52) || // Riding on Epona
+                                (this->actionFunc == Player_Action_80) || // Riding swamp boat (non-archery)
+                                (this->actionFunc == Player_Action_81);   // Bow minigames
+
+    if (!playerMovementLocked && CVarGetInteger("gEnhancements.Camera.FirstPerson.MoveInFirstPerson", 0) &&
         CVarGetInteger("gEnhancements.Camera.FirstPerson.RightStickEnabled", 0)) {
         f32 movementSpeed = 8.25f; // account for form
-        if (this->currentMask == PLAYER_MASK_BUNNY) {
+        if (GameInteractor_Should(VB_CONSIDER_BUNNY_HOOD_EQUIPPED, this->currentMask == PLAYER_MASK_BUNNY)) {
             movementSpeed *= 1.5f;
         }
 
@@ -14592,7 +14596,7 @@ void Player_Action_13(Player* this, PlayState* play) {
 
     Player_GetMovementSpeedAndYaw(this, &speedTarget, &yawTarget, SPEED_MODE_CURVED, play);
 
-    if (GameInteractor_Should(VB_CONSIDER_BUNNY_HOOD_EQUIPPED, this->currentMask == PLAYER_MASK_BUNNY, this)) {
+    if (GameInteractor_Should(VB_CONSIDER_BUNNY_HOOD_EQUIPPED, this->currentMask == PLAYER_MASK_BUNNY)) {
         speedTarget *= 1.5f;
     }
 

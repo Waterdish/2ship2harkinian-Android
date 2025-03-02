@@ -16,6 +16,8 @@ typedef struct {
     /* 0x14 */ f32 unk_14;
     /* 0x18 */ f32 unk_18;
     /* 0x1C */ u8 unk_1C;
+    // 2S2H [Port]
+    /*      */ s16 epoch; // Tracks when an effect is reset for use with interpolation skipping
 } ObjectKankyoStruct; // size = 0x20
 
 typedef struct ObjectKankyo {

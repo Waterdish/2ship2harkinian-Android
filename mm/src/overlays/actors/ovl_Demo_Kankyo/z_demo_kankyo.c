@@ -272,6 +272,9 @@ void DemoKakyo_LostWoodsSparkleActionFunc(DemoKankyo* this, PlayState* play) {
                         this->effects[i].posOffset.z = 0.0f;
                         this->effects[i].posBase.z = posCenterZ + repositionLimit;
                     }
+
+                    // 2S2H [Interpolation] Skip particle interpolation on next frame
+                    this->effects[i].epoch++;
                 }
                 break;
 
@@ -396,10 +399,17 @@ void DemoKakyo_MoonSparklesActionFunc(DemoKankyo* this, PlayState* play) {
                 }
 
                 if (((this->effects[i].posBase.x + this->effects[i].posOffset.x) - newEye.x) > halfScreenHeight) {
+                    // 2S2H [Interpolation] Here and below, skip particle interp on next frame when position moves
+                    if (ABS(this->effects[i].posBase.x - (newEye.x - halfScreenHeight)) >= 120.0f) {
+                        this->effects[i].epoch++;
+                    }
                     this->effects[i].posBase.x = newEye.x - halfScreenHeight;
                 }
 
                 if (((this->effects[i].posBase.x + this->effects[i].posOffset.x) - newEye.x) < -halfScreenHeight) {
+                    if (ABS(this->effects[i].posBase.x - (newEye.x + halfScreenHeight)) >= 120.0f) {
+                        this->effects[i].epoch++;
+                    }
                     this->effects[i].posBase.x = newEye.x + halfScreenHeight;
                 }
 
@@ -413,18 +423,30 @@ void DemoKakyo_MoonSparklesActionFunc(DemoKankyo* this, PlayState* play) {
 
                 // I think this code is shifting the effects 1 frame -> half screen at a time to keep it in-view
                 if (halfScreenWidth < ((this->effects[i].posBase.y + this->effects[i].posOffset.y) - newEye.y)) {
+                    if (ABS(this->effects[i].posBase.y - (newEye.y - halfScreenWidth)) >= 120.0f) {
+                        this->effects[i].epoch++;
+                    }
                     this->effects[i].posBase.y = newEye.y - halfScreenWidth;
                 }
 
                 if (((this->effects[i].posBase.y + this->effects[i].posOffset.y) - newEye.y) < -halfScreenWidth) {
+                    if (ABS(this->effects[i].posBase.y - (newEye.y + halfScreenWidth)) >= 120.0f) {
+                        this->effects[i].epoch++;
+                    }
                     this->effects[i].posBase.y = newEye.y + halfScreenWidth;
                 }
 
                 if (((this->effects[i].posBase.z + this->effects[i].posOffset.z) - newEye.z) > halfScreenHeight) {
+                    if (ABS(this->effects[i].posBase.z - (newEye.z - halfScreenHeight)) >= 120.0f) {
+                        this->effects[i].epoch++;
+                    }
                     this->effects[i].posBase.z = newEye.z - halfScreenHeight;
                 }
 
                 if (((this->effects[i].posBase.z + this->effects[i].posOffset.z) - newEye.z) < -halfScreenHeight) {
+                    if (ABS(this->effects[i].posBase.z - (newEye.z + halfScreenHeight)) >= 120.0f) {
+                        this->effects[i].epoch++;
+                    }
                     this->effects[i].posBase.z = newEye.z + halfScreenHeight;
                 }
 
@@ -516,7 +538,6 @@ void DemoKakyo_DrawLostWoodsSparkle(Actor* thisx, PlayState* play2) {
         gSPDisplayList(POLY_XLU_DISP++, gSunSparkleMaterialDL);
 
         for (i = 0; i < play->envCtx.precipitation[PRECIP_SNOW_MAX]; i++) {
-            FrameInterpolation_RecordOpenChild(this, i);
             worldPos.x = this->effects[i].posBase.x + this->effects[i].posOffset.x;
             worldPos.y = this->effects[i].posBase.y + this->effects[i].posOffset.y;
             worldPos.z = this->effects[i].posBase.z + this->effects[i].posOffset.z;
@@ -530,11 +551,12 @@ void DemoKakyo_DrawLostWoodsSparkle(Actor* thisx, PlayState* play2) {
                 xMin = OTRGetDimensionFromLeftEdge(xMin);
                 xMax = OTRGetDimensionFromRightEdge(xMax);
             }
-            // #pragma endregion
+            // #endregion
 
             // checking if particle is on screen
             if ((screenPos.x >= xMin) && (screenPos.x < xMax) && (screenPos.y >= 0.0f) &&
                 (screenPos.y < SCREEN_HEIGHT)) {
+                FrameInterpolation_RecordOpenChild(&this->effects[i], this->effects[i].epoch);
                 Matrix_Translate(worldPos.x, worldPos.y, worldPos.z, MTXMODE_NEW);
                 scaleAlpha = this->effects[i].alpha / 50.0f;
                 if (scaleAlpha > 1.0f) {
@@ -591,8 +613,8 @@ void DemoKakyo_DrawLostWoodsSparkle(Actor* thisx, PlayState* play2) {
                 gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx),
                           G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 gSPDisplayList(POLY_XLU_DISP++, gSunSparkleModelDL);
+                FrameInterpolation_RecordCloseChild();
             }
-            FrameInterpolation_RecordCloseChild();
         }
 
         CLOSE_DISPS(play->state.gfxCtx);
@@ -617,7 +639,6 @@ void DemoKankyo_DrawMoonAndGiant(Actor* thisx, PlayState* play2) {
         Gfx_SetupDL25_Xlu(gfxCtx);
 
         for (i = 0; i < play->envCtx.precipitation[PRECIP_SNOW_MAX]; i++) {
-            FrameInterpolation_RecordOpenChild(this, i);
             worldPos.x = this->effects[i].posBase.x + this->effects[i].posOffset.x;
             worldPos.y = this->effects[i].posBase.y + this->effects[i].posOffset.y;
             worldPos.z = this->effects[i].posBase.z + this->effects[i].posOffset.z;
@@ -631,11 +652,12 @@ void DemoKankyo_DrawMoonAndGiant(Actor* thisx, PlayState* play2) {
                 xMin = OTRGetDimensionFromLeftEdge(xMin);
                 xMax = OTRGetDimensionFromRightEdge(xMax);
             }
-            // #pragma endregion
+            // #endregion
 
             // checking if effect is on screen
             if ((screenPos.x >= xMin) && (screenPos.x < xMax) && (screenPos.y >= 0.0f) &&
                 (screenPos.y < SCREEN_HEIGHT)) {
+                FrameInterpolation_RecordOpenChild(&this->effects[i], this->effects[i].epoch);
                 Matrix_Translate(worldPos.x, worldPos.y, worldPos.z, MTXMODE_NEW);
                 alphaScale = this->effects[i].alpha / 50.0f;
                 if (alphaScale > 1.0f) {
@@ -680,8 +702,8 @@ void DemoKankyo_DrawMoonAndGiant(Actor* thisx, PlayState* play2) {
                 } else {
                     gSPDisplayList(POLY_XLU_DISP++, gLightOrbModelDL);
                 }
+                FrameInterpolation_RecordCloseChild();
             }
-            FrameInterpolation_RecordCloseChild();
         }
 
         CLOSE_DISPS(gfxCtx);

@@ -773,8 +773,12 @@ void DrawEnhancementsMenu() {
             UIWidgets::CVarCheckbox("Skip Scarecrow Song", "gEnhancements.Playback.SkipScarecrowSong",
                                     { .tooltip = "Pierre appears when the Ocarina is pulled out." });
             UIWidgets::CVarCheckbox("Pause Owl Warp", "gEnhancements.Songs.PauseOwlWarp",
-                                    { .tooltip = "Allows the player to use the pause menu map to owl warp instead of "
-                                                 "having to play the Song of Soaring." });
+                                    { .tooltip =
+                                          "Allows warping to registered Owl Statues from the pause menu map screen. "
+                                          "Requires that you can play Song of Soaring normally.\n\n"
+                                          "Accounts for Index-Warp being active, by presenting all valid warps for "
+                                          "the registered map points. "
+                                          "Great Bay Coast warp is always given for index 0 warp as a convenience." });
             UIWidgets::CVarSliderInt("Zora Eggs For Bossa Nova", "gEnhancements.Songs.ZoraEggCount", 1, 7, 7,
                                      { .tooltip = "The number of eggs required to unlock new wave bossa nova." });
 

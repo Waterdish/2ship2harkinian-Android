@@ -46,6 +46,7 @@
 
 #include "2s2h/BenPort.h"
 #include "2s2h/GameInteractor/GameInteractor.h"
+#include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
 
 void PlayerCall_Init(Actor* thisx, PlayState* play);
 void PlayerCall_Destroy(Actor* thisx, PlayState* play);
@@ -3185,6 +3186,9 @@ void Player_DrawBunnyHood(PlayState* play) {
     Vec3s earRot;
 
     OPEN_DISPS(play->state.gfxCtx);
+
+    // Ignoring the players actor mtx allows the bunny hood to render interpolated without issues
+    FrameInterpolation_IgnoreActorMtx();
 
     gSPSegment(POLY_OPA_DISP++, 0x0B, mtx);
 

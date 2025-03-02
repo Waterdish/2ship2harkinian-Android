@@ -6,6 +6,8 @@
 
 #include "z_en_dai.h"
 
+#include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
+
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_10 | ACTOR_FLAG_20 | ACTOR_FLAG_2000000)
 
 #define THIS ((EnDai*)thisx)
@@ -65,6 +67,7 @@ void func_80B3E168(EnDaiEffect* effect, PlayState* play2) {
 
     for (i = 0; i < EN_DAI_EFFECT_COUNT; i++, effect++) {
         if (effect->isEnabled == true) {
+            FrameInterpolation_RecordOpenChild(effect, 0);
             gDPPipeSync(POLY_XLU_DISP++);
 
             if (!isDisplayListSet) {
@@ -91,6 +94,7 @@ void func_80B3E168(EnDaiEffect* effect, PlayState* play2) {
             gSPDisplayList(POLY_XLU_DISP++, object_dai_DL_0002E8);
 
             Matrix_Pop();
+            FrameInterpolation_RecordCloseChild();
         }
     }
 

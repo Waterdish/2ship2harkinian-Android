@@ -11,6 +11,8 @@
 #include "overlays/actors/ovl_En_Bom/z_en_bom.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
 
+#include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
+
 #define FLAGS \
     (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_10 | ACTOR_FLAG_2000000 | ACTOR_FLAG_CANT_LOCK_ON)
 
@@ -1490,6 +1492,7 @@ void func_80964950(PlayState* play, EnFuUnkStruct* ptr, s32 len) {
 
     for (i = 0; i < len; i++, ptr++) {
         if (ptr->unk_36 == 1) {
+            FrameInterpolation_RecordOpenChild(ptr, i);
             if (!flag) {
                 gSPDisplayList(POLY_OPA_DISP++, gHoneyAndDarlingHeartMaterialDL);
                 flag = true;
@@ -1501,6 +1504,7 @@ void func_80964950(PlayState* play, EnFuUnkStruct* ptr, s32 len) {
             gSPSegment(POLY_OPA_DISP++, 0x08, Lib_SegmentedToVirtual(gDropRecoveryHeartTex));
             gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(POLY_OPA_DISP++, gHoneyAndDarlingHeartModelDL);
+            FrameInterpolation_RecordCloseChild();
         }
     }
 

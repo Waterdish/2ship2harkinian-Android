@@ -157,6 +157,10 @@ void HandlePauseOwlWarp(PauseContext* pauseCtx) {
                 pauseCtx->worldMapPoints[i] = true;
             }
         }
+
+        // Always set Great Bay since that is accessible from the "default index" for index warp
+        // when loading from a save/scene change and never touching the pause map screen
+        pauseCtx->worldMapPoints[OWL_WARP_GREAT_BAY_COAST] = true;
     }
 
     // Ensure cursor starts at an activated point and is not on the broken stone tower region point

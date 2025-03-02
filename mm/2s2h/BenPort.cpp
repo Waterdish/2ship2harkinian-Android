@@ -113,6 +113,7 @@ Color_RGB8 zoraColor = { 0x00, 0xEC, 0x64 };
 
 OTRGlobals::OTRGlobals() {
     std::vector<std::string> archiveFiles;
+    std::vector<std::string> patchFiles;
     std::string mmPathO2R = Ship::Context::LocateFileAcrossAppDirs("mm.o2r", appShortName);
     std::string mmPathZIP = Ship::Context::LocateFileAcrossAppDirs("mm.zip", appShortName);
     if (std::filesystem::exists(mmPathO2R)) {
@@ -136,15 +137,26 @@ OTRGlobals::OTRGlobals() {
         if (std::filesystem::is_directory(patchesPath)) {
             for (const auto& p : std::filesystem::recursive_directory_iterator(patchesPath)) {
                 if (StringHelper::IEquals(p.path().extension().string(), ".o2r")) {
-                    archiveFiles.push_back(p.path().generic_string());
+                    patchFiles.push_back(p.path().generic_string());
                 } else if (StringHelper::IEquals(p.path().extension().string(), ".zip")) {
-                    archiveFiles.push_back(p.path().generic_string());
+                    patchFiles.push_back(p.path().generic_string());
                 } else if (StringHelper::IEquals(p.path().extension().string(), ".otr")) {
-                    archiveFiles.push_back(p.path().generic_string());
+                    patchFiles.push_back(p.path().generic_string());
                 }
             }
         }
     }
+
+    // Sort all patch files from the mods directory lexigraphically to guarantee sort order across all platforms
+    std::sort(patchFiles.begin(), patchFiles.end(), [](const std::string& a, const std::string& b) {
+        // Sort based on file name alone, excluding file extension, so that order is not impacted by archive format
+        const std::string aFileName = a.substr(0, a.find_last_of("."));
+        const std::string bFileName = b.substr(0, b.find_last_of("."));
+        return std::lexicographical_compare(aFileName.begin(), aFileName.end(), bFileName.begin(), bFileName.end(),
+                                            [](char c1, char c2) { return std::tolower(c1) < std::tolower(c2); });
+    });
+
+    archiveFiles.insert(archiveFiles.end(), patchFiles.begin(), patchFiles.end());
 
     std::unordered_set<uint32_t> validHashes = { MM_NTSC_US_10, MM_NTSC_US_GC };
 
@@ -152,6 +164,8 @@ OTRGlobals::OTRGlobals() {
     context =
         Ship::Context::CreateInstance("2 Ship 2 Harkinian", appShortName, "2ship2harkinian.json", archiveFiles, {}, 3,
                                       { .SampleRate = 44100, .SampleLength = 1024, .DesiredBuffered = 2480 });
+
+    SPDLOG_INFO("Starting 2 Ship 2 Harkinian version {}", (char*)gBuildVersion);
 
     prevAltAssets = CVarGetInteger("gEnhancements.Mods.AlternateAssets", 0);
     context->GetResourceManager()->SetAltAssetsEnabled(prevAltAssets);
@@ -269,6 +283,10 @@ uint32_t OTRGlobals::GetInterpolationFPS() {
 
     return std::min<uint32_t>(Ship::Context::GetInstance()->GetWindow()->GetCurrentRefreshRate(),
                               CVarGetInteger("gInterpolationFPS", 20));
+}
+
+extern "C" uint32_t Ship_GetInterpolationFPS() {
+    return OTRGlobals::Instance->GetInterpolationFPS();
 }
 
 struct ExtensionEntry {

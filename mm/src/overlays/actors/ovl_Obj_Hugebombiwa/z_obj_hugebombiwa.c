@@ -672,11 +672,13 @@ void ObjHugebombiwa_Draw(Actor* thisx, PlayState* play) {
             ptr = &this->unk_190[i];
 
             if (ptr->unk_24 == 0) {
+                FrameInterpolation_RecordOpenChild(ptr, i);
                 Matrix_SetTranslateRotateYXZ(ptr->unk_0C.x, ptr->unk_0C.y, ptr->unk_0C.z, &ptr->unk_1C);
                 Matrix_Scale(ptr->unk_00.x, ptr->unk_00.x, ptr->unk_00.x, MTXMODE_APPLY);
 
                 gSPMatrix(gfx++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 gSPDisplayList(gfx++, object_bombiwa_DL_001990);
+                FrameInterpolation_RecordCloseChild();
             }
         }
 
@@ -709,8 +711,8 @@ void func_80A55B34(Actor* thisx, PlayState* play) {
         if (ptr->unk_24 != 0) {
             continue;
         }
-        FrameInterpolation_RecordOpenChild(this, i);
 
+        FrameInterpolation_RecordOpenChild(ptr, i);
         Matrix_SetTranslateRotateYXZ(ptr->unk_0C.x, ptr->unk_0C.y + (325.0f * ptr->unk_00.y), ptr->unk_0C.z,
                                      &ptr->unk_1C);
         Matrix_Scale(ptr->unk_00.x, ptr->unk_00.y, ptr->unk_00.z, MTXMODE_APPLY);

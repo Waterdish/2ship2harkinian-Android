@@ -20,6 +20,8 @@
 #include "objects/gameplay_keep/gameplay_keep.h"
 #include "overlays/actors/ovl_Obj_Aqua/z_obj_aqua.h"
 
+#include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
+
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_10 | ACTOR_FLAG_2000000)
 
 #define THIS ((EnGo*)thisx)
@@ -783,6 +785,7 @@ void EnGo_DrawSteam(EnGoEffect effect[ENGO_EFFECT_COUNT], PlayState* play2) {
             isMaterialSet = true;
         }
 
+        FrameInterpolation_RecordOpenChild(effect, effect->type);
         Matrix_Push();
 
         alpha = (f32)effect->alphaNumer / effect->alphaDenom;
@@ -800,6 +803,7 @@ void EnGo_DrawSteam(EnGoEffect effect[ENGO_EFFECT_COUNT], PlayState* play2) {
         gSPDisplayList(POLY_XLU_DISP++, gGoronSteamModelDL);
 
         Matrix_Pop();
+        FrameInterpolation_RecordCloseChild();
     }
 
     CLOSE_DISPS(play->state.gfxCtx);
@@ -877,6 +881,7 @@ void EnGo_DrawDust(EnGoEffect effect[ENGO_EFFECT_COUNT], PlayState* play2) {
             isMaterialSet = true;
         }
 
+        FrameInterpolation_RecordOpenChild(effect, effect->type);
         Matrix_Push();
 
         alpha = (f32)effect->alphaNumer / effect->alphaDenom;
@@ -896,6 +901,7 @@ void EnGo_DrawDust(EnGoEffect effect[ENGO_EFFECT_COUNT], PlayState* play2) {
         gSPDisplayList(POLY_XLU_DISP++, gGoronDustModelDL);
 
         Matrix_Pop();
+        FrameInterpolation_RecordCloseChild();
     }
 
     CLOSE_DISPS(play->state.gfxCtx);
@@ -1045,6 +1051,7 @@ void EnGo_DrawSnow(EnGoEffect effect[ENGO_SNOW_EFFECT_COUNT], PlayState* play, G
             isMaterialSet = true;
         }
 
+        FrameInterpolation_RecordOpenChild(effect, effect->type);
         Matrix_Push();
         Matrix_Translate(effect->pos.x, effect->pos.y, effect->pos.z, MTXMODE_NEW);
         Matrix_Scale(0.08f, 0.08f, 0.08f, MTXMODE_APPLY);
@@ -1056,6 +1063,7 @@ void EnGo_DrawSnow(EnGoEffect effect[ENGO_SNOW_EFFECT_COUNT], PlayState* play, G
         gSPDisplayList(POLY_OPA_DISP++, model);
 
         Matrix_Pop();
+        FrameInterpolation_RecordCloseChild();
     }
 
     CLOSE_DISPS(play->state.gfxCtx);

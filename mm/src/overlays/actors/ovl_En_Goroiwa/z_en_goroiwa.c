@@ -9,6 +9,8 @@
 #include "objects/object_goroiwa/object_goroiwa.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
 
+#include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
+
 #define FLAGS (ACTOR_FLAG_10 | ACTOR_FLAG_80000000)
 
 #define THIS ((EnGoroiwa*)thisx)
@@ -1607,9 +1609,22 @@ void EnGoroiwa_Draw(Actor* thisx, PlayState* play) {
     EnGoroiwa* this = THIS;
     s32 params = ENGOROIWA_GET_C000(&this->actor);
 
+    // #region 2S2H [Interpolation] Track when a boulder resets back to its "home" position and mark
+    // interpolation to be skipped that frame
+    bool boulderReset = false;
+    s32 params300 = ENGOROIWA_GET_300(&this->actor);
+    if (((params300 == ENGOROIWA_300_0) || (params300 == ENGOROIWA_300_1)) &&
+        ((this->unk_1D6 == 0) || (this->unk_1D6 == this->unk_1D4))) {
+        boulderReset = true;
+    }
+    // #endregion
+
     if (this->actionFunc == func_8094220C) {
         func_80942B1C(this, play);
     } else if (this->actionFunc != func_80942604) {
+        FrameInterpolation_RecordOpenChild(this, boulderReset ? 1 : 0);
+        FrameInterpolation_IgnoreActorMtx();
         Gfx_DrawDListOpa(play, D_80942EB4[params]);
+        FrameInterpolation_RecordCloseChild();
     }
 }

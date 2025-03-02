@@ -649,6 +649,7 @@ void EffectBlure_DrawSmooth(EffectBlure* this2, GraphicsContext* gfxCtx) {
     interpolationEpoch++;
 
     OPEN_DISPS(gfxCtx);
+    // Force blure effects to never interpolate
     FrameInterpolation_RecordOpenChild(this, interpolationEpoch);
 
     if (this->numElements < 2) {

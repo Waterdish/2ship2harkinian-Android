@@ -3,13 +3,52 @@
 #include "assets/2s2h_assets.h"
 
 extern "C" {
+#include "z64.h"
+#include "functions.h"
 #include "macros.h"
+
+extern float OTRGetAspectRatio();
 
 extern f32 sNESFontWidths[160];
 extern const char* fontTbl[156];
 extern TexturePtr gItemIcons[131];
 extern TexturePtr gQuestIcons[14];
 extern TexturePtr gBombersNotebookPhotos[24];
+}
+
+constexpr f32 fourByThree = 4.0f / 3.0f;
+
+// Gets the additional ratio of the screen compared to the original 4:3 ratio, clamping to 1 if smaller
+extern "C" f32 Ship_GetExtendedAspectRatioMultiplier() {
+    f32 currentRatio = OTRGetAspectRatio();
+    return MAX(currentRatio / fourByThree, 1.0f);
+}
+
+// Enables Extended Culling options on specific actors by applying an inverse ratio of the draw distance slider
+// to the projected Z value of the actor. This tricks distance checks without having to replace hardcoded values.
+// Requires that Ship_ExtendedCullingActorRestoreProjectedPos is called within the same function scope.
+extern "C" void Ship_ExtendedCullingActorAdjustProjectedZ(Actor* actor) {
+    s32 multiplier = CVarGetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance", 1);
+    multiplier = MAX(multiplier, 1);
+    if (multiplier > 1) {
+        actor->projectedPos.z /= multiplier;
+    }
+}
+
+// Enables Extended Culling options on specific actors by applying an inverse ratio of the widescreen aspect ratio
+// to the projected X value of the actor. This tricks distance checks without having to replace hardcoded values.
+// Requires that Ship_ExtendedCullingActorRestoreProjectedPos is called within the same function scope.
+extern "C" void Ship_ExtendedCullingActorAdjustProjectedX(Actor* actor) {
+    if (CVarGetInteger("gEnhancements.Graphics.ActorCullingAccountsForWidescreen", 0)) {
+        f32 ratioAdjusted = Ship_GetExtendedAspectRatioMultiplier();
+        actor->projectedPos.x /= ratioAdjusted;
+    }
+}
+
+// Restores the projectedPos values on the actor after modifications from the Extended Culling hacks
+extern "C" void Ship_ExtendedCullingActorRestoreProjectedPos(PlayState* play, Actor* actor) {
+    f32 invW = 0.0f;
+    Actor_GetProjectedPos(play, &actor->world.pos, &actor->projectedPos, &invW);
 }
 
 extern "C" bool Ship_IsCStringEmpty(const char* str) {

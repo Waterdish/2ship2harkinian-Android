@@ -1315,7 +1315,7 @@ void EnDeath_DrawScytheSpinning(EnDeath* this, PlayState* play) {
     dl = POLY_XLU_DISP;
 
     for (i = 1; i < this->numScytheAfterImages; i++) {
-        FrameInterpolation_RecordOpenChild(dl, 0);
+        FrameInterpolation_RecordOpenChild(this, i);
         gDPPipeSync(dl++);
         gDPSetEnvColor(dl++, 30, 30, 0, 255 - i * 35);
 
@@ -1470,7 +1470,7 @@ void EnDeath_DrawBats(EnDeath* this, PlayState* play) {
             Matrix_Scale(phi_fs2, phi_fs2, phi_fs2, MTXMODE_APPLY);
 
             for (phi_s0 = miniDeath->unk_160, j = 0; j < ARRAY_COUNT(miniDeath->unk_160); j++, phi_s0++) {
-                FrameInterpolation_RecordOpenChild(dl, j); // Kinda out of options for what to pass into `a`
+                FrameInterpolation_RecordOpenChild(phi_s0, 2);
                 cmf->mf[3][0] = miniDeath->actor.world.pos.x - phi_s0->unk_10.x;
                 cmf->mf[3][1] = miniDeath->actor.world.pos.y + (20.0f - phi_s0->unk_10.y);
                 cmf->mf[3][2] = miniDeath->actor.world.pos.z - phi_s0->unk_10.z;
@@ -1559,7 +1559,7 @@ void EnDeath_DrawFlames(EnDeath* this, PlayState* play2) {
             effect = this->miniDeaths[i]->unk_160;
 
             for (j = 0; j < ARRAY_COUNT(this->miniDeaths[i]->unk_160); j++, effect++) {
-                FrameInterpolation_RecordOpenChild(POLY_XLU_DISP, j);
+                FrameInterpolation_RecordOpenChild(effect, 3);
                 cmf->mf[3][0] = effect->unk_4.x;
                 cmf->mf[3][1] = effect->unk_4.y - 12.0f;
                 cmf->mf[3][2] = effect->unk_4.z;

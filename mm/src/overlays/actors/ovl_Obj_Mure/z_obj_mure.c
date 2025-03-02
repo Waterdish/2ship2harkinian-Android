@@ -10,6 +10,8 @@
 #include "overlays/actors/ovl_En_Insect/z_en_insect.h"
 #include "overlays/actors/ovl_En_Kusa/z_en_kusa.h"
 
+#include "2s2h/ShipUtils.h"
+
 #define FLAGS 0x00000000
 
 #define THIS ((ObjMure*)thisx)
@@ -273,11 +275,15 @@ void ObjMure_InitialAction(ObjMure* this, PlayState* play) {
 }
 
 void ObjMure_CulledState(ObjMure* this, PlayState* play) {
+    Ship_ExtendedCullingActorAdjustProjectedZ(&this->actor);
+
     if (fabsf(this->actor.projectedPos.z) < sZClip[this->type]) {
         this->actionFunc = ObjMure_ActiveState;
         this->actor.flags |= ACTOR_FLAG_10;
         ObjMure_SpawnActors(this, play);
     }
+
+    Ship_ExtendedCullingActorRestoreProjectedPos(play, &this->actor);
 }
 
 void ObjMure_SetFollowTargets(ObjMure* this, f32 randMax) {
@@ -395,6 +401,8 @@ static ObjMureActionFunc sTypeGroupBehaviorFunc[] = {
 };
 
 void ObjMure_ActiveState(ObjMure* this, PlayState* play) {
+    Ship_ExtendedCullingActorAdjustProjectedZ(&this->actor);
+
     ObjMure_CheckChildren(this, play);
     if ((sZClip[this->type] + 40.0f) <= fabsf(this->actor.projectedPos.z)) {
         this->actionFunc = ObjMure_CulledState;
@@ -403,6 +411,8 @@ void ObjMure_ActiveState(ObjMure* this, PlayState* play) {
     } else if (sTypeGroupBehaviorFunc[this->type] != NULL) {
         sTypeGroupBehaviorFunc[this->type](this, play);
     }
+
+    Ship_ExtendedCullingActorRestoreProjectedPos(play, &this->actor);
 }
 
 void ObjMure_Update(Actor* thisx, PlayState* play) {

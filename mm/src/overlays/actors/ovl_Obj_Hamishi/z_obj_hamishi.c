@@ -7,6 +7,8 @@
 #include "z_obj_hamishi.h"
 #include "objects/gameplay_field_keep/gameplay_field_keep.h"
 
+#include "2s2h/ShipUtils.h"
+
 #define FLAGS (ACTOR_FLAG_10)
 
 #define THIS ((ObjHamishi*)thisx)
@@ -265,6 +267,8 @@ void ObjHamishi_Draw(Actor* thisx, PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx);
 
+    Ship_ExtendedCullingActorAdjustProjectedZ(&this->actor);
+
     if ((thisx->projectedPos.z <= 2150.0f) || ((this->unk_1A2 & 1) && (thisx->projectedPos.z < 2250.0f))) {
         thisx->shape.shadowAlpha = 160;
         Gfx_SetupDL25_Opa(play->state.gfxCtx);
@@ -286,6 +290,8 @@ void ObjHamishi_Draw(Actor* thisx, PlayState* play) {
     } else {
         thisx->shape.shadowAlpha = 0;
     }
+
+    Ship_ExtendedCullingActorRestoreProjectedPos(play, &this->actor);
 
     CLOSE_DISPS(play->state.gfxCtx);
 }

@@ -182,6 +182,7 @@ void EnTanron5_SpawnEffectSand(TwinmoldEffect* effect, Vec3f* pos, f32 scale) {
             effect->timer = 0;
             effect->scale = scale;
             effect->targetScale = 2.0f * scale;
+            effect->epoch++;
             break;
         }
     }
@@ -206,6 +207,7 @@ void EnTanron5_SpawnEffectBlackDust(TwinmoldEffect* effect, Vec3f* pos, f32 scal
             effect->timer = 0;
             effect->scale = scale;
             effect->targetScale = 2.0f * scale;
+            effect->epoch++;
             break;
         }
     }

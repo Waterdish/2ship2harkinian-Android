@@ -10,6 +10,8 @@
 #include "objects/gameplay_field_keep/gameplay_field_keep.h"
 #include "overlays/actors/ovl_En_Insect/z_en_insect.h"
 
+#include "2s2h/ShipUtils.h"
+
 #define FLAGS (ACTOR_FLAG_10 | ACTOR_FLAG_800000)
 
 #define THIS ((EnKusa*)thisx)
@@ -706,6 +708,8 @@ void EnKusa_DrawBush(Actor* thisx, PlayState* play2) {
     PlayState* play = play2;
     EnKusa* this = THIS;
 
+    Ship_ExtendedCullingActorAdjustProjectedZ(&this->actor);
+
     if ((this->actor.projectedPos.z <= 1200.0f) || ((this->isInWater & 1) && (this->actor.projectedPos.z < 1300.0f))) {
 
         if ((play->roomCtx.curRoom.behaviorType1 == ROOM_BEHAVIOR_TYPE1_0) &&
@@ -730,6 +734,8 @@ void EnKusa_DrawBush(Actor* thisx, PlayState* play2) {
 
         CLOSE_DISPS(play->state.gfxCtx);
     }
+
+    Ship_ExtendedCullingActorRestoreProjectedPos(play, &this->actor);
 }
 
 void EnKusa_DrawGrass(Actor* thisx, PlayState* play) {

@@ -7,6 +7,7 @@
 #include "z_eff_dust.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
 #include "system_malloc.h"
+
 #include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
 
 #define FLAGS (ACTOR_FLAG_10 | ACTOR_FLAG_20)
@@ -291,7 +292,7 @@ void func_80919768(Actor* thisx, PlayState* play2) {
     gSPSegment(POLY_XLU_DISP++, 0x08, D_80919DB0);
 
     for (i = 0; i < ARRAY_COUNT(this->distanceTraveled); i++) {
-        FrameInterpolation_RecordOpenChild(this, i);
+        FrameInterpolation_RecordOpenChild(distanceTraveled, i);
         if (*distanceTraveled < 1.0f) {
             aux = 1.0f - SQ(*distanceTraveled);
             Matrix_Translate(thisx->world.pos.x, thisx->world.pos.y, thisx->world.pos.z, MTXMODE_NEW);
@@ -349,6 +350,7 @@ void func_809199FC(Actor* thisx, PlayState* play2) {
 
     for (i = 0; i < ARRAY_COUNT(this->distanceTraveled); i++) {
         if (*distanceTraveled < 1.0f) {
+            FrameInterpolation_RecordOpenChild(distanceTraveled, i);
             gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 255, (*distanceTraveled * 255.0f));
 
             aux = 1.0f - SQ(*distanceTraveled);
@@ -367,6 +369,7 @@ void func_809199FC(Actor* thisx, PlayState* play2) {
 
             gSPDisplayList(POLY_XLU_DISP++, gEffSparklesDL);
             gSPSetGeometryMode(POLY_XLU_DISP++, G_FOG | G_LIGHTING);
+            FrameInterpolation_RecordCloseChild();
         }
 
         initialPositions++;

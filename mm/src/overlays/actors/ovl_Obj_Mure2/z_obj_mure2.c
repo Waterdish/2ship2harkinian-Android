@@ -6,6 +6,8 @@
 
 #include "z_obj_mure2.h"
 
+#include "2s2h/ShipUtils.h"
+
 #define FLAGS 0x00000000
 
 #define THIS ((ObjMure2*)thisx)
@@ -213,12 +215,17 @@ void func_809613E8(ObjMure2* this) {
 }
 
 void func_809613FC(ObjMure2* this, PlayState* play) {
+    Ship_ExtendedCullingActorAdjustProjectedX(&this->actor);
+    Ship_ExtendedCullingActorAdjustProjectedZ(&this->actor);
+
     if (Math3D_Dist1DSq(this->actor.projectedPos.x, this->actor.projectedPos.z) <
         D_80961590[this->actor.params & 3] * this->unk_17C) {
         this->actor.flags |= 0x10;
         func_8096104C(this, play);
         func_8096147C(this);
     }
+
+    Ship_ExtendedCullingActorRestoreProjectedPos(play, &this->actor);
 }
 
 void func_8096147C(ObjMure2* this) {
@@ -227,12 +234,18 @@ void func_8096147C(ObjMure2* this) {
 
 void func_80961490(ObjMure2* this, PlayState* play) {
     ObjMure2_ClearChildrenList(this);
+
+    Ship_ExtendedCullingActorAdjustProjectedX(&this->actor);
+    Ship_ExtendedCullingActorAdjustProjectedZ(&this->actor);
+
     if ((D_8096159C[this->actor.params & 3] * this->unk_17C) <=
         Math3D_Dist1DSq(this->actor.projectedPos.x, this->actor.projectedPos.z)) {
         this->actor.flags &= ~0x10;
         func_809611BC(this, play);
         func_809613E8(this);
     }
+
+    Ship_ExtendedCullingActorRestoreProjectedPos(play, &this->actor);
 }
 
 void ObjMure2_Update(Actor* thisx, PlayState* play) {

@@ -10,6 +10,8 @@
 #include "z_obj_grass.h"
 #include "overlays/actors/ovl_Obj_Grass_Carry/z_obj_grass_carry.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
+
+#include "2s2h/ShipUtils.h"
 #include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
 
 #define FLAGS (ACTOR_FLAG_10 | ACTOR_FLAG_20)
@@ -75,16 +77,26 @@ s32 func_809A9110(PlayState* play, Vec3f* pos) {
 
     SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, pos, &projectedPos, &w);
 
-    if ((play->projectionMtxFDiagonal.z * -130.13191f) < projectedPos.z) {
+    // #region 2S2H [Enhancement] Extended Culling handling for grass unit drawing
+    s32 distMultiplier = CVarGetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance", 1);
+    distMultiplier = MAX(distMultiplier, 1);
+
+    f32 aspectMultiplier = 1.0f;
+    if (CVarGetInteger("gEnhancements.Graphics.ActorCullingAccountsForWidescreen", 0)) {
+        aspectMultiplier = Ship_GetExtendedAspectRatioMultiplier();
+    }
+
+    if ((play->projectionMtxFDiagonal.z * -130.13191f * distMultiplier) < projectedPos.z) {
         if (w < 1.0f) {
             w = 1.0f;
         }
 
-        if (((fabsf(projectedPos.x) - (130.13191f * play->projectionMtxFDiagonal.x)) < w) &&
+        if (((fabsf(projectedPos.x) - (130.13191f * play->projectionMtxFDiagonal.x)) < (w * aspectMultiplier)) &&
             ((fabsf(projectedPos.y) - (130.13191f * play->projectionMtxFDiagonal.y)) < w)) {
             return true;
         }
     }
+    // #endregion
     return false;
 }
 
@@ -402,10 +414,16 @@ void ObjGrass_InitDraw(ObjGrass* this, PlayState* play) {
     f32 distSq;
     f32 eyeDist;
 
+    // 2S2H [Enhancement] Extended Culling handling
+    // Recompute the eyeDist and distSq values below with the inverse distance multiplier to trick the checks
+    s32 multiplier = CVarGetInteger("gEnhancements.Graphics.IncreaseActorDrawDistance", 1);
+    multiplier = MAX(multiplier, 1);
+
     for (i = 0; i < this->activeGrassGroups; i++) {
         grassGroup = &this->grassGroups[i];
 
         eyeDist = Math3D_Vec3fDistSq(&grassGroup->homePos, &GET_ACTIVE_CAM(play)->eye);
+        eyeDist = SQ(sqrtf(eyeDist) / multiplier); // Hijacked
 
         if ((eyeDist < SQ(1280.0f)) && func_809A9110(play, &grassGroup->homePos)) {
             grassGroup->flags |= OBJ_GRASS_GROUP_DRAW;
@@ -422,6 +440,7 @@ void ObjGrass_InitDraw(ObjGrass* this, PlayState* play) {
                         grassElem->alpha = 255;
                     } else {
                         distSq = Math3D_Vec3fDistSq(&grassElem->pos, &GET_ACTIVE_CAM(play)->eye);
+                        distSq = SQ(sqrtf(distSq) / multiplier); // Hijacked
                         if ((distSq <= SQ(1080.0f)) ||
                             ((grassElem->flags & OBJ_GRASS_ELEM_UNDERWATER) && (distSq < SQ(1180.0f)))) {
                             grassElem->alpha = 255;
@@ -467,9 +486,8 @@ void ObjGrass_DrawOpa(Actor* thisx, PlayState* play2) {
             for (j = 0; j < grassGroup->count; j++) {
                 grassElem = &grassGroup->elements[j];
 
-                FrameInterpolation_RecordOpenChild(grassGroup, i + j);
-
                 if ((grassElem->flags & OBJ_GRASS_ELEM_DRAW) && (grassElem->alpha == 255)) {
+                    FrameInterpolation_RecordOpenChild(grassElem, 0);
                     rot.y = grassElem->rotY;
                     Matrix_SetTranslateRotateYXZ(grassElem->pos.x, grassElem->pos.y, grassElem->pos.z, &rot);
                     Matrix_Scale(this->actor.scale.x, this->actor.scale.y, this->actor.scale.z, MTXMODE_APPLY);
@@ -480,9 +498,8 @@ void ObjGrass_DrawOpa(Actor* thisx, PlayState* play2) {
                     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx),
                               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                     gSPDisplayList(POLY_OPA_DISP++, gObjGrass_D_809AAAE0);
+                    FrameInterpolation_RecordCloseChild();
                 }
-
-                FrameInterpolation_RecordCloseChild();
             }
         }
     }
@@ -511,9 +528,8 @@ void ObjGrass_DrawXlu(Actor* thisx, PlayState* play) {
             for (j = 0; j < grassGroup->count; j++) {
                 grassElem = &grassGroup->elements[j];
 
-                FrameInterpolation_RecordOpenChild(grassGroup, i + j);
-
                 if ((grassElem->flags & OBJ_GRASS_ELEM_DRAW) && (grassElem->alpha > 0) && (grassElem->alpha < 255)) {
+                    FrameInterpolation_RecordOpenChild(grassElem, 0);
                     rot.y = grassElem->rotY;
                     Matrix_SetTranslateRotateYXZ(grassElem->pos.x, grassElem->pos.y, grassElem->pos.z, &rot);
                     Matrix_Scale(this->actor.scale.x, this->actor.scale.y, this->actor.scale.z, MTXMODE_APPLY);
@@ -522,9 +538,8 @@ void ObjGrass_DrawXlu(Actor* thisx, PlayState* play) {
                               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 255, grassElem->alpha);
                     gSPDisplayList(POLY_XLU_DISP++, gObjGrass_D_809AAAE0);
+                    FrameInterpolation_RecordCloseChild();
                 }
-
-                FrameInterpolation_RecordCloseChild();
             }
         }
     }

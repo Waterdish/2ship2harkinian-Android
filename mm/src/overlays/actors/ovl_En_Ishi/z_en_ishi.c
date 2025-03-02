@@ -12,6 +12,8 @@
 #include "objects/object_ishi/object_ishi.h"
 #include "overlays/actors/ovl_En_Insect/z_en_insect.h"
 
+#include "2s2h/ShipUtils.h"
+
 #define FLAGS (ACTOR_FLAG_10 | ACTOR_FLAG_800000)
 
 #define THIS ((EnIshi*)thisx)
@@ -704,6 +706,8 @@ void func_8095F210(EnIshi* this, PlayState* play) {
     s32 pad;
     s32 sp28;
 
+    Ship_ExtendedCullingActorAdjustProjectedZ(&this->actor);
+
     if ((this->actor.projectedPos.z <= 1200.0f) || ((this->unk_197 & 1) && (this->actor.projectedPos.z < 1300.0f))) {
         Gfx_DrawDListOpa(play, gameplay_field_keep_DL_0066B0);
         return;
@@ -722,12 +726,16 @@ void func_8095F210(EnIshi* this, PlayState* play) {
 
         CLOSE_DISPS(play->state.gfxCtx);
     }
+
+    Ship_ExtendedCullingActorRestoreProjectedPos(play, &this->actor);
 }
 
 void func_8095F36C(EnIshi* this, PlayState* play) {
     s32 pad;
 
     OPEN_DISPS(play->state.gfxCtx);
+
+    Ship_ExtendedCullingActorAdjustProjectedZ(&this->actor);
 
     if ((this->actor.projectedPos.z <= 2150.0f) || ((this->unk_197 & 1) && (this->actor.projectedPos.z < 2250.0f))) {
         this->actor.shape.shadowAlpha = 160;
@@ -752,6 +760,8 @@ void func_8095F36C(EnIshi* this, PlayState* play) {
     } else {
         this->actor.shape.shadowAlpha = 0;
     }
+
+    Ship_ExtendedCullingActorRestoreProjectedPos(play, &this->actor);
 
     CLOSE_DISPS(play->state.gfxCtx);
 }

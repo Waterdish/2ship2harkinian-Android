@@ -137,6 +137,7 @@ struct WidgetOptions {
     bool sameLine = false;
     bool showButtons = true;
     const char* format = "%f";
+    float step = 0.01f;
     bool isPercentage = false;
 };
 
@@ -514,8 +515,8 @@ void AddSettings() {
                 "Adjust overall sound volume.",
                 WIDGET_CVAR_SLIDER_FLOAT,
                 { .min = 0.0f,
-                  .max = 100.0f,
-                  .defaultVariant = 100.0f,
+                  .max = 1.0f,
+                  .defaultVariant = 1.0f,
                   .showButtons = false,
                   .format = "",
                   .isPercentage = true } },
@@ -524,8 +525,8 @@ void AddSettings() {
                 "Adjust the Background Music volume.",
                 WIDGET_CVAR_SLIDER_FLOAT,
                 { .min = 0.0f,
-                  .max = 100.0f,
-                  .defaultVariant = 100.0f,
+                  .max = 1.0f,
+                  .defaultVariant = 1.0f,
                   .showButtons = false,
                   .format = "",
                   .isPercentage = true },
@@ -538,8 +539,8 @@ void AddSettings() {
                 "Adjust the Sub Music volume.",
                 WIDGET_CVAR_SLIDER_FLOAT,
                 { .min = 0.0f,
-                  .max = 100.0f,
-                  .defaultVariant = 100.0f,
+                  .max = 1.0f,
+                  .defaultVariant = 1.0f,
                   .showButtons = false,
                   .format = "",
                   .isPercentage = true },
@@ -552,8 +553,8 @@ void AddSettings() {
                 "Adjust the Sound Effects volume.",
                 WIDGET_CVAR_SLIDER_FLOAT,
                 { .min = 0.0f,
-                  .max = 100.0f,
-                  .defaultVariant = 100.0f,
+                  .max = 1.0f,
+                  .defaultVariant = 1.0f,
                   .showButtons = false,
                   .format = "",
                   .isPercentage = true },
@@ -566,8 +567,8 @@ void AddSettings() {
                 "Adjust the Fanfare volume.",
                 WIDGET_CVAR_SLIDER_FLOAT,
                 { .min = 0.0f,
-                  .max = 100.0f,
-                  .defaultVariant = 100.0f,
+                  .max = 1.0f,
+                  .defaultVariant = 1.0f,
                   .showButtons = false,
                   .format = "",
                   .isPercentage = true },
@@ -580,8 +581,8 @@ void AddSettings() {
                 "Adjust the Ambient Sound volume.",
                 WIDGET_CVAR_SLIDER_FLOAT,
                 { .min = 0.0f,
-                  .max = 100.0f,
-                  .defaultVariant = 100.0f,
+                  .max = 1.0f,
+                  .defaultVariant = 1.0f,
                   .showButtons = false,
                   .format = "",
                   .isPercentage = true },
@@ -619,9 +620,9 @@ void AddSettings() {
                 "Multiplies your output resolution by the value inputted, as a more intensive but effective "
                 "form of anti-aliasing.",
                 WIDGET_CVAR_SLIDER_FLOAT,
-                { .min = 50.0f,
-                  .max = 200.0f,
-                  .defaultVariant = 100.0f,
+                { .min = 0.5f,
+                  .max = 2.0f,
+                  .defaultVariant = 1.0f,
                   .showButtons = false,
                   .format = "",
                   .isPercentage = true },
@@ -726,43 +727,44 @@ void AddSettings() {
                                       WIDGET_WINDOW_BUTTON,
                                       { .size = UIWidgets::Sizes::Inline, .windowName = "2S2H Input Editor" } } } } });
 
-    settingsSidebar.push_back({ "Notifications",
-                                1,
-                                { {
-                                    { "Position",
-                                      "gNotifications.Position",
-                                      "Which corner of the screen notifications appear in.",
-                                      WIDGET_CVAR_COMBOBOX,
-                                      { .defaultVariant = 3, .comboBoxOptions = notificationPosition } },
-                                    { "Duration: %.0f seconds",
-                                      "gNotifications.Duration",
-                                      "How long notifications are displayed for.",
-                                      WIDGET_CVAR_SLIDER_FLOAT,
-                                      { .min = 300.0f, .max = 3000.0f, .defaultVariant = 1000.0f } },
-                                    { "Background Opacity: %.0f%%",
-                                      "gNotifications.BgOpacity",
-                                      "How opaque the background of notifications is.",
-                                      WIDGET_CVAR_SLIDER_FLOAT,
-                                      { .min = 0.0f, .max = 100.0f, .defaultVariant = 50.0f, .isPercentage = true } },
-                                    { "Size %.1f",
-                                      "gNotifications.Size",
-                                      "How large notifications are.",
-                                      WIDGET_CVAR_SLIDER_FLOAT,
-                                      { .min = 100.0f, .max = 500.0f, .defaultVariant = 180.0f } },
-                                    { "Test Notification",
-                                      "",
-                                      "Displays a test notification.",
-                                      WIDGET_BUTTON,
-                                      {},
-                                      [](widgetInfo& info) {
-                                          Notification::Emit({
-                                              .itemIcon = "__OTR__icon_item_24_static_yar/gQuestIconGoldSkulltulaTex",
-                                              .prefix = "This",
-                                              .message = "is a",
-                                              .suffix = "test.",
-                                          });
-                                      } },
-                                } } });
+    settingsSidebar.push_back(
+        { "Notifications",
+          1,
+          { {
+              { "Position",
+                "gNotifications.Position",
+                "Which corner of the screen notifications appear in.",
+                WIDGET_CVAR_COMBOBOX,
+                { .defaultVariant = 3, .comboBoxOptions = notificationPosition } },
+              { "Duration: %.0f seconds",
+                "gNotifications.Duration",
+                "How long notifications are displayed for.",
+                WIDGET_CVAR_SLIDER_FLOAT,
+                { .min = 3.0f, .max = 30.0f, .defaultVariant = 10.0f, .format = "%.1f", .step = 0.1f } },
+              { "Background Opacity: %.0f%%",
+                "gNotifications.BgOpacity",
+                "How opaque the background of notifications is.",
+                WIDGET_CVAR_SLIDER_FLOAT,
+                { .min = 0.0f, .max = 1.0f, .defaultVariant = 0.5f, .format = "%.0f%%", .isPercentage = true } },
+              { "Size %.1f",
+                "gNotifications.Size",
+                "How large notifications are.",
+                WIDGET_CVAR_SLIDER_FLOAT,
+                { .min = 1.0f, .max = 5.0f, .defaultVariant = 1.8f, .format = "%.1f", .step = 0.1f } },
+              { "Test Notification",
+                "",
+                "Displays a test notification.",
+                WIDGET_BUTTON,
+                {},
+                [](widgetInfo& info) {
+                    Notification::Emit({
+                        .itemIcon = "__OTR__icon_item_24_static_yar/gQuestIconGoldSkulltulaTex",
+                        .prefix = "This",
+                        .message = "is a",
+                        .suffix = "test.",
+                    });
+                } },
+          } } });
 
     if (CVarGetInteger("gSettings.SidebarSearch", 0)) {
         settingsSidebar.insert(settingsSidebar.begin() + searchSidebarIndex, searchSidebarEntry);
@@ -804,13 +806,13 @@ void AddEnhancements() {
                   "gEnhancements.Camera.FirstPerson.SensitivityX",
                   "Adjusts the Sensitivity of the X Axis in First Person Mode.",
                   WIDGET_CVAR_SLIDER_FLOAT,
-                  { .min = 10.0f, .max = 200.0f, .defaultVariant = 100.0f, .format = "%.0f%%", .isPercentage = true },
+                  { .min = 0.01f, .max = 2.0f, .defaultVariant = 1.0f, .format = "%.0f%%", .isPercentage = true },
                   nullptr },
                 { "Y Axis Sensitivity: %.0f%%",
                   "gEnhancements.Camera.FirstPerson.SensitivityY",
                   "Adjusts the Sensitivity of the Y Axis in First Person Mode.",
                   WIDGET_CVAR_SLIDER_FLOAT,
-                  { .min = 10.0f, .max = 200.0f, .defaultVariant = 100.0f, .format = "%.0f%%", .isPercentage = true },
+                  { .min = 0.01f, .max = 2.0f, .defaultVariant = 1.0f, .format = "%.0f%%", .isPercentage = true },
                   nullptr },
                 { "Gyro Aiming",
                   "gEnhancements.Camera.FirstPerson.GyroEnabled",
@@ -836,14 +838,14 @@ void AddEnhancements() {
                   "gEnhancements.Camera.FirstPerson.GyroSensitivityX",
                   "Adjusts the Sensitivity of the X Axis of the Gyro in First Person Mode.",
                   WIDGET_CVAR_SLIDER_FLOAT,
-                  { .min = 10.0f, .max = 200.0f, .defaultVariant = 100.0f, .format = "%.0f%%", .isPercentage = true },
+                  { .min = 0.01f, .max = 2.0f, .defaultVariant = 1.0f, .format = "%.0f%%", .isPercentage = true },
                   nullptr,
                   [](widgetInfo& info) { info.isHidden = disabledMap.at(DISABLE_FOR_GYRO_OFF).active; } },
                 { "Gyro Y Axis Sensitivity: %.0f%%",
                   "gEnhancements.Camera.FirstPerson.GyroSensitivityY",
                   "Adjusts the Sensitivity of the Y Axis of the Gyro in First Person Mode.",
                   WIDGET_CVAR_SLIDER_FLOAT,
-                  { .min = 10.0f, .max = 200.0f, .defaultVariant = 100.0f, .format = "%.0f%%", .isPercentage = true },
+                  { .min = 0.01f, .max = 2.0f, .defaultVariant = 1.0f, .format = "%.0f%%", .isPercentage = true },
                   nullptr,
                   [](widgetInfo& info) { info.isHidden = disabledMap.at(DISABLE_FOR_GYRO_OFF).active; } },
                 { "Right Stick Aiming", "gEnhancements.Camera.FirstPerson.RightStickEnabled",
@@ -876,14 +878,14 @@ void AddEnhancements() {
                   "gEnhancements.Camera.FirstPerson.RightStickSensitivityX",
                   "Adjusts the Sensitivity of the X Axis of the Right Stick in First Person Mode.",
                   WIDGET_CVAR_SLIDER_FLOAT,
-                  { .min = 10.0f, .max = 200.0f, .defaultVariant = 100.0f, .format = "%.0f%%", .isPercentage = true },
+                  { .min = 0.01f, .max = 2.0f, .defaultVariant = 1.0f, .format = "%.0f%%", .isPercentage = true },
                   nullptr,
                   [](widgetInfo& info) { info.isHidden = disabledMap.at(DISABLE_FOR_RIGHT_STICK_OFF).active; } },
                 { "Right Stick Y Axis Sensitivity: %.0f%%",
                   "gEnhancements.Camera.FirstPerson.RightStickSensitivityY",
                   "Adjusts the Sensitivity of the Y Axis of the Right Stick in First Person Mode.",
                   WIDGET_CVAR_SLIDER_FLOAT,
-                  { .min = 10.0f, .max = 200.0f, .defaultVariant = 100.0f, .format = "%.0f%%", .isPercentage = true },
+                  { .min = 0.01f, .max = 2.0f, .defaultVariant = 1.0f, .format = "%.0f%%", .isPercentage = true },
                   nullptr,
                   [](widgetInfo& info) { info.isHidden = disabledMap.at(DISABLE_FOR_RIGHT_STICK_OFF).active; } },
             },
@@ -918,14 +920,14 @@ void AddEnhancements() {
                 "gEnhancements.Camera.FreeLook.MaxPitch",
                 "Maximum Height of the Camera.",
                 WIDGET_CVAR_SLIDER_FLOAT,
-                { -8900.0f, 8900.0f, 7200.0f },
+                { .min = -89.0f, .max = 89.0f, .defaultVariant = 72.0f, .format = "%.0f\xC2\xB0" },
                 [](widgetInfo& info) { FreeLookPitchMinMax(); },
                 [](widgetInfo& info) { info.isHidden = disabledMap.at(DISABLE_FOR_FREE_LOOK_OFF).active; } },
               { "Min Camera Height Angle: %.0f\xC2\xB0",
                 "gEnhancements.Camera.FreeLook.MinPitch",
                 "Minimum Height of the Camera.",
                 WIDGET_CVAR_SLIDER_FLOAT,
-                { -8900.0f, 8900.0f, -4900.0f },
+                { .min = -89.0f, .max = 89.0f, .defaultVariant = -49.0f, .format = "%.0f\xC2\xB0" },
                 [](widgetInfo& info) { FreeLookPitchMinMax(); },
                 [](widgetInfo& info) { info.isHidden = disabledMap.at(DISABLE_FOR_FREE_LOOK_OFF).active; } },
               { "Debug Camera",
@@ -965,7 +967,7 @@ void AddEnhancements() {
                 "gEnhancements.Camera.RightStick.CameraSensitivity.X",
                 "Adjust the Sensitivity of the x axis when in Third Person.",
                 WIDGET_CVAR_SLIDER_FLOAT,
-                { 1.0f, 500.0f, 100.0f },
+                { .min = 0.01f, .max = 5.0f, .defaultVariant = 1.0f, .format = "%.0f%%", .isPercentage = true },
                 nullptr,
                 [](widgetInfo& info) {
                     if (disabledMap.at(DISABLE_FOR_CAMERAS_OFF).active) {
@@ -976,7 +978,7 @@ void AddEnhancements() {
                 "gEnhancements.Camera.RightStick.CameraSensitivity.Y",
                 "Adjust the Sensitivity of the x axis when in Third Person.",
                 WIDGET_CVAR_SLIDER_FLOAT,
-                { 1.0f, 500.0f, 100.0f },
+                { .min = 0.01f, .max = 5.0f, .defaultVariant = 1.0f, .format = "%.0f%%", .isPercentage = true },
                 nullptr,
                 [](widgetInfo& info) {
                     if (disabledMap.at(DISABLE_FOR_CAMERAS_OFF).active) {
@@ -996,7 +998,7 @@ void AddEnhancements() {
                 "gEnhancements.Camera.DebugCam.CameraSpeed",
                 "Adjusts the speed of the Camera.",
                 WIDGET_CVAR_SLIDER_FLOAT,
-                { 10.0f, 300.0f, 50.0f },
+                { .min = 0.1f, .max = 3.0f, .defaultVariant = 0.5f, .format = "%.0f%%", .isPercentage = true },
                 nullptr,
                 [](widgetInfo& info) { info.isHidden = disabledMap.at(DISABLE_FOR_DEBUG_CAM_OFF).active; } } } } });
     // Cheats
@@ -1293,8 +1295,10 @@ void AddEnhancements() {
               { "Dpad Ocarina", "gEnhancements.Playback.DpadOcarina", "Enables using the Dpad for Ocarina playback.",
                 WIDGET_CVAR_CHECKBOX },
               { "Pause Owl Warp", "gEnhancements.Songs.PauseOwlWarp",
-                "Allows the player to use the pause menu map to owl warp instead of "
-                "having to play the Song of Soaring.",
+                "Allows warping to registered Owl Statues from the pause menu map screen. "
+                "Requires that you can play Song of Soaring normally.\n\n"
+                "Accounts for Index-Warp being active, by presenting all valid warps for the registered map points. "
+                "Great Bay Coast warp is always given for index 0 warp as a convenience.",
                 WIDGET_CVAR_CHECKBOX },
               { "Zora Eggs For Bossa Nova",
                 "gEnhancements.Songs.ZoraEggCount",
@@ -1833,9 +1837,6 @@ void SearchMenuGetItem(widgetInfo& widget) {
                 };
             } break;
             case WIDGET_SLIDER_FLOAT: {
-                float floatMin = (std::get<float>(widget.widgetOptions.min) / 100);
-                float floatMax = (std::get<float>(widget.widgetOptions.max) / 100);
-                float floatDefault = (std::get<float>(widget.widgetOptions.defaultVariant) / 100);
                 float* pointer = std::get<float*>(widget.widgetOptions.valuePointer);
 
                 if (pointer == nullptr) {
@@ -1843,13 +1844,16 @@ void SearchMenuGetItem(widgetInfo& widget) {
                     assert(false);
                     return;
                 }
-                if (UIWidgets::SliderFloat(widget.widgetName.c_str(), pointer, floatMin, floatMax,
+                if (UIWidgets::SliderFloat(widget.widgetName.c_str(), pointer,
+                                           std::get<float>(widget.widgetOptions.min),
+                                           std::get<float>(widget.widgetOptions.max),
                                            { .color = menuTheme[menuThemeIndex],
                                              .tooltip = widget.widgetTooltip,
                                              .disabled = disabledValue,
                                              .disabledTooltip = disabledTooltip,
                                              .showButtons = widget.widgetOptions.showButtons,
                                              .format = widget.widgetOptions.format,
+                                             .step = widget.widgetOptions.step,
                                              .isPercentage = widget.widgetOptions.isPercentage })) {
                     if (widget.widgetCallback != nullptr) {
                         widget.widgetCallback(widget);
@@ -1873,18 +1877,17 @@ void SearchMenuGetItem(widgetInfo& widget) {
                 };
                 break;
             case WIDGET_CVAR_SLIDER_FLOAT: {
-                float floatMin = (std::get<float>(widget.widgetOptions.min) / 100);
-                float floatMax = (std::get<float>(widget.widgetOptions.max) / 100);
-                float floatDefault = (std::get<float>(widget.widgetOptions.defaultVariant) / 100);
-                if (UIWidgets::CVarSliderFloat(widget.widgetName.c_str(), widget.widgetCVar, floatMin, floatMax,
-                                               floatDefault,
-                                               { .color = menuTheme[menuThemeIndex],
-                                                 .tooltip = widget.widgetTooltip,
-                                                 .disabled = disabledValue,
-                                                 .disabledTooltip = disabledTooltip,
-                                                 .showButtons = widget.widgetOptions.showButtons,
-                                                 .format = widget.widgetOptions.format,
-                                                 .isPercentage = widget.widgetOptions.isPercentage })) {
+                if (UIWidgets::CVarSliderFloat(
+                        widget.widgetName.c_str(), widget.widgetCVar, std::get<float>(widget.widgetOptions.min),
+                        std::get<float>(widget.widgetOptions.max), std::get<float>(widget.widgetOptions.defaultVariant),
+                        { .color = menuTheme[menuThemeIndex],
+                          .tooltip = widget.widgetTooltip,
+                          .disabled = disabledValue,
+                          .disabledTooltip = disabledTooltip,
+                          .showButtons = widget.widgetOptions.showButtons,
+                          .format = widget.widgetOptions.format,
+                          .step = widget.widgetOptions.step,
+                          .isPercentage = widget.widgetOptions.isPercentage })) {
                     if (widget.widgetCallback != nullptr) {
                         widget.widgetCallback(widget);
                     }

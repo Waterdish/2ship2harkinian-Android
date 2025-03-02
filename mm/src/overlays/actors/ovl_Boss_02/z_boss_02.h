@@ -22,6 +22,8 @@ typedef struct {
     /* 0x30 */ s16 rotY;
     /* 0x34 */ f32 scale;
     /* 0x38 */ f32 targetScale;
+    // 2S2H [Port]
+    /*      */ s16 epoch; // Tracks when an effect is spawned for use with interpolation skipping
 } TwinmoldEffect; // size = 0x3C
 
 typedef enum {

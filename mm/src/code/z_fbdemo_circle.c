@@ -120,11 +120,8 @@ void TransitionCircle_LoadAndSetTexture(Gfx** gfxp, TexturePtr texture, s32 fmt,
     }
 
     // #region 2S2H [Cosmetic] Adjust circle overlay to support widescreen
-    // The first wide rectangle instruction renders the tile information on the extra space on the left edge
-    // The second instruction renders the original overlay in the center and has it extend to the right edge
-    // gSPTextureRectangle(gfx++, 0, 0, xh << 2, yh << 2, G_TX_RENDERTILE, (s32)(s * (1 << 5)), (s32)(t * (1 << 5)),
-    // dsdx,
-    //                     dtdy);
+    // The first wide rectangle instruction renders the tile information on the extra space off the left edge
+    // The second instruction renders the original overlay in the center and has it extended to the right edge
     s32 x = OTRGetRectDimensionFromLeftEdge(0) << 2;
     if (x < 0) {
         // Only render if the screen is wider then original
@@ -152,6 +149,9 @@ void TransitionCircle_Draw(void* thisx, Gfx** gfxp) {
         gDPSetCombineLERP(gfx++, 0, 0, 0, PRIMITIVE, 1, TEXEL0, PRIM_LOD_FRAC, PRIMITIVE, 0, 0, 0, PRIMITIVE, 1, TEXEL0,
                           PRIM_LOD_FRAC, PRIMITIVE);
     }
+    // 2S2H [Port] We need to set the render mode to XLU_SURF for alpha logic to be used in Fast3D
+    // If Fast3D changes how it decides alpha in the future, we may be able to remove this line
+    gDPSetRenderMode(gfx++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
     TransitionCircle_LoadAndSetTexture(&gfx, this->texture, G_IM_FMT_I, 0, this->masks, this->maskt,
                                        this->referenceRadius);
     gDPPipeSync(gfx++);

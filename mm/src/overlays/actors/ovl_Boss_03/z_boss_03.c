@@ -2418,7 +2418,8 @@ void Boss03_DrawEffects(PlayState* play) {
 
     for (i = 0; i < GYORG_EFFECT_COUNT; i++, eff++) {
         if (eff->type == GYORG_EFFECT_BUBBLE) {
-            FrameInterpolation_RecordOpenChild(eff, i);
+            FrameInterpolation_RecordOpenChild(eff, eff->type);
+            FrameInterpolation_IgnoreActorMtx();
             if (!flag) {
                 gSPDisplayList(POLY_OPA_DISP++, gGyorgBubbleMaterialDL);
                 gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, 255);
@@ -2445,7 +2446,8 @@ void Boss03_DrawEffects(PlayState* play) {
 
     for (i = 0; i < GYORG_EFFECT_COUNT; i++, eff++) {
         if ((eff->type == GYORG_EFFECT_DROPLET) || (eff->type == GYORG_EFFECT_SPLASH)) {
-            FrameInterpolation_RecordOpenChild(eff, i);
+            FrameInterpolation_RecordOpenChild(eff, eff->type);
+            FrameInterpolation_IgnoreActorMtx();
             if (!flag) {
                 POLY_XLU_DISP = Gfx_SetupDL(POLY_XLU_DISP, SETUPDL_0);
 
@@ -2481,7 +2483,8 @@ void Boss03_DrawEffects(PlayState* play) {
 
     for (i = 0; i < GYORG_EFFECT_COUNT; i++, eff++) {
         if (eff->type == GYORG_EFFECT_WET_SPOT) {
-            FrameInterpolation_RecordOpenChild(eff, i);
+            FrameInterpolation_RecordOpenChild(eff, eff->type);
+            FrameInterpolation_IgnoreActorMtx();
             if (!flag) {
                 Gfx_SetupDL44_Xlu(gfxCtx);
 

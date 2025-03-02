@@ -8,6 +8,9 @@
 #include "z_en_kusa2.h"
 #include "objects/gameplay_field_keep/gameplay_field_keep.h"
 #include "objects/gameplay_keep/gameplay_keep.h"
+
+#include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
+#include "2s2h/ShipUtils.h"
 #include <string.h>
 
 #define FLAGS (ACTOR_FLAG_10 | ACTOR_FLAG_800000)
@@ -920,6 +923,9 @@ void func_80A5D618(EnKusa2* this) {
 }
 
 void func_80A5D62C(EnKusa2* this, PlayState* play) {
+    Ship_ExtendedCullingActorAdjustProjectedX(&this->actor);
+    Ship_ExtendedCullingActorAdjustProjectedZ(&this->actor);
+
     if (this->unk_1BE != 0) {
         func_80A5B490(this, play);
         func_80A5D754(this);
@@ -927,6 +933,8 @@ void func_80A5D62C(EnKusa2* this, PlayState* play) {
         func_80A5B160(this, play);
         func_80A5D6B0(this);
     }
+
+    Ship_ExtendedCullingActorRestoreProjectedPos(play, &this->actor);
 }
 
 void func_80A5D6B0(EnKusa2* this) {
@@ -935,6 +943,10 @@ void func_80A5D6B0(EnKusa2* this) {
 
 void func_80A5D6C4(EnKusa2* this, PlayState* play) {
     func_80A5B3BC(this);
+
+    Ship_ExtendedCullingActorAdjustProjectedX(&this->actor);
+    Ship_ExtendedCullingActorAdjustProjectedZ(&this->actor);
+
     if (this->unk_1BE != 0) {
         func_80A5B490(this, play);
         func_80A5D754(this);
@@ -942,6 +954,8 @@ void func_80A5D6C4(EnKusa2* this, PlayState* play) {
         func_80A5B334(this, play);
         func_80A5D618(this);
     }
+
+    Ship_ExtendedCullingActorRestoreProjectedPos(play, &this->actor);
 }
 
 void func_80A5D754(EnKusa2* this) {
@@ -1331,11 +1345,14 @@ void func_80A5E6F0(Actor* thisx, PlayState* play) {
         EnKusa2UnkBssSubStruct2* s = &D_80A5F1C0.unk_0480[i];
 
         if (s->unk_2C > 0) {
+            FrameInterpolation_RecordOpenChild(s, 0);
+            FrameInterpolation_IgnoreActorMtx();
             Matrix_SetTranslateRotateYXZ(s->unk_04.x, s->unk_04.y, s->unk_04.z, &s->unk_20);
             Matrix_Scale(s->unk_00, s->unk_00, s->unk_00, MTXMODE_APPLY);
 
             gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(POLY_OPA_DISP++, D_80A5EB68[i & 1]);
+            FrameInterpolation_RecordCloseChild();
         }
     }
 
@@ -1357,6 +1374,8 @@ void func_80A5E80C(PlayState* play, s32 arg1) {
 void EnKusa2_Draw(Actor* thisx, PlayState* play) {
     EnKusa2* this = THIS;
 
+    Ship_ExtendedCullingActorAdjustProjectedZ(&this->actor);
+
     if (this->actor.projectedPos.z <= 1200.0f) {
         if ((play->roomCtx.curRoom.behaviorType1 == ROOM_BEHAVIOR_TYPE1_0) && (this->actor.projectedPos.z > -150.0f) &&
             (this->actor.projectedPos.z < 400.0f)) {
@@ -1366,6 +1385,8 @@ void EnKusa2_Draw(Actor* thisx, PlayState* play) {
     } else if (this->actor.projectedPos.z < 1300.0f) {
         func_80A5E80C(play, (1300.0f - this->actor.projectedPos.z) * 2.55f);
     }
+
+    Ship_ExtendedCullingActorRestoreProjectedPos(play, &this->actor);
 }
 
 void func_80A5E9B4(Actor* thisx, PlayState* play) {

@@ -5,6 +5,8 @@
 #include "overlays/actors/ovl_En_Elf/z_en_elf.h"
 #include "overlays/actors/ovl_En_Elforg/z_en_elforg.h"
 
+#include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
+
 #define FLAGS 0x00000000
 
 #define THIS ((EnItem00*)thisx)
@@ -705,6 +707,13 @@ void EnItem00_Draw(Actor* thisx, PlayState* play) {
     EnItem00* this = THIS;
 
     if (!(this->unk14E & this->unk150)) {
+        // 2S2H [Interpolation] Skip interpolation when the item moves from the ground to over the player head
+        Player* player = GET_PLAYER(play);
+        bool itemOnPlayer =
+            player->actor.home.pos.x == this->actor.world.pos.x && player->actor.home.pos.z == this->actor.world.pos.z;
+        FrameInterpolation_RecordOpenChild(this, itemOnPlayer ? 1 : 0);
+        FrameInterpolation_IgnoreActorMtx();
+
         switch (this->actor.params) {
             case ITEM00_RUPEE_GREEN:
             case ITEM00_RUPEE_BLUE:
@@ -774,6 +783,8 @@ void EnItem00_Draw(Actor* thisx, PlayState* play) {
             case ITEM00_BIG_FAIRY:
                 break;
         }
+
+        FrameInterpolation_RecordCloseChild();
     }
 }
 

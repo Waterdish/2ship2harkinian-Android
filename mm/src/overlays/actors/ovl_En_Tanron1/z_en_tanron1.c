@@ -6,6 +6,8 @@
 
 #include "z_en_tanron1.h"
 
+#include "2s2h/Enhancements/FrameInterpolation/FrameInterpolation.h"
+
 #define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_10 | ACTOR_FLAG_20)
 
 #define THIS ((EnTanron1*)thisx)
@@ -373,6 +375,7 @@ void func_80BB5AAC(EnTanron1* this, PlayState* play) {
 
     for (i = 0; i < this->actor.params; i++, ptr++) {
         if (ptr->unk_24 == 1) {
+            FrameInterpolation_RecordOpenChild(ptr, ptr->unk_24);
             if (!flag) {
                 gSPDisplayList(POLY_OPA_DISP++, ovl_En_Tanron1_DL_001888);
                 flag++;
@@ -384,6 +387,7 @@ void func_80BB5AAC(EnTanron1* this, PlayState* play) {
 
             gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(POLY_OPA_DISP++, ovl_En_Tanron1_DL_001900);
+            FrameInterpolation_RecordCloseChild();
         }
     }
 
@@ -391,6 +395,7 @@ void func_80BB5AAC(EnTanron1* this, PlayState* play) {
     ptr = ptrBase;
     for (i = 0; i < this->actor.params; i++, ptr++) {
         if (ptr->unk_24 == 2) {
+            FrameInterpolation_RecordOpenChild(ptr, ptr->unk_24);
             if (!flag) {
                 gSPDisplayList(POLY_OPA_DISP++, ovl_En_Tanron1_DL_001888);
                 gDPLoadTextureBlock(POLY_OPA_DISP++, ovl_En_Tanron1_DL_001428, G_IM_FMT_RGBA, G_IM_SIZ_16b, 16, 32, 0,
@@ -406,6 +411,7 @@ void func_80BB5AAC(EnTanron1* this, PlayState* play) {
 
             gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(POLY_OPA_DISP++, ovl_En_Tanron1_DL_001900);
+            FrameInterpolation_RecordCloseChild();
         }
     }
 
