@@ -151,7 +151,7 @@ bool Camera_CanFreeLook(Camera* camera) {
     f32 camY = sCamPlayState->state.input[0].cur.right_stick_y * 10.0f;
 
 #ifdef __ANDROID__
-    if(!sCanFreeLook && Ship::Mobile::IsUsingTouchscreenControls() && (Ship::Mobile::GetCameraYaw()>0||Ship::Mobile::GetCameraPitch()>0)) {
+    if(!sCanFreeLook && Ship::Mobile::IsUsingTouchscreenControls() && (fabsf(Ship::Mobile::GetCameraYaw()) > 0.0f || fabsf(Ship::Mobile::GetCameraPitch()) > 0.0f)) {
             sCanFreeLook=true;
     }
 #endif
